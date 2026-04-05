@@ -36,3 +36,11 @@ All mock dishes use `public/images/placeholder-dish.jpg` (see `src/mocks/constan
 ## Design tokens
 
 Semantic colors and fonts follow `../../design/emerald_hearth/DESIGN.md` (see `src/index.css` `@theme`).
+
+## Product notes (recent)
+
+Documented in detail in [`../../STATUS.md`](../../STATUS.md). Short list:
+
+- **Guest menu:** empty card when filters hide every dish that would otherwise appear for the current search/category; different messaging for empty search vs empty category.
+- **Guest filters:** header **Clear filters** / **Save choices**; in-page notification **logic** (`showSnack`, timers) without a visible snackbar for now — see `GuestFilterSnackbar.tsx` to re-enable.
+- **Owner:** below the `md` breakpoint, a **menu** icon in the top bar opens the **sidebar as a left drawer** (scrim, slide transition, Escape closes).

@@ -48,7 +48,7 @@ Snapshot of work completed in `dimome3` (product planning + frontend client scaf
 
 **MVP default:** `/` is the **owner** app (dashboard). **Guest** routes use **`/qr/:menuId`** for QR (`https://<host>/qr/<menuId>`) and **`/menu/:menuId`** as a readable alias.
 
-**Owner** (`OwnerLayout` at `/` — **sidebar** on `md+`: Overview, Menus, Categories, …):
+**Owner** (`OwnerLayout` at `/` — **sidebar** on `md+`: Overview, Menus, Categories, …; **below `md`** the sidebar is hidden and a **header menu icon** opens a **slide-in drawer** from the left with scrim, close control, **Escape** to dismiss, and **body scroll lock** while open):
 
 | Route | Page |
 |-------|------|
@@ -72,8 +72,8 @@ Snapshot of work completed in `dimome3` (product planning + frontend client scaf
 
 | Route | Page |
 |-------|------|
-| `/qr/:menuId`, `/menu/:menuId` | Menu — search, categories, filters, add to order |
-| `…/filters` | Allergen filters |
+| `/qr/:menuId`, `/menu/:menuId` | Menu — search, categories, filters, add to order; **empty state** when allergen filters hide every visible dish (`GuestMenuFilterEmptyState`); separate copy for no search hits / empty category |
+| `…/filters` | Allergen filters — header **Clear filters**, **Save choices** (back to menu); **notification timing/state** (`showSnack` / dismiss / timers) kept for future UI — `GuestFilterSnackbar` exists but is not mounted |
 | `…/order` | My order stub |
 
 **Legacy:** `/owner/*` redirects to the same path **without** the `/owner` prefix (e.g. `/owner/menus/x` → `/menus/x`).
@@ -119,4 +119,15 @@ npm run build      # client production build
 
 ---
 
-*Last updated: owner shell with sidebar + routes above; guest QR `/qr/:menuId` (+ `/menu/:menuId` alias); legacy `/owner/*` redirect.*
+## Changelog (since prior doc refresh)
+
+| Area | Change |
+|------|--------|
+| **Guest — menu** | `GuestMenuFilterEmptyState` when the current category/search would show dishes but **all are hidden by allergen filters**; other empty states for **no search matches** and **empty section**. |
+| **Guest — filters** | Sticky header: **Clear filters** (disabled when none active), **Save choices** (return to parent menu). Snackbar **UI removed**; **`showSnack` / `dismissSnack` / auto-clear timer** still run on toggles for future notifications; **`GuestFilterSnackbar`** component left in repo for reuse. |
+| **Owner — responsive** | `OwnerSidebar` is **`mobileOpen` / `onMobileOpenChange`** from `OwnerLayout`; mobile overlay **`z-[80]`** above the sticky header. |
+| **Git (repo root)** | Root **`.gitignore`**: `node_modules/`, `dimome1/`, `Dimome2/`. Removed from the index (not from disk): nested **gitlinks** under `dimome1/` + `Dimome2`, and hoisted **`dimome3/node_modules`** (~6k files) so they are no longer pushed to GitHub. |
+
+---
+
+*Last updated: 2026-04-06 — guest filter/menu empty states + header actions; owner mobile drawer; root gitignore / untrack `node_modules` + legacy dirs.*
