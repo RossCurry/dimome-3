@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Digital Maître d’ - Menu Management</title>
+<!-- Fonts -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Epilogue:ital,wght@0,100..900;1,100..900&amp;family=Inter:wght@100..900&amp;display=swap" rel="stylesheet"/>
+<!-- Material Symbols -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "on-secondary-fixed-variant": "#36485b",
+                    "outline-variant": "#c0c9c3",
+                    "tertiary-fixed": "#ffdbcd",
+                    "on-background": "#191c1c",
+                    "on-error": "#ffffff",
+                    "error": "#ba1a1a",
+                    "inverse-on-surface": "#f0f1f0",
+                    "surface": "#f9f9f8",
+                    "primary-fixed": "#baeed9",
+                    "surface-variant": "#e1e3e2",
+                    "tertiary-fixed-dim": "#ffb595",
+                    "surface-dim": "#d9dad9",
+                    "surface-container-highest": "#e1e3e2",
+                    "on-primary": "#ffffff",
+                    "background": "#f9f9f8",
+                    "on-surface": "#191c1c",
+                    "secondary-fixed": "#d1e4fb",
+                    "on-surface-variant": "#404945",
+                    "surface-container-high": "#e7e8e7",
+                    "surface-bright": "#f9f9f8",
+                    "tertiary": "#551d00",
+                    "primary": "#003629",
+                    "on-error-container": "#93000a",
+                    "secondary": "#4e6073",
+                    "inverse-surface": "#2e3131",
+                    "outline": "#707974",
+                    "error-container": "#ffdad6",
+                    "on-secondary-fixed": "#091d2e",
+                    "on-secondary-container": "#526478",
+                    "on-tertiary-container": "#ff9869",
+                    "secondary-fixed-dim": "#b5c8df",
+                    "surface-container-lowest": "#ffffff",
+                    "surface-tint": "#376757",
+                    "on-secondary": "#ffffff",
+                    "on-tertiary": "#ffffff",
+                    "on-primary-fixed": "#002117",
+                    "on-tertiary-fixed-variant": "#7c2e00",
+                    "on-tertiary-fixed": "#351000",
+                    "surface-container": "#edeeed",
+                    "inverse-primary": "#9ed1bd",
+                    "tertiary-container": "#792d00",
+                    "on-primary-fixed-variant": "#1d4f40",
+                    "on-primary-container": "#8abda9",
+                    "surface-container-low": "#f3f4f3",
+                    "secondary-container": "#cfe2f9",
+                    "primary-fixed-dim": "#9ed1bd",
+                    "primary-container": "#1b4d3e"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "fontFamily": {
+                    "headline": ["Epilogue"],
+                    "body": ["Inter"],
+                    "label": ["Inter"]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        body { font-family: 'Inter', sans-serif; }
+        h1, h2, h3 { font-family: 'Epilogue', sans-serif; }
+    </style>
+</head>
+<body class="bg-surface text-on-surface">
+<!-- TopNavBar -->
+<header class="bg-emerald-950/80 backdrop-blur-xl dark:bg-emerald-950/90 font-['Epilogue'] tracking-tight docked full-width top-0 sticky z-50 tonal-shift bg-emerald-900/10 flat no shadows flex justify-between items-center w-full px-6 py-3 max-w-[1920px] mx-auto">
+<div class="flex items-center gap-8">
+<span class="text-xl font-bold italic text-emerald-50">Digital Maître d’</span>
+<nav class="hidden md:flex gap-6">
+<a class="text-emerald-200/70 hover:text-white transition-colors" href="#">Dashboard</a>
+<a class="text-white font-semibold border-b-2 border-emerald-400 pb-1" href="#">Analytics</a>
+<a class="text-emerald-200/70 hover:text-white transition-colors" href="#">Settings</a>
+</nav>
+</div>
+<div class="flex items-center gap-4">
+<button class="bg-gradient-to-br from-primary to-primary-container text-white px-4 py-2 rounded-lg font-medium text-sm flex items-center gap-2 hover:bg-emerald-800/30 transition-all">
+<span class="material-symbols-outlined text-sm">add</span> Add Menu
+            </button>
+<div class="flex items-center gap-2">
+<button class="p-2 text-emerald-50 hover:bg-emerald-800/30 rounded-lg transition-all"><span class="material-symbols-outlined" data-icon="notifications">notifications</span></button>
+<button class="p-2 text-emerald-50 hover:bg-emerald-800/30 rounded-lg transition-all"><span class="material-symbols-outlined" data-icon="help">help</span></button>
+<img alt="User profile" class="w-8 h-8 rounded-full border border-emerald-400/30" data-alt="close up professional portrait of a restaurant manager in a clean white shirt with warm ambient lighting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBTwyn0OXWeSB5ZEyx7gPFp7NxVxefcUzgcp-SxOkaVTxoleWNDyK1K73zmCAvgGEias4G6G08qR1QFxsv0pxh8Jy1n5AagOMUtMApUg7V3sVO0stjYQ9jluRgkHvUVMPigRMjHoO-v-9iQ13DnrnQJa1vdJpdbJa7Btgmb691CbpvCggSvwPyFgOk5CvRxehRJjU4IJ2kqC4Q4ApDuSrT91tAyV8Ebll3kTaMrtpd5B5roOalWy3rAJdNN_qJHlSh-CG6xE5KQ9NxJ"/>
+</div>
+</div>
+</header>
+<!-- Main Layout Container -->
+<div class="flex">
+<!-- SideNavBar -->
+<aside class="bg-stone-50 dark:bg-stone-950 h-screen w-64 fixed left-0 top-0 pt-20 flex flex-col border-r border-stone-200/20 z-40">
+<div class="px-6 py-4 flex items-center gap-3">
+<img alt="Restaurant Logo" class="w-10 h-10 rounded-xl" data-alt="minimalist organic restaurant logo with green leaf motif on clean white background" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDLCyyNWEEp_KDcoOXKCaVlLQXbWy9Aq5Nc5oLvw8pS-HaxYaczWOWz0ZqJnqciT_bGT4TCwI4XESE650CLxeDY6edMo5ZQUkl2TnniRuhs_yKHl6sThci33G0SJTOH_enrm3aEWvroaqc6Pnoudgb4_ozKUKgUvahpC58wSfNpxi_KvKkqIiE1LMmSG64d0VPdHgLwGQRU7D6dhQgU9RVaQd582Vf0w186-nb2f3VK31IYPs7Xe_lB6x3q_zcmfqR2pUM7DhonP54Z"/>
+<div>
+<h2 class="font-['Epilogue'] font-bold text-emerald-900 leading-tight">The Green Table</h2>
+<p class="text-[10px] text-stone-500 uppercase tracking-wider">Premium B2B Account</p>
+</div>
+</div>
+<nav class="mt-6 flex-grow">
+<ul class="space-y-1">
+<li><a class="flex items-center gap-3 px-6 py-3 text-stone-600 hover:text-emerald-800 hover:bg-stone-100 transition-all duration-200" href="#"><span class="material-symbols-outlined" data-icon="dashboard">dashboard</span> Overview</a></li>
+<li><a class="flex items-center gap-3 px-6 py-3 bg-emerald-100/50 text-emerald-900 font-semibold rounded-r-full translate-x-1 duration-200" href="#"><span class="material-symbols-outlined" data-icon="menu_book">menu_book</span> Menus</a></li>
+<li><a class="flex items-center gap-3 px-6 py-3 text-stone-600 hover:text-emerald-800 hover:bg-stone-100 transition-all duration-200" href="#"><span class="material-symbols-outlined" data-icon="category">category</span> Categories</a></li>
+<li><a class="flex items-center gap-3 px-6 py-3 text-stone-600 hover:text-emerald-800 hover:bg-stone-100 transition-all duration-200" href="#"><span class="material-symbols-outlined" data-icon="egg_alt">egg_alt</span> Ingredients</a></li>
+<li><a class="flex items-center gap-3 px-6 py-3 text-stone-600 hover:text-emerald-800 hover:bg-stone-100 transition-all duration-200" href="#"><span class="material-symbols-outlined" data-icon="bar_chart">bar_chart</span> Performance</a></li>
+</ul>
+<div class="px-6 mt-8">
+<button class="w-full py-3 bg-primary text-white rounded-xl text-sm font-semibold flex items-center justify-center gap-2 shadow-sm">
+<span class="material-symbols-outlined text-sm">add_circle</span> New Item
+                    </button>
+</div>
+</nav>
+<div class="p-6 border-t border-stone-200/20">
+<ul class="space-y-1">
+<li><a class="flex items-center gap-3 py-2 text-stone-600 hover:text-emerald-800" href="#"><span class="material-symbols-outlined" data-icon="contact_support">contact_support</span> Support</a></li>
+<li><a class="flex items-center gap-3 py-2 text-stone-600 hover:text-emerald-800" href="#"><span class="material-symbols-outlined" data-icon="logout">logout</span> Logout</a></li>
+</ul>
+</div>
+</aside>
+<!-- Main Canvas -->
+<main class="ml-64 flex-grow p-8 bg-surface">
+<!-- Header & Breadcrumbs -->
+<div class="mb-10">
+<nav class="flex items-center gap-2 text-label-md text-on-surface-variant mb-2">
+<span>Menus</span>
+<span class="material-symbols-outlined text-sm">chevron_right</span>
+<span class="text-primary font-medium">Dinner Menu</span>
+</nav>
+<div class="flex justify-between items-end">
+<div>
+<h1 class="text-display-lg leading-tight text-on-surface">The Green Table <span class="text-primary">Dinner Menu</span></h1>
+<p class="text-body-lg text-on-surface-variant mt-2 max-w-2xl">Curate your seasonal evening offerings. Manage ingredients, pricing, and allergen visibility for the main dining room experience.</p>
+</div>
+<div class="flex gap-3">
+<button class="px-6 py-3 bg-surface-container-low text-on-surface-variant rounded-lg font-medium hover:bg-surface-container-high transition-colors">Preview Menu</button>
+<button class="px-6 py-3 bg-tertiary text-white rounded-lg font-medium shadow-sm hover:opacity-90 transition-opacity">Publish Changes</button>
+</div>
+</div>
+</div>
+<!-- Content Grid / Category Sections -->
+<div class="space-y-12">
+<!-- Category 1: Starters -->
+<section>
+<div class="flex items-center justify-between mb-6 pb-2 border-b-2 border-primary/10">
+<div class="flex items-center gap-4">
+<h2 class="text-headline-md text-tertiary">Starters</h2>
+<span class="px-2 py-0.5 bg-secondary-fixed text-on-secondary-fixed text-[10px] font-bold rounded-full uppercase tracking-tighter">4 Items</span>
+</div>
+<button class="text-primary font-semibold text-sm flex items-center gap-1 hover:underline">
+<span class="material-symbols-outlined text-base">add</span> Add Item to Starters
+                        </button>
+</div>
+<div class="grid grid-cols-1 gap-4">
+<!-- Menu Item Row -->
+<div class="group flex items-center gap-6 p-4 bg-surface-container-lowest hover:bg-surface-container-low rounded-xl transition-all duration-200">
+<div class="w-16 h-16 rounded-lg bg-surface-container overflow-hidden flex-shrink-0">
+<img class="w-full h-full object-cover" data-alt="vibrant healthy salad bowl with avocado, seeds, and fresh greens on a light textured plate" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBL_L3D4neBayURC0b_hJATqp6vxYlGfDB4vH-jOqfGM45kzZXXQZ-W3SDa1P-pBtrcginLgi6t-JWEDyyRVkKjl96M2uF1BcvSjFOP5iH1NvbUjlf6nuaFe-JuwoUDMGDTpPw-jOgi_FMB9ZsuhHqGxWuFMhFIU44FnMVAFHhasvh80_38jQEPxiZscbkzcrH2vNMUmbrSNIa_VZBQT4HM73fKIlluM9H3pAAGXAevnNKWP_liDth1jApFWB0_sAogj2_wVdJmMp_2"/>
+</div>
+<div class="flex-grow">
+<div class="flex items-center gap-3">
+<h3 class="text-title-lg text-on-surface">Heirloom Tomato Tartare</h3>
+<div class="flex gap-1">
+<span class="w-6 h-6 rounded-full bg-secondary-fixed flex items-center justify-center" title="Vegan">
+<span class="material-symbols-outlined text-primary text-[14px]" data-icon="eco">eco</span>
+</span>
+<span class="w-6 h-6 rounded-full bg-secondary-fixed flex items-center justify-center" title="Gluten-free">
+<span class="material-symbols-outlined text-primary text-[14px]" data-icon="grain">grain</span>
+</span>
+</div>
+</div>
+<p class="text-body-lg text-on-surface-variant leading-relaxed">Fermented shallots, caper emulsion, and toasted sourdough crumbles.</p>
+</div>
+<div class="text-right flex-shrink-0">
+<span class="text-title-lg font-bold text-on-surface">$18.00</span>
+</div>
+<div class="flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+<button class="p-2 hover:bg-surface-variant rounded-lg"><span class="material-symbols-outlined text-on-surface-variant">edit</span></button>
+<button class="p-2 hover:bg-error-container text-error rounded-lg"><span class="material-symbols-outlined">delete</span></button>
+</div>
+</div>
+<!-- Menu Item Row -->
+<div class="group flex items-center gap-6 p-4 bg-surface-container-low rounded-xl transition-all duration-200">
+<div class="w-16 h-16 rounded-lg bg-surface-container overflow-hidden flex-shrink-0">
+<img class="w-full h-full object-cover" data-alt="creamy forest mushroom soup in a handmade ceramic bowl garnished with herbs" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDD2rBXv6F_wBZff3EdtesDebnTBr_-tQVDep9hlgkr5GNL_A4dBaTMnGZNZoByss2uiSyeMLVOxX7OS5aNkUvidayzfJEL9TqtIU1f3BYEkORq4BzYWSR0RvF4MRhJ7lxF6yExyQkgLo_qIzaNR1F3KWHen98x7KEaIwJ20y8hwmQfY4T7eW4WkizhgRU6eDbnPCO4CbYej0ZnFixmo-D6nK8xIrMiEKPOM3tcBMw3D9DXew_VY7BZKwIA7bVG8aG2tffhBAJB-c5D"/>
+</div>
+<div class="flex-grow">
+<div class="flex items-center gap-3">
+<h3 class="text-title-lg text-on-surface">Wild Mushroom Velouté</h3>
+<div class="flex gap-1">
+<span class="w-6 h-6 rounded-full bg-secondary-fixed flex items-center justify-center" title="Nut-free">
+<span class="material-symbols-outlined text-primary text-[14px]" data-icon="nutrition">nutrition</span>
+</span>
+</div>
+</div>
+<p class="text-body-lg text-on-surface-variant leading-relaxed">Truffle foam, chive oil, and forest soil mushroom dust.</p>
+</div>
+<div class="text-right flex-shrink-0">
+<span class="text-title-lg font-bold text-on-surface">$22.00</span>
+</div>
+<div class="flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+<button class="p-2 hover:bg-surface-variant rounded-lg"><span class="material-symbols-outlined text-on-surface-variant">edit</span></button>
+<button class="p-2 hover:bg-error-container text-error rounded-lg"><span class="material-symbols-outlined">delete</span></button>
+</div>
+</div>
+</div>
+</section>
+<!-- Category 2: Main Courses -->
+<section>
+<div class="flex items-center justify-between mb-6 pb-2 border-b-2 border-primary/10">
+<div class="flex items-center gap-4">
+<h2 class="text-headline-md text-tertiary">Main Courses</h2>
+<span class="px-2 py-0.5 bg-secondary-fixed text-on-secondary-fixed text-[10px] font-bold rounded-full uppercase tracking-tighter">6 Items</span>
+</div>
+<button class="text-primary font-semibold text-sm flex items-center gap-1 hover:underline">
+<span class="material-symbols-outlined text-base">add</span> Add Item to Main Courses
+                        </button>
+</div>
+<div class="grid grid-cols-1 gap-4">
+<!-- Menu Item Row -->
+<div class="group flex items-center gap-6 p-4 bg-surface-container-lowest hover:bg-surface-container-low rounded-xl transition-all duration-200">
+<div class="w-16 h-16 rounded-lg bg-surface-container overflow-hidden flex-shrink-0">
+<img class="w-full h-full object-cover" data-alt="seared salmon fillet with roasted vegetables and lemon butter sauce on a premium ceramic plate" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDj0bQXRMnf76soci3YCtbdwpmCh6zQmoulhCCsVT5HNO5fVuxggukWdhzg0P2nWn5LEpqEevWq0AeYNALAN4M1xI1l2tDjxWtKZaX7Bdh3KrNsfm3YhHGqwlDDgoDXAHmRfqg7qrYRA-F0utsfe2jZLwmfstpkFPYIhnvuCFzrgBLFwZRIEgJLs9-wANECzYbfcMGfYoL2BNGPvKzLS2As6Od4Y4bXbfteZnUw63OQiQQxwYrSrbmOojhFYugCmh5vUcc4trH1EF5U"/>
+</div>
+<div class="flex-grow">
+<div class="flex items-center gap-3">
+<h3 class="text-title-lg text-on-surface">Pan-Seared Arctic Char</h3>
+<div class="flex gap-1">
+<span class="w-6 h-6 rounded-full bg-secondary-fixed flex items-center justify-center" title="Gluten-free">
+<span class="material-symbols-outlined text-primary text-[14px]" data-icon="grain">grain</span>
+</span>
+</div>
+</div>
+<p class="text-body-lg text-on-surface-variant leading-relaxed">Sustainable fish, lemon-verbena beurre blanc, and wilted rainbow chard.</p>
+</div>
+<div class="text-right flex-shrink-0">
+<span class="text-title-lg font-bold text-on-surface">$42.00</span>
+</div>
+<div class="flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+<button class="p-2 hover:bg-surface-variant rounded-lg"><span class="material-symbols-outlined text-on-surface-variant">edit</span></button>
+<button class="p-2 hover:bg-error-container text-error rounded-lg"><span class="material-symbols-outlined">delete</span></button>
+</div>
+</div>
+<!-- Menu Item Row -->
+<div class="group flex items-center gap-6 p-4 bg-surface-container-low rounded-xl transition-all duration-200">
+<div class="w-16 h-16 rounded-lg bg-surface-container overflow-hidden flex-shrink-0">
+<img class="w-full h-full object-cover" data-alt="thick cut grilled beef tenderloin with red wine reduction and baby carrots on a dark plate" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBSwQHmqO0gbhKvGS9LyvXQkKD9bjbxAF2qFmb0FX8MOESUtyBuHmlYzlUvSnfShWPeoCnP8UWTtI3LZTM5Kg71nu8xGWMx_0GYNC6RZ898Ftuj_mmEMpLyMmHMwXc3fKRsWWynfRihTWMLKfKm63IBtoFrcYuA_3MjfqxYRCJDjLVVeTNTgxGWa_8kCI86xG3wMfXDrJOgUdXrIdIwaMduZ96GxiS6L6yUDoOamczY5VFnDCfxHdqCYTUW2By482iP8rflpy2jOrIk"/>
+</div>
+<div class="flex-grow">
+<div class="flex items-center gap-3">
+<h3 class="text-title-lg text-on-surface">Grass-Fed Beef Tenderloin</h3>
+<div class="flex gap-1">
+<span class="w-6 h-6 rounded-full bg-secondary-fixed flex items-center justify-center" title="Nut-free">
+<span class="material-symbols-outlined text-primary text-[14px]" data-icon="nutrition">nutrition</span>
+</span>
+</div>
+</div>
+<p class="text-body-lg text-on-surface-variant leading-relaxed">Bordeaux reduction, smoked potato purée, and honey-glazed carrots.</p>
+</div>
+<div class="text-right flex-shrink-0">
+<span class="text-title-lg font-bold text-on-surface">$58.00</span>
+</div>
+<div class="flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+<button class="p-2 hover:bg-surface-variant rounded-lg"><span class="material-symbols-outlined text-on-surface-variant">edit</span></button>
+<button class="p-2 hover:bg-error-container text-error rounded-lg"><span class="material-symbols-outlined">delete</span></button>
+</div>
+</div>
+</div>
+</section>
+</div>
+<!-- Sticky Action Button -->
+<div class="fixed bottom-10 right-10 flex flex-col gap-4">
+<button class="bg-primary text-white w-14 h-14 rounded-full shadow-lg flex items-center justify-center hover:scale-105 transition-transform" title="Add Category">
+<span class="material-symbols-outlined text-2xl">create_new_folder</span>
+</button>
+<button class="bg-tertiary text-white w-14 h-14 rounded-full shadow-lg flex items-center justify-center hover:scale-105 transition-transform" title="Add Item">
+<span class="material-symbols-outlined text-2xl">add</span>
+</button>
+</div>
+</main>
+</div>
+</body></html>

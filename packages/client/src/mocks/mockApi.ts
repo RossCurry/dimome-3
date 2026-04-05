@@ -1,0 +1,85 @@
+import type {
+  CsvPreviewData,
+  MenuItem,
+  MenuItemEditor,
+  OwnerDashboardData,
+  PublicMenuData,
+  ScanDraftData,
+} from "@/types";
+import { delay } from "@/mocks/delay";
+import {
+  FIXTURE_CSV_HEADERS,
+  FIXTURE_CSV_PREVIEW_ROWS,
+  FIXTURE_OWNER_DASHBOARD,
+  FIXTURE_PUBLIC_MENU,
+  FIXTURE_SCAN_DRAFT_ROWS,
+  getFixtureItemEditor,
+  getFixtureItemsList,
+} from "@/mocks/fixtures";
+
+function cachedPromise<T>(factory: () => Promise<T>): () => Promise<T> {
+  let p: Promise<T> | null = null;
+  return () => {
+    if (!p) p = factory();
+    return p;
+  };
+}
+
+/** Guest menu — use with React `use()` inside `<Suspense>`. */
+export const readPublicMenu = cachedPromise(async (): Promise<PublicMenuData> => {
+  await delay(600);
+  return structuredClone(FIXTURE_PUBLIC_MENU);
+});
+
+/** Owner dashboard summary. */
+export const readOwnerDashboard = cachedPromise(async (): Promise<OwnerDashboardData> => {
+  await delay(500);
+  return structuredClone(FIXTURE_OWNER_DASHBOARD);
+});
+
+/** Menu browse (items table) — keyed by menu id for future; same data for mocks. */
+const menuBrowseCache = new Map<string, Promise<MenuItem[]>>();
+
+export function readMenuBrowse(menuId: string): Promise<MenuItem[]> {
+  let p = menuBrowseCache.get(menuId);
+  if (!p) {
+    p = (async () => {
+      await delay(450);
+      return getFixtureItemsList();
+    })();
+    menuBrowseCache.set(menuId, p);
+  }
+  return p;
+}
+
+const itemEditorCache = new Map<string, Promise<MenuItemEditor | null>>();
+
+export function readItemEditor(itemId: string): Promise<MenuItemEditor | null> {
+  let p = itemEditorCache.get(itemId);
+  if (!p) {
+    p = (async () => {
+      await delay(480);
+      return getFixtureItemEditor(itemId);
+    })();
+    itemEditorCache.set(itemId, p);
+  }
+  return p;
+}
+
+/** CSV preview after “upload” — canned rows. */
+export const readCsvPreview = cachedPromise(async (): Promise<CsvPreviewData> => {
+  await delay(400);
+  return {
+    headers: [...FIXTURE_CSV_HEADERS],
+    rows: FIXTURE_CSV_PREVIEW_ROWS.map((r) => ({ ...r })),
+  };
+});
+
+/** Simulated AI extraction result. */
+export const readScanDraft = cachedPromise(async (): Promise<ScanDraftData> => {
+  await delay(700);
+  return {
+    rows: FIXTURE_SCAN_DRAFT_ROWS.map((r) => ({ ...r })),
+    imagePreviewUrl: null,
+  };
+});

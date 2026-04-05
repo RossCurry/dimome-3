@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<link href="https://fonts.googleapis.com/css2?family=Epilogue:wght@600;700&amp;family=Inter:wght@400;500;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "tertiary": "#551d00",
+                    "primary-container": "#1b4d3e",
+                    "on-primary": "#ffffff",
+                    "on-secondary-fixed": "#091d2e",
+                    "background": "#f9f9f8",
+                    "on-error": "#ffffff",
+                    "tertiary-fixed": "#ffdbcd",
+                    "surface-container-low": "#f3f4f3",
+                    "surface-variant": "#e1e3e2",
+                    "on-tertiary": "#ffffff",
+                    "outline": "#707974",
+                    "surface-container": "#edeeed",
+                    "tertiary-fixed-dim": "#ffb595",
+                    "surface-container-lowest": "#ffffff",
+                    "on-tertiary-container": "#ff9869",
+                    "secondary-container": "#cfe2f9",
+                    "error": "#ba1a1a",
+                    "on-secondary-container": "#526478",
+                    "secondary": "#4e6073",
+                    "surface-bright": "#f9f9f8",
+                    "primary-fixed": "#baeed9",
+                    "surface-container-highest": "#e1e3e2",
+                    "outline-variant": "#c0c9c3",
+                    "on-surface": "#191c1c",
+                    "on-background": "#191c1c",
+                    "on-secondary-fixed-variant": "#36485b",
+                    "inverse-on-surface": "#f0f1f0",
+                    "tertiary-container": "#792d00",
+                    "surface-tint": "#376757",
+                    "on-error-container": "#93000a",
+                    "surface": "#f9f9f8",
+                    "on-surface-variant": "#404945",
+                    "on-primary-fixed": "#002117",
+                    "error-container": "#ffdad6",
+                    "on-primary-container": "#8abda9",
+                    "primary": "#003629",
+                    "secondary-fixed": "#d1e4fb",
+                    "on-secondary": "#ffffff",
+                    "on-tertiary-fixed": "#351000",
+                    "surface-container-high": "#e7e8e7",
+                    "inverse-primary": "#9ed1bd",
+                    "on-primary-fixed-variant": "#1d4f40",
+                    "surface-dim": "#d9dad9",
+                    "primary-fixed-dim": "#9ed1bd",
+                    "on-tertiary-fixed-variant": "#7c2e00",
+                    "inverse-surface": "#2e3131",
+                    "secondary-fixed-dim": "#b5c8df"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "fontFamily": {
+                    "headline": ["Epilogue"],
+                    "body": ["Inter"],
+                    "label": ["Inter"]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .cta-gradient {
+            background: linear-gradient(135deg, #003629 0%, #1b4d3e 100%);
+        }
+        .no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background text-on-surface font-body min-h-screen pb-32">
+<!-- Top App Bar -->
+<header class="bg-stone-50/80 dark:bg-stone-950/80 backdrop-blur-xl fixed top-0 w-full z-50 flex items-center justify-between px-6 h-16 w-full">
+<div class="flex items-center gap-4">
+<span class="material-symbols-outlined text-emerald-900 dark:text-emerald-500 active:scale-95 transition-transform cursor-pointer">qr_code_scanner</span>
+<h1 class="font-['Epilogue'] font-semibold tracking-tight text-xl font-bold text-emerald-900 dark:text-emerald-50">Emerald Hearth</h1>
+</div>
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded-full bg-surface-container flex items-center justify-center">
+<span class="material-symbols-outlined text-sm">notifications</span>
+</div>
+</div>
+</header>
+<main class="pt-20 px-6 max-w-md mx-auto">
+<!-- Editorial Header -->
+<section class="mb-8 mt-4">
+<span class="text-tertiary font-label text-[11px] font-medium uppercase tracking-[0.2em] mb-2 block">Table 12</span>
+<h2 class="font-headline text-3xl font-bold text-on-surface tracking-tight">My Order</h2>
+<p class="text-on-surface-variant text-sm mt-1">Review your selections before placing the order.</p>
+</section>
+<!-- Order Items List -->
+<div class="space-y-6">
+<!-- Item 1 -->
+<div class="flex gap-4 items-start">
+<div class="w-20 h-20 rounded-xl overflow-hidden flex-shrink-0 bg-surface-container-low">
+<img alt="Smoked Forest Mushrooms" class="w-full h-full object-cover" data-alt="Close-up of artisan roasted wild mushrooms with fresh herbs and a drizzle of balsamic glaze on a ceramic plate" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBUjMzsHy8gx3sBv_Xc2NLsUzhXSniRpGaPnx53ll1P39gg-Xrz1ijwolI-Wyl1mlzGyen6iCse66sIGB-S8DW8spplKcKhltWUe1HWxAFThaoH_jLFeaCoUl5GekOOH4w_gze643ezOuqmdwRfOt-WDtAE3e5KYgj6fjo2QewOTYXt94K1ooKKASUtswNEoMZuirpgfBKdsaO7QJ1ede9Zu747D2beGRiOulTYu3kih8Y4eC9rKkEzE4q2Gn_-fRTq6msuICbBHH5b"/>
+</div>
+<div class="flex-grow">
+<div class="flex justify-between items-start">
+<h3 class="font-headline text-lg font-semibold leading-tight">Smoked Forest Mushrooms</h3>
+<span class="font-body font-semibold text-primary">$18.00</span>
+</div>
+<p class="text-xs text-on-surface-variant mt-1 mb-3">Truffle oil, thyme, sourdough</p>
+<div class="flex items-center gap-4">
+<div class="flex items-center bg-surface-container-low rounded-full px-2 py-1">
+<button class="w-6 h-6 flex items-center justify-center text-primary active:scale-90 transition-all">
+<span class="material-symbols-outlined text-base">remove</span>
+</button>
+<span class="px-3 text-sm font-semibold">1</span>
+<button class="w-6 h-6 flex items-center justify-center text-primary active:scale-90 transition-all">
+<span class="material-symbols-outlined text-base">add</span>
+</button>
+</div>
+<button class="text-error text-xs font-medium uppercase tracking-wider">Remove</button>
+</div>
+</div>
+</div>
+<!-- Item 2 -->
+<div class="flex gap-4 items-start">
+<div class="w-20 h-20 rounded-xl overflow-hidden flex-shrink-0 bg-surface-container-low">
+<img alt="Venison Tartare" class="w-full h-full object-cover" data-alt="Elegant plating of venison tartare with egg yolk, capers, and microgreens in a fine dining moody lighting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCd6kA7Bn6bDKnRBIKj57BJV7SRBJAsLPEKhfBsJdIpyL3Tf23T7pqHEH7R24_J04FoQB3lEGL43zCTiqJFYw1jByPsClIsWMwS9aEGmYjIGHr95noZTltUUdmes-M64aJEG93kcQr52Nwkclfik--L29ul0SEqOcR5yJ8LeIJXxhv4W0h0mYnAS2mcA53QZ5n_pjvgHiigwbl_tz0qfSeCUarJxd30Xv9yQ2q8gQJDy1PR4vDJX27wgvvWrWfApo9l2E-5MaVaqWCX"/>
+</div>
+<div class="flex-grow">
+<div class="flex justify-between items-start">
+<h3 class="font-headline text-lg font-semibold leading-tight">Venison Tartare</h3>
+<span class="font-body font-semibold text-primary">$24.00</span>
+</div>
+<p class="text-xs text-on-surface-variant mt-1 mb-3">Juniper berry, quails egg</p>
+<div class="flex items-center gap-4">
+<div class="flex items-center bg-surface-container-low rounded-full px-2 py-1">
+<button class="w-6 h-6 flex items-center justify-center text-primary active:scale-90 transition-all">
+<span class="material-symbols-outlined text-base">remove</span>
+</button>
+<span class="px-3 text-sm font-semibold">2</span>
+<button class="w-6 h-6 flex items-center justify-center text-primary active:scale-90 transition-all">
+<span class="material-symbols-outlined text-base">add</span>
+</button>
+</div>
+<button class="text-error text-xs font-medium uppercase tracking-wider">Remove</button>
+</div>
+</div>
+</div>
+<!-- Item 3 -->
+<div class="flex gap-4 items-start">
+<div class="w-20 h-20 rounded-xl overflow-hidden flex-shrink-0 bg-surface-container-low">
+<img alt="Elderberry Spritz" class="w-full h-full object-cover" data-alt="A refreshing botanical cocktail in a crystal glass with ice and a sprig of fresh elderflower on a stone surface" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBirv7VpYDZ8ludToBt3Ot8S6n3NcOuBRb7q1Ot371EDI46r3cwHsOd-D60JqYizToAf-1wOlAqfT20Yn8Mo6FAp_xiOuPpiOe0ufZScWY0t6CBmiinpy4QavZ371MHn9uEcgGiG4b5EGPeRuDNs7yNQRwrMCkrQOxgQ0b0lp4PKBlASoDBBAEo8qmKJUPf5q2c4-1ERraggadySX8pJhk1Bv6_64KgAYHynGglVx8j2yw7yYfm62c5shd0Cgbc3vqh93uT985j4rnJ"/>
+</div>
+<div class="flex-grow">
+<div class="flex justify-between items-start">
+<h3 class="font-headline text-lg font-semibold leading-tight">Elderberry Spritz</h3>
+<span class="font-body font-semibold text-primary">$14.00</span>
+</div>
+<p class="text-xs text-on-surface-variant mt-1 mb-3">House botanical syrup, soda</p>
+<div class="flex items-center gap-4">
+<div class="flex items-center bg-surface-container-low rounded-full px-2 py-1">
+<button class="w-6 h-6 flex items-center justify-center text-primary active:scale-90 transition-all">
+<span class="material-symbols-outlined text-base">remove</span>
+</button>
+<span class="px-3 text-sm font-semibold">1</span>
+<button class="w-6 h-6 flex items-center justify-center text-primary active:scale-90 transition-all">
+<span class="material-symbols-outlined text-base">add</span>
+</button>
+</div>
+<button class="text-error text-xs font-medium uppercase tracking-wider">Remove</button>
+</div>
+</div>
+</div>
+</div>
+<!-- Summary Section -->
+<section class="mt-12 p-6 bg-surface-container-low rounded-3xl">
+<div class="space-y-3">
+<div class="flex justify-between text-sm">
+<span class="text-on-surface-variant">Subtotal</span>
+<span class="text-on-surface font-medium">$80.00</span>
+</div>
+<div class="flex justify-between text-sm">
+<span class="text-on-surface-variant">Service Charge (10%)</span>
+<span class="text-on-surface font-medium">$8.00</span>
+</div>
+<div class="pt-3 mt-3 border-t border-outline-variant/20 flex justify-between items-baseline">
+<span class="font-headline font-semibold text-lg">Total</span>
+<span class="font-headline font-bold text-2xl text-primary">$88.00</span>
+</div>
+</div>
+</section>
+<!-- Secondary Action -->
+<div class="mt-8 flex justify-center">
+<button class="flex items-center gap-2 px-6 py-3 bg-surface-container-highest/50 backdrop-blur-md rounded-full text-primary font-semibold active:scale-95 transition-all">
+<span class="material-symbols-outlined">doorbell</span>
+                Call Waiter
+            </button>
+</div>
+</main>
+<!-- Floating Action Footer -->
+<div class="fixed bottom-24 left-0 w-full px-6 z-40">
+<button class="cta-gradient w-full py-4 rounded-xl text-on-primary font-headline font-bold text-lg shadow-[0px_12px_32px_rgba(25,28,28,0.06)] active:scale-[0.98] transition-all">
+            Place Order
+        </button>
+</div>
+<!-- Bottom Navigation Bar -->
+<nav class="bg-stone-50/80 dark:bg-stone-950/80 backdrop-blur-xl fixed bottom-0 left-0 w-full flex justify-around items-center px-4 pb-6 pt-3 z-50 rounded-t-3xl shadow-[0px_-12px_32px_rgba(25,28,28,0.06)]">
+<a class="flex flex-col items-center justify-center text-stone-500 dark:text-stone-400 px-5 py-2 hover:bg-stone-200/50 dark:hover:bg-stone-800/50 transition-all active:scale-90" href="#">
+<span class="material-symbols-outlined">home</span>
+<span class="font-['Inter'] text-[11px] font-medium uppercase tracking-wider mt-1">Home</span>
+</a>
+<a class="flex flex-col items-center justify-center text-stone-500 dark:text-stone-400 px-5 py-2 hover:bg-stone-200/50 dark:hover:bg-stone-800/50 transition-all active:scale-90" href="#">
+<span class="material-symbols-outlined">search</span>
+<span class="font-['Inter'] text-[11px] font-medium uppercase tracking-wider mt-1">Search</span>
+</a>
+<a class="flex flex-col items-center justify-center bg-emerald-900/10 dark:bg-emerald-50/10 text-emerald-900 dark:text-emerald-50 rounded-2xl px-5 py-2 active:scale-90 transition-all" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">shopping_bag</span>
+<span class="font-['Inter'] text-[11px] font-medium uppercase tracking-wider mt-1">My Order</span>
+</a>
+<a class="flex flex-col items-center justify-center text-stone-500 dark:text-stone-400 px-5 py-2 hover:bg-stone-200/50 dark:hover:bg-stone-800/50 transition-all active:scale-90" href="#">
+<span class="material-symbols-outlined">tune</span>
+<span class="font-['Inter'] text-[11px] font-medium uppercase tracking-wider mt-1">Filters</span>
+</a>
+</nav>
+</body></html>

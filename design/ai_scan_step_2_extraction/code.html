@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Extraction in Progress - Editorial Efficiency</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Epilogue:wght@400;600;700;800&amp;family=Inter:wght@400;500;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "surface-container-lowest": "#ffffff",
+                    "surface": "#f9f9f8",
+                    "on-tertiary-fixed-variant": "#7c2e00",
+                    "inverse-on-surface": "#f0f1f0",
+                    "on-secondary-container": "#526478",
+                    "on-primary-container": "#8abda9",
+                    "background": "#f9f9f8",
+                    "on-tertiary": "#ffffff",
+                    "surface-bright": "#f9f9f8",
+                    "secondary-fixed": "#d1e4fb",
+                    "on-primary": "#ffffff",
+                    "surface-dim": "#d9dad9",
+                    "tertiary": "#551d00",
+                    "surface-variant": "#e1e3e2",
+                    "error-container": "#ffdad6",
+                    "tertiary-fixed-dim": "#ffb595",
+                    "on-surface": "#191c1c",
+                    "on-secondary": "#ffffff",
+                    "outline-variant": "#c0c9c3",
+                    "on-primary-fixed-variant": "#1d4f40",
+                    "on-error": "#ffffff",
+                    "secondary": "#4e6073",
+                    "secondary-container": "#cfe2f9",
+                    "on-primary-fixed": "#002117",
+                    "inverse-primary": "#9ed1bd",
+                    "tertiary-fixed": "#ffdbcd",
+                    "on-secondary-fixed": "#091d2e",
+                    "outline": "#707974",
+                    "on-tertiary-container": "#ff9869",
+                    "on-error-container": "#93000a",
+                    "primary-fixed-dim": "#9ed1bd",
+                    "surface-container-high": "#e7e8e7",
+                    "on-background": "#191c1c",
+                    "inverse-surface": "#2e3131",
+                    "surface-tint": "#376757",
+                    "on-tertiary-fixed": "#351000",
+                    "surface-container-low": "#f3f4f3",
+                    "on-secondary-fixed-variant": "#36485b",
+                    "tertiary-container": "#792d00",
+                    "error": "#ba1a1a",
+                    "primary-fixed": "#baeed9",
+                    "secondary-fixed-dim": "#b5c8df",
+                    "surface-container-highest": "#e1e3e2",
+                    "primary": "#003629",
+                    "surface-container": "#edeeed",
+                    "primary-container": "#1b4d3e",
+                    "on-surface-variant": "#404945"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "fontFamily": {
+                    "headline": ["Epilogue"],
+                    "body": ["Inter"],
+                    "label": ["Inter"]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .scanning-line {
+            position: absolute;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, #9ed1bd, transparent);
+            box-shadow: 0 0 15px #9ed1bd;
+            animation: scan 3s linear infinite;
+        }
+        @keyframes scan {
+            0% { top: 0; opacity: 0; }
+            10% { opacity: 1; }
+            90% { opacity: 1; }
+            100% { top: 100%; opacity: 0; }
+        }
+    </style>
+</head>
+<body class="bg-surface font-body text-on-surface">
+<!-- TopNavBar -->
+<header class="fixed top-0 w-full z-50 bg-[#f9f9f8]/80 backdrop-blur-xl shadow-sm flex justify-between items-center px-6 py-4">
+<div class="flex items-center gap-8">
+<h1 class="text-xl font-bold text-[#003629] font-headline tracking-tight">Editorial Efficiency</h1>
+<nav class="hidden md:flex gap-6">
+<a class="font-headline font-semibold text-[#191c1c]/60 hover:text-[#1b4d3e] transition-colors" href="#">Dashboard</a>
+<a class="font-headline font-semibold text-[#191c1c]/60 hover:text-[#1b4d3e] transition-colors" href="#">Menu Management</a>
+<a class="font-headline font-semibold text-[#003629] border-b-2 border-[#003629] pb-1 hover:text-[#1b4d3e] transition-colors" href="#">Analytics</a>
+</nav>
+</div>
+<div class="flex items-center gap-4">
+<div class="hidden md:flex items-center gap-4 mr-4">
+<span class="material-symbols-outlined text-on-surface-variant cursor-pointer hover:text-primary transition-colors">notifications</span>
+<span class="material-symbols-outlined text-on-surface-variant cursor-pointer hover:text-primary transition-colors">settings</span>
+</div>
+<button class="bg-gradient-to-br from-primary to-primary-container text-on-primary px-5 py-2 rounded-lg font-semibold text-sm shadow-sm active:opacity-80 transition-all">
+                New Scan
+            </button>
+</div>
+</header>
+<!-- SideNavBar (Desktop Only) -->
+<aside class="hidden lg:flex fixed left-0 top-0 h-full w-64 bg-surface-container-low flex-col p-4 space-y-2 pt-24">
+<div class="mb-8 px-2">
+<h2 class="font-headline font-bold text-[#003629] text-lg">The Artisan Bistro</h2>
+<p class="text-xs text-on-surface-variant opacity-70">Digital Maître d’</p>
+</div>
+<nav class="space-y-1 flex-1">
+<a class="flex items-center gap-3 px-3 py-2 text-[#191c1c]/70 hover:bg-[#e1e3e2] rounded-lg transition-transform duration-200 hover:translate-x-1 font-medium text-sm" href="#">
+<span class="material-symbols-outlined">dashboard</span>
+                Home
+            </a>
+<a class="flex items-center gap-3 px-3 py-2 text-[#191c1c]/70 hover:bg-[#e1e3e2] rounded-lg transition-transform duration-200 hover:translate-x-1 font-medium text-sm" href="#">
+<span class="material-symbols-outlined">restaurant_menu</span>
+                Menus
+            </a>
+<a class="flex items-center gap-3 px-3 py-2 bg-white text-[#003629] rounded-lg shadow-sm font-medium text-sm" href="#">
+<span class="material-symbols-outlined">auto_awesome</span>
+                AI Scans
+            </a>
+<a class="flex items-center gap-3 px-3 py-2 text-[#191c1c]/70 hover:bg-[#e1e3e2] rounded-lg transition-transform duration-200 hover:translate-x-1 font-medium text-sm" href="#">
+<span class="material-symbols-outlined">group</span>
+                Staff
+            </a>
+<a class="flex items-center gap-3 px-3 py-2 text-[#191c1c]/70 hover:bg-[#e1e3e2] rounded-lg transition-transform duration-200 hover:translate-x-1 font-medium text-sm" href="#">
+<span class="material-symbols-outlined">query_stats</span>
+                Insights
+            </a>
+</nav>
+<div class="mt-auto space-y-4">
+<div class="bg-primary-container/10 p-4 rounded-xl">
+<p class="text-xs font-semibold text-primary mb-2">Upgrade Plan</p>
+<p class="text-[10px] text-on-surface-variant leading-relaxed">Unlock advanced allergen detection and multilingual menu generation.</p>
+</div>
+<div class="border-t border-outline-variant/20 pt-4 space-y-1">
+<a class="flex items-center gap-3 px-3 py-2 text-[#191c1c]/70 hover:bg-[#e1e3e2] rounded-lg text-sm" href="#">
+<span class="material-symbols-outlined">help</span>
+                    Help Center
+                </a>
+<a class="flex items-center gap-3 px-3 py-2 text-[#191c1c]/70 hover:bg-[#e1e3e2] rounded-lg text-sm" href="#">
+<span class="material-symbols-outlined">logout</span>
+                    Logout
+                </a>
+</div>
+</div>
+</aside>
+<!-- Main Content Canvas -->
+<main class="lg:ml-64 pt-24 pb-12 px-6 md:px-12">
+<!-- Header Section -->
+<header class="mb-12">
+<nav class="flex items-center gap-2 text-xs text-on-surface-variant mb-4 font-medium uppercase tracking-widest">
+<span>AI Tools</span>
+<span class="material-symbols-outlined text-[14px]">chevron_right</span>
+<span class="text-primary">Image Extraction</span>
+</nav>
+<h1 class="text-4xl md:text-5xl font-headline font-bold text-primary tracking-tight leading-none mb-4">
+                Step 2: Extraction in Progress
+            </h1>
+<p class="text-on-surface-variant max-w-2xl text-lg leading-relaxed">
+                Our AI engine is currently deconstructing your menu image into structured data. We're identifying item names, descriptions, pricing, and dietary requirements.
+            </p>
+</header>
+<!-- Bento Grid Layout -->
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+<!-- Left: Scanning Visualizer (7 Columns) -->
+<section class="lg:col-span-7 bg-surface-container-lowest rounded-3xl overflow-hidden shadow-sm relative group">
+<div class="absolute inset-0 bg-primary/5 pointer-events-none z-10"></div>
+<div class="p-8 h-full flex flex-col">
+<div class="flex items-center justify-between mb-6">
+<div class="flex items-center gap-2">
+<span class="w-2 h-2 rounded-full bg-primary animate-pulse"></span>
+<span class="text-xs font-bold font-headline tracking-tighter text-primary">LIVE SCANNING VIEW</span>
+</div>
+<span class="text-[10px] bg-primary-fixed-dim text-on-primary-fixed-variant px-2 py-0.5 rounded-full font-bold">4K RESOLUTION</span>
+</div>
+<div class="relative flex-1 rounded-2xl overflow-hidden bg-surface-dim border-none ring-1 ring-outline-variant/10">
+<!-- Image with Scan Overlay -->
+<img alt="Restaurant menu on heavy paper" class="w-full h-full object-cover opacity-60 mix-blend-multiply" data-alt="Close-up of a high-end restaurant menu printed on textured heavy cream paper with elegant typography and dark green accents." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBR3OV1K4DSX--GRNH874bOqK7BNNHBC2L4249TZqQRb4Dj0mJ6u95L0WnUXzWCxzrmoxd3BoTEdjSFIpRMJEQyGz_fx2--RmWY5wpbhCcQM5utYuw-VtUMM0hymQtnY-SD9pR2CnZL_pfOYyX8E5Tf2JDf0Yf4icU_0qSMONeUiTOonMMLJi113aadqV728smqKR2v9WKGd2kPFTsv8Y1Ess0_woKmzSioLS_9uP3wWfgkk9JPZZiCaGhg9n3Kg8QECy3n8ymektYx"/>
+<!-- The Scanning Animation Overlay -->
+<div class="scanning-line"></div>
+<!-- Detected Regions Highlighting (Static for UI feel) -->
+<div class="absolute top-1/4 left-1/4 w-1/2 h-16 border-2 border-primary-fixed-dim/40 bg-primary-fixed-dim/5 rounded-lg backdrop-blur-[2px]"></div>
+<div class="absolute top-1/2 left-1/4 w-1/3 h-12 border-2 border-primary-fixed-dim/40 bg-primary-fixed-dim/5 rounded-lg backdrop-blur-[2px]"></div>
+<div class="absolute bottom-1/4 left-1/3 w-2/5 h-20 border-2 border-primary-fixed-dim/40 bg-primary-fixed-dim/5 rounded-lg backdrop-blur-[2px]"></div>
+</div>
+</div>
+</section>
+<!-- Right: Real-time Extraction Status (5 Columns) -->
+<section class="lg:col-span-5 flex flex-col gap-6">
+<!-- Overall Progress Card -->
+<div class="bg-primary text-on-primary p-8 rounded-3xl shadow-sm relative overflow-hidden">
+<div class="relative z-10">
+<div class="flex justify-between items-end mb-6">
+<div>
+<p class="text-sm font-label opacity-70 mb-1">Total Completion</p>
+<h3 class="text-5xl font-headline font-bold">64%</h3>
+</div>
+<span class="material-symbols-outlined text-4xl opacity-50" style="font-variation-settings: 'FILL' 1;">auto_awesome</span>
+</div>
+<div class="w-full bg-white/20 h-3 rounded-full overflow-hidden">
+<div class="bg-primary-fixed-dim h-full rounded-full transition-all duration-1000 ease-in-out" style="width: 64%;"></div>
+</div>
+</div>
+<!-- Aesthetic Gradient -->
+<div class="absolute top-0 right-0 w-32 h-32 bg-primary-container rounded-full blur-3xl opacity-30 -mr-16 -mt-16"></div>
+</div>
+<!-- Detailed Status List -->
+<div class="bg-surface-container-low p-8 rounded-3xl space-y-6">
+<h4 class="font-headline font-bold text-lg text-primary mb-2">Live Extraction Logs</h4>
+<!-- Item 1: Complete -->
+<div class="flex items-start gap-4">
+<div class="mt-1 flex-shrink-0 w-6 h-6 rounded-full bg-primary flex items-center justify-center">
+<span class="material-symbols-outlined text-white text-sm" style="font-variation-settings: 'wght' 700;">check</span>
+</div>
+<div class="flex-1">
+<div class="flex justify-between items-center mb-1">
+<span class="font-bold text-sm">Image Normalization</span>
+<span class="text-[10px] font-bold text-primary px-2 py-0.5 bg-primary/10 rounded">SUCCESS</span>
+</div>
+<p class="text-xs text-on-surface-variant leading-tight">Contrast adjusted and perspective corrected for optimal OCR reading.</p>
+</div>
+</div>
+<!-- Item 2: Complete -->
+<div class="flex items-start gap-4">
+<div class="mt-1 flex-shrink-0 w-6 h-6 rounded-full bg-primary flex items-center justify-center">
+<span class="material-symbols-outlined text-white text-sm" style="font-variation-settings: 'wght' 700;">check</span>
+</div>
+<div class="flex-1">
+<div class="flex justify-between items-center mb-1">
+<span class="font-bold text-sm">Detecting Categories...</span>
+<span class="text-[10px] font-bold text-primary px-2 py-0.5 bg-primary/10 rounded">FOUND 8</span>
+</div>
+<p class="text-xs text-on-surface-variant leading-tight">Starters, Mains, Desserts, and Wine List identified via layout analysis.</p>
+</div>
+</div>
+<!-- Item 3: Active -->
+<div class="flex items-start gap-4">
+<div class="mt-1 flex-shrink-0 w-6 h-6 rounded-full border-2 border-primary/20 flex items-center justify-center animate-spin">
+<span class="material-symbols-outlined text-primary text-xs" style="font-variation-settings: 'wght' 700;">sync</span>
+</div>
+<div class="flex-1">
+<div class="flex justify-between items-center mb-1">
+<span class="font-bold text-sm">Extracting Item Names...</span>
+<span class="text-[10px] font-bold text-primary/60 px-2 py-0.5 bg-primary/5 rounded animate-pulse">PROCESSING</span>
+</div>
+<p class="text-xs text-on-surface-variant leading-tight italic">Analyzing 24 distinct text clusters for Dish Titles and Prices...</p>
+</div>
+</div>
+<!-- Item 4: Pending -->
+<div class="flex items-start gap-4 opacity-40">
+<div class="mt-1 flex-shrink-0 w-6 h-6 rounded-full border-2 border-outline-variant/30 flex items-center justify-center">
+<span class="material-symbols-outlined text-on-surface-variant text-xs">hourglass_empty</span>
+</div>
+<div class="flex-1">
+<div class="flex justify-between items-center mb-1">
+<span class="font-bold text-sm">Scanning for Allergens...</span>
+<span class="text-[10px] font-bold text-on-surface-variant px-2 py-0.5 bg-surface-dim rounded">QUEUED</span>
+</div>
+<p class="text-xs text-on-surface-variant leading-tight">Cross-referencing ingredients with allergen database.</p>
+</div>
+</div>
+</div>
+<!-- Appetizer CTA / Quick Note -->
+<div class="bg-tertiary p-6 rounded-3xl flex items-center justify-between group cursor-pointer hover:bg-on-tertiary-fixed-variant transition-colors">
+<div class="flex flex-col">
+<span class="text-[10px] font-bold text-tertiary-fixed mb-1 uppercase tracking-widest">Need Help?</span>
+<span class="text-white font-headline font-semibold text-sm">Manual Correction Mode</span>
+</div>
+<span class="material-symbols-outlined text-white transition-transform group-hover:translate-x-1">arrow_forward</span>
+</div>
+</section>
+</div>
+<!-- Secondary Section: Technical Insight -->
+<section class="mt-16 grid grid-cols-1 md:grid-cols-3 gap-8">
+<div class="bg-surface-container p-8 rounded-3xl border-none">
+<div class="w-12 h-12 bg-secondary-fixed rounded-2xl flex items-center justify-center mb-6">
+<span class="material-symbols-outlined text-on-secondary-fixed-variant">font_download</span>
+</div>
+<h3 class="font-headline font-bold text-primary text-lg mb-2">OCR Precision</h3>
+<p class="text-sm text-on-surface-variant leading-relaxed">Using high-density neural networks to interpret stylized fonts and hand-written specials with 99.4% accuracy.</p>
+</div>
+<div class="bg-surface-container p-8 rounded-3xl border-none">
+<div class="w-12 h-12 bg-secondary-fixed rounded-2xl flex items-center justify-center mb-6">
+<span class="material-symbols-outlined text-on-secondary-fixed-variant">language</span>
+</div>
+<h3 class="font-headline font-bold text-primary text-lg mb-2">Auto-Translation</h3>
+<p class="text-sm text-on-surface-variant leading-relaxed">Simultaneously translating all culinary terms into English, French, and Spanish for your global digital menu.</p>
+</div>
+<div class="bg-surface-container p-8 rounded-3xl border-none">
+<div class="w-12 h-12 bg-secondary-fixed rounded-2xl flex items-center justify-center mb-6">
+<span class="material-symbols-outlined text-on-secondary-fixed-variant">restaurant</span>
+</div>
+<h3 class="font-headline font-bold text-primary text-lg mb-2">Recipe Enrichment</h3>
+<p class="text-sm text-on-surface-variant leading-relaxed">Mapping detected items to common recipe patterns to suggest missing calorie and allergen metadata automatically.</p>
+</div>
+</section>
+</main>
+<!-- Mobile Navigation (Floating Glass Dock) -->
+<nav class="md:hidden fixed bottom-6 left-6 right-6 z-50 bg-surface-container-lowest/80 backdrop-blur-xl h-16 rounded-full flex items-center justify-around px-4 shadow-xl border border-white/20">
+<button class="p-2 text-primary">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">dashboard</span>
+</button>
+<button class="p-2 text-on-surface-variant">
+<span class="material-symbols-outlined">restaurant_menu</span>
+</button>
+<button class="w-12 h-12 -mt-10 bg-primary text-white rounded-full shadow-lg flex items-center justify-center">
+<span class="material-symbols-outlined">add</span>
+</button>
+<button class="p-2 text-on-surface-variant">
+<span class="material-symbols-outlined">auto_awesome</span>
+</button>
+<button class="p-2 text-on-surface-variant">
+<span class="material-symbols-outlined">person</span>
+</button>
+</nav>
+</body></html>

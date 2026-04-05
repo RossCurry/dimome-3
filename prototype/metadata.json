@@ -1,0 +1,7 @@
+{
+  "name": "DiMoMe3",
+  "description": "Digital, Mobile-friendly Menus for modern dining. AI-assisted menu parsing, allergen-aware guest views, and powerful business management.",
+  "requestFramePermissions": [
+    "camera"
+  ]
+}

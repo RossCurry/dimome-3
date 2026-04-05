@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<link href="https://fonts.googleapis.com/css2?family=Epilogue:wght@600;700&amp;family=Inter:wght@400;500;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "on-secondary-fixed-variant": "#36485b",
+                    "outline-variant": "#c0c9c3",
+                    "tertiary-fixed": "#ffdbcd",
+                    "on-background": "#191c1c",
+                    "on-error": "#ffffff",
+                    "error": "#ba1a1a",
+                    "inverse-on-surface": "#f0f1f0",
+                    "surface": "#f9f9f8",
+                    "primary-fixed": "#baeed9",
+                    "surface-variant": "#e1e3e2",
+                    "tertiary-fixed-dim": "#ffb595",
+                    "surface-dim": "#d9dad9",
+                    "surface-container-highest": "#e1e3e2",
+                    "on-primary": "#ffffff",
+                    "background": "#f9f9f8",
+                    "on-surface": "#191c1c",
+                    "secondary-fixed": "#d1e4fb",
+                    "on-surface-variant": "#404945",
+                    "surface-container-high": "#e7e8e7",
+                    "surface-bright": "#f9f9f8",
+                    "tertiary": "#551d00",
+                    "primary": "#003629",
+                    "on-error-container": "#93000a",
+                    "secondary": "#4e6073",
+                    "inverse-surface": "#2e3131",
+                    "outline": "#707974",
+                    "error-container": "#ffdad6",
+                    "on-secondary-fixed": "#091d2e",
+                    "on-secondary-container": "#526478",
+                    "on-tertiary-container": "#ff9869",
+                    "secondary-fixed-dim": "#b5c8df",
+                    "surface-container-lowest": "#ffffff",
+                    "surface-tint": "#376757",
+                    "on-secondary": "#ffffff",
+                    "on-tertiary": "#ffffff",
+                    "on-primary-fixed": "#002117",
+                    "on-tertiary-fixed-variant": "#7c2e00",
+                    "on-tertiary-fixed": "#351000",
+                    "surface-container": "#edeeed",
+                    "inverse-primary": "#9ed1bd",
+                    "tertiary-container": "#792d00",
+                    "on-primary-fixed-variant": "#1d4f40",
+                    "on-primary-container": "#8abda9",
+                    "surface-container-low": "#f3f4f3",
+                    "secondary-container": "#cfe2f9",
+                    "primary-fixed-dim": "#9ed1bd",
+                    "primary-container": "#1b4d3e"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "fontFamily": {
+                    "headline": ["Epilogue"],
+                    "body": ["Inter"],
+                    "label": ["Inter"]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .hide-scrollbar::-webkit-scrollbar { display: none; }
+        .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-surface font-body text-on-surface selection:bg-primary-fixed selection:text-on-primary-fixed">
+<header class="sticky top-0 z-50 bg-emerald-950/80 backdrop-blur-xl dark:bg-emerald-950/90 docked full-width top-0 sticky z-50 tonal-shift bg-emerald-900/10 flat no shadows font-['Epilogue'] tracking-tight">
+<div class="flex justify-between items-center w-full px-6 py-4 max-w-[1920px] mx-auto">
+<h1 class="text-xl font-bold italic text-emerald-50">The Green Table</h1>
+<div class="flex items-center gap-4">
+<button class="flex items-center justify-center p-2 rounded-lg hover:bg-emerald-800/30 transition-all text-emerald-50">
+<span class="material-symbols-outlined" data-icon="qr_code_scanner">qr_code_scanner</span>
+</button>
+</div>
+</div>
+</header>
+<main class="pb-32">
+<section class="px-6 py-4">
+<div class="relative group">
+<div class="absolute inset-y-0 left-4 flex items-center pointer-events-none text-on-surface-variant/60">
+<span class="material-symbols-outlined" data-icon="search">search</span>
+</div>
+<input class="w-full pl-12 pr-4 py-4 bg-surface-container-low rounded-xl border-none focus:ring-2 focus:ring-primary/20 focus:bg-surface-container-lowest transition-all placeholder:text-on-surface-variant/40 text-on-surface font-medium" placeholder="Search for dishes..." type="text"/>
+</div>
+</section>
+<nav class="px-6 pb-2 overflow-x-auto hide-scrollbar flex items-center gap-3">
+<button class="flex-shrink-0 px-6 py-2 rounded-full bg-primary-container text-on-primary-container font-semibold shadow-sm">All</button>
+<button class="flex-shrink-0 px-6 py-2 rounded-full bg-surface-container-low text-on-surface-variant hover:bg-surface-container-high transition-colors font-medium">Starters</button>
+<button class="flex-shrink-0 px-6 py-2 rounded-full bg-surface-container-low text-on-surface-variant hover:bg-surface-container-high transition-colors font-medium">Mains</button>
+<button class="flex-shrink-0 px-6 py-2 rounded-full bg-surface-container-low text-on-surface-variant hover:bg-surface-container-high transition-colors font-medium">Desserts</button>
+<button class="flex-shrink-0 px-6 py-2 rounded-full bg-surface-container-low text-on-surface-variant hover:bg-surface-container-high transition-colors font-medium">Drinks</button>
+</nav>
+<section class="px-6 py-4 flex items-center gap-3">
+<button class="flex items-center gap-2 px-4 py-2 bg-tertiary-fixed text-on-tertiary-fixed-variant rounded-lg font-medium text-sm transition-all active:scale-95">
+<span class="material-symbols-outlined text-sm" data-icon="tune">tune</span>
+                Filter Allergens
+            </button>
+<div class="flex-1 flex gap-2 overflow-x-auto hide-scrollbar">
+<span class="inline-flex items-center px-3 py-1 bg-secondary-fixed text-on-secondary-fixed-variant rounded-full text-xs font-semibold whitespace-nowrap">GF</span>
+<span class="inline-flex items-center px-3 py-1 bg-secondary-fixed text-on-secondary-fixed-variant rounded-full text-xs font-semibold whitespace-nowrap">Vegan</span>
+</div>
+</section>
+<section class="px-6 space-y-8 mt-4">
+<div class="flex flex-col gap-6">
+<div class="group relative bg-surface-container-lowest rounded-3xl overflow-hidden transition-all">
+<div class="relative h-64 w-full">
+<img class="h-full w-full object-cover" data-alt="vibrant mediterranean salad with colorful roasted vegetables, fresh greens, and artisanal olive oil drizzle in soft daylight" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCzZMn04zDTweV9lpWOkBG5xyZzadd1YofvR_ZRc8Koc43SSXh_TKiVq2WHsie0no5lvcEZUhucXqRahOlknmxamgLx9WNNhKkhtzUioQ7GOFG-TOowKhzw53RKu2KhM2dkfFHqDaReBx5EMv0geTGyIhaP4rFqbuLlOGBZjQlwhroazO923Gzj5C44CrNoVSq9xzScNMu9TWGIezgsYndZbsVrMEwfnnjWRYRxFdRT_d55ydXcBp-xir1rgV29MrvqV60WFEmp0icR"/>
+<div class="absolute top-4 right-4 bg-white/80 backdrop-blur-md px-3 py-1 rounded-full text-tertiary font-bold">$18.50</div>
+</div>
+<div class="p-5">
+<div class="flex justify-between items-start mb-2">
+<h3 class="font-headline text-xl font-semibold text-primary">Garden Harvest Bowl</h3>
+<div class="flex gap-1">
+<div class="w-8 h-8 rounded-full bg-secondary-fixed flex items-center justify-center" title="Gluten Free">
+<span class="material-symbols-outlined text-primary text-lg" data-icon="grass">grass</span>
+</div>
+<div class="w-8 h-8 rounded-full bg-secondary-fixed flex items-center justify-center" title="Vegan">
+<span class="material-symbols-outlined text-primary text-lg" data-icon="eco">eco</span>
+</div>
+</div>
+</div>
+<p class="text-on-surface-variant text-sm leading-relaxed mb-6">Roasted heritage carrots, quinoa, wild arugula, and a preserved lemon vinaigrette.</p>
+<button class="w-full py-4 bg-gradient-to-br from-primary to-primary-container text-on-primary rounded-xl font-bold text-center tracking-wide active:scale-95 transition-transform shadow-lg shadow-primary/10">
+                            Add to Order
+                        </button>
+</div>
+</div>
+<div class="group relative bg-surface-container-lowest rounded-3xl overflow-hidden transition-all">
+<div class="relative h-64 w-full">
+<img class="h-full w-full object-cover" data-alt="slow-cooked braised short rib on a bed of creamy polenta with microgreens garnish, dramatic side lighting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuADOnz95YgqGgAlBFVK-CNs25nPF-NJSxEAWYyQH-5ifnRK79uHFkJHW60cYaPmmTb7TqcF11NKj5DV39kmsU6vfMeyws1TD3QZqewwEAoCnh7p9ZLKnVtZ6ln5SVHlQQ2dRP0gn_KLlbECd58jqM8uzJK7M3wT0pS9DXIz0_YeSP4vBxuz8cbN1QYqk-HtZ390_eIDM0HNVwi1jS9phnD069EWl-LNGJVwg1Yiwqqd9AErk9D-O0RS2Jk0EdYbEFh4b6qMuzAQuaX2"/>
+<div class="absolute top-4 right-4 bg-white/80 backdrop-blur-md px-3 py-1 rounded-full text-tertiary font-bold">$34.00</div>
+</div>
+<div class="p-5">
+<div class="flex justify-between items-start mb-2">
+<h3 class="font-headline text-xl font-semibold text-primary">24hr Braised Rib</h3>
+<div class="flex gap-1">
+<div class="w-8 h-8 rounded-full bg-secondary-fixed flex items-center justify-center" title="Nut Free">
+<span class="material-symbols-outlined text-primary text-lg" data-icon="check_circle">check_circle</span>
+</div>
+</div>
+</div>
+<p class="text-on-surface-variant text-sm leading-relaxed mb-6">Locally sourced beef served over truffle-infused polenta with a red wine reduction.</p>
+<button class="w-full py-4 bg-gradient-to-br from-primary to-primary-container text-on-primary rounded-xl font-bold text-center tracking-wide active:scale-95 transition-transform shadow-lg shadow-primary/10">
+                            Add to Order
+                        </button>
+</div>
+</div>
+<div class="group relative bg-surface-container-lowest rounded-3xl overflow-hidden transition-all">
+<div class="relative h-64 w-full">
+<img class="h-full w-full object-cover" data-alt="pan-seared scallops on cauliflower puree with pomegranate seeds and citrus foam, fine dining editorial style" src="https://lh3.googleusercontent.com/aida-public/AB6AXuApXUS2LHspHuYqgrD0X_7DfAVxoYagg4loKFeItifv_JNFu7x2dtTIP7K0qYkS1YjMW9L1TLhZT07-DfJste30-HtWjr2_jEle_lgVn-_jvR1BoR2b3TKEMao67G63jlNJ3qPFU441V-in22IUynWIXq1ScQvptNJ95vE0cuGoMS6wBq4zq--YpoxmNA5JHClt-mTvPROsm6DpByXjzcCwhDIyUiSrnDkfL6jPbQIs7qr3ytJLPkcHq9Wd7j_FQmy7yjP2ZzXjBoCC"/>
+<div class="absolute top-4 right-4 bg-white/80 backdrop-blur-md px-3 py-1 rounded-full text-tertiary font-bold">$26.00</div>
+</div>
+<div class="p-5">
+<div class="flex justify-between items-start mb-2">
+<h3 class="font-headline text-xl font-semibold text-primary">Coastal Scallops</h3>
+<div class="flex gap-1">
+<div class="w-8 h-8 rounded-full bg-secondary-fixed flex items-center justify-center">
+<span class="material-symbols-outlined text-primary text-lg" data-icon="set_meal">set_meal</span>
+</div>
+</div>
+</div>
+<p class="text-on-surface-variant text-sm leading-relaxed mb-6">Hand-dived scallops, cauliflower silk, and crispy pancetta crumbs.</p>
+<button class="w-full py-4 bg-gradient-to-br from-primary to-primary-container text-on-primary rounded-xl font-bold text-center tracking-wide active:scale-95 transition-transform shadow-lg shadow-primary/10">
+                            Add to Order
+                        </button>
+</div>
+</div>
+</div>
+</section>
+</main>
+<nav class="fixed bottom-0 left-0 w-full z-50 flex justify-around items-center px-4 py-3 bg-white/80 backdrop-blur-2xl dark:bg-stone-900/80 rounded-t-3xl shadow-[0px_-12px_32px_rgba(25,28,28,0.06)] pb-safe">
+<div class="flex flex-col items-center justify-center bg-orange-950 text-white rounded-2xl px-5 py-2 scale-90 duration-100 font-['Inter'] text-[10px] font-bold uppercase tracking-widest">
+<span class="material-symbols-outlined mb-1" data-icon="restaurant" style="font-variation-settings: 'FILL' 1;">restaurant</span>
+<span>Home</span>
+</div>
+<div class="flex flex-col items-center justify-center text-stone-500 px-4 py-2 active:bg-stone-100 font-['Inter'] text-[10px] font-bold uppercase tracking-widest transition-all">
+<span class="material-symbols-outlined mb-1" data-icon="search">search</span>
+<span>Search</span>
+</div>
+<div class="flex flex-col items-center justify-center text-stone-500 px-4 py-2 active:bg-stone-100 font-['Inter'] text-[10px] font-bold uppercase tracking-widest transition-all relative">
+<div class="absolute -top-1 -right-0 bg-tertiary text-white w-5 h-5 flex items-center justify-center rounded-full text-[10px]">2</div>
+<span class="material-symbols-outlined mb-1" data-icon="shopping_basket">shopping_basket</span>
+<span>My Order</span>
+</div>
+<div class="flex flex-col items-center justify-center text-stone-500 px-4 py-2 active:bg-stone-100 font-['Inter'] text-[10px] font-bold uppercase tracking-widest transition-all">
+<span class="material-symbols-outlined mb-1" data-icon="tune">tune</span>
+<span>Filters</span>
+</div>
+</nav>
+</body></html>

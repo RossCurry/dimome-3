@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<link href="https://fonts.googleapis.com/css2?family=Epilogue:wght@600;700;800&amp;family=Inter:wght@400;500;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "surface-tint": "#376757",
+                    "surface-container-high": "#e7e8e7",
+                    "secondary-fixed-dim": "#b5c8df",
+                    "error-container": "#ffdad6",
+                    "primary-fixed-dim": "#9ed1bd",
+                    "surface": "#f9f9f8",
+                    "primary-fixed": "#baeed9",
+                    "on-surface-variant": "#404945",
+                    "on-primary-fixed": "#002117",
+                    "surface-container-highest": "#e1e3e2",
+                    "on-secondary": "#ffffff",
+                    "error": "#ba1a1a",
+                    "tertiary-fixed": "#ffdbcd",
+                    "primary-container": "#1b4d3e",
+                    "outline": "#707974",
+                    "on-tertiary-container": "#ff9869",
+                    "on-secondary-fixed": "#091d2e",
+                    "on-primary": "#ffffff",
+                    "surface-variant": "#e1e3e2",
+                    "surface-container-low": "#f3f4f3",
+                    "outline-variant": "#c0c9c3",
+                    "surface-dim": "#d9dad9",
+                    "secondary-container": "#cfe2f9",
+                    "tertiary": "#551d00",
+                    "on-secondary-fixed-variant": "#36485b",
+                    "inverse-surface": "#2e3131",
+                    "background": "#f9f9f8",
+                    "on-tertiary": "#ffffff",
+                    "inverse-on-surface": "#f0f1f0",
+                    "tertiary-container": "#792d00",
+                    "tertiary-fixed-dim": "#ffb595",
+                    "on-secondary-container": "#526478",
+                    "secondary-fixed": "#d1e4fb",
+                    "on-tertiary-fixed": "#351000",
+                    "on-error-container": "#93000a",
+                    "on-background": "#191c1c",
+                    "on-surface": "#191c1c",
+                    "on-error": "#ffffff",
+                    "inverse-primary": "#9ed1bd",
+                    "on-primary-fixed-variant": "#1d4f40",
+                    "surface-container-lowest": "#ffffff",
+                    "surface-container": "#edeeed",
+                    "on-primary-container": "#8abda9",
+                    "primary": "#003629",
+                    "on-tertiary-fixed-variant": "#7c2e00",
+                    "surface-bright": "#f9f9f8",
+                    "secondary": "#4e6073"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "fontFamily": {
+                    "headline": ["Epilogue"],
+                    "body": ["Inter"],
+                    "label": ["Inter"]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .editorial-shadow {
+            box-shadow: 0px 12px 32px rgba(25, 28, 28, 0.06);
+        }
+        .primary-gradient {
+            background: linear-gradient(135deg, #003629 0%, #1b4d3e 100%);
+        }
+    </style>
+</head>
+<body class="bg-surface font-body text-on-surface">
+<!-- TopNavBar -->
+<header class="bg-emerald-950/80 backdrop-blur-xl dark:bg-emerald-950/90 docked full-width top-0 sticky z-50 tonal-shift bg-emerald-900/10">
+<div class="flex justify-between items-center w-full px-6 py-3 max-w-[1920px] mx-auto">
+<div class="flex items-center gap-8">
+<span class="text-xl font-bold italic text-emerald-50 font-['Epilogue'] tracking-tight">Digital Maître d’</span>
+<nav class="hidden md:flex gap-6 items-center">
+<a class="text-emerald-200/70 hover:text-white transition-colors font-['Epilogue'] tracking-tight" href="#">Dashboard</a>
+<a class="text-emerald-200/70 hover:text-white transition-colors font-['Epilogue'] tracking-tight" href="#">Analytics</a>
+<a class="text-emerald-200/70 hover:text-white transition-colors font-['Epilogue'] tracking-tight" href="#">Settings</a>
+</nav>
+</div>
+<div class="flex items-center gap-4">
+<div class="hidden md:flex items-center gap-2">
+<span class="material-symbols-outlined text-emerald-50/70">notifications</span>
+<span class="material-symbols-outlined text-emerald-50/70">help</span>
+</div>
+<button class="primary-gradient text-white px-5 py-2 rounded-lg font-medium text-sm flex items-center gap-2 hover:bg-emerald-800/30 transition-all scale-95 duration-150 ease-in-out">
+<span>Add Menu</span>
+</button>
+<img alt="User profile" class="w-8 h-8 rounded-full border border-emerald-800" data-alt="Professional headshot of a restaurant manager in a clean white shirt with soft natural office lighting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBbzsVcqwLWUPTHcVXlewhhxswpMw2kpzvRf4qWmv3k-nUOt4O1FYY1_xB_H3tZ2-2oVRLWttSKVJA7wS5oc23vx5ol7ZJUFhunVqRY6NDBQFUuH-Scn7woUihb5a15-dbKzXpDy3zAW0y8laC-GNN7AFUH2GkYIOfbBfBC1Z6C41d4VpAABM4fdKjK4iEZpMA0g3l53FHuKNF5pxfRtDtPbp2cVFU-z-5VZvberJ5udbTchsbndZRYpgiR2L-wE7zw4zPLCHcmrBPd"/>
+</div>
+</div>
+</header>
+<div class="flex min-h-screen">
+<!-- SideNavBar -->
+<aside class="hidden md:flex flex-col h-screen w-64 fixed left-0 top-0 pt-20 bg-stone-50 dark:bg-stone-950 border-r border-stone-200/20 bg-stone-100/50">
+<div class="px-6 py-8 flex flex-col gap-1">
+<div class="flex items-center gap-3 mb-8">
+<div class="w-10 h-10 rounded-lg bg-emerald-900 flex items-center justify-center text-white font-headline font-bold">GT</div>
+<div>
+<p class="font-['Epilogue'] font-bold text-emerald-900 leading-tight">The Green Table</p>
+<p class="text-[10px] text-stone-500 uppercase tracking-widest font-bold">Premium B2B Account</p>
+</div>
+</div>
+<nav class="flex flex-col gap-1">
+<a class="flex items-center gap-3 px-4 py-3 text-stone-600 hover:text-emerald-800 hover:bg-stone-100 transition-all duration-200 font-medium text-sm" href="#">
+<span class="material-symbols-outlined" data-icon="dashboard">dashboard</span>
+<span>Overview</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 bg-emerald-100/50 text-emerald-900 font-semibold rounded-r-full translate-x-1 duration-200 font-medium text-sm" href="#">
+<span class="material-symbols-outlined" data-icon="menu_book">menu_book</span>
+<span>Menus</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-stone-600 hover:text-emerald-800 hover:bg-stone-100 transition-all duration-200 font-medium text-sm" href="#">
+<span class="material-symbols-outlined" data-icon="category">category</span>
+<span>Categories</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-stone-600 hover:text-emerald-800 hover:bg-stone-100 transition-all duration-200 font-medium text-sm" href="#">
+<span class="material-symbols-outlined" data-icon="egg_alt">egg_alt</span>
+<span>Ingredients</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-stone-600 hover:text-emerald-800 hover:bg-stone-100 transition-all duration-200 font-medium text-sm" href="#">
+<span class="material-symbols-outlined" data-icon="bar_chart">bar_chart</span>
+<span>Performance</span>
+</a>
+</nav>
+<div class="mt-auto pb-10 flex flex-col gap-1">
+<a class="flex items-center gap-3 px-4 py-3 text-stone-600 hover:text-emerald-800 transition-all font-medium text-sm" href="#">
+<span class="material-symbols-outlined" data-icon="contact_support">contact_support</span>
+<span>Support</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-stone-600 hover:text-emerald-800 transition-all font-medium text-sm" href="#">
+<span class="material-symbols-outlined" data-icon="logout">logout</span>
+<span>Logout</span>
+</a>
+</div>
+</div>
+</aside>
+<!-- Main Canvas -->
+<main class="flex-1 md:ml-64 p-6 md:p-12 lg:p-20 bg-surface">
+<div class="max-w-4xl mx-auto">
+<!-- Editorial Breadcrumb / Header Section -->
+<header class="mb-12">
+<div class="flex items-center gap-3 text-on-surface-variant font-label text-sm mb-4">
+<span>Menus</span>
+<span class="material-symbols-outlined text-xs">chevron_right</span>
+<span class="font-semibold text-primary">Import New Menu</span>
+</div>
+<h1 class="font-headline text-[3.5rem] leading-[1.1] text-primary mb-6 tracking-tight">CSV Upload - Step 1</h1>
+<p class="text-lg text-on-surface-variant max-w-2xl font-body leading-relaxed">
+                        Transform your raw inventory into a curated digital experience. Our maître d' will handle the formatting; you just provide the data.
+                    </p>
+</header>
+<!-- Upload Section (Asymmetric Bento) -->
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+<!-- Drag and Drop Area -->
+<div class="lg:col-span-8 group">
+<div class="relative editorial-shadow rounded-2xl bg-surface-container-lowest overflow-hidden border-2 border-dashed border-outline-variant/30 hover:border-primary/40 transition-all duration-500">
+<div class="flex flex-col items-center justify-center py-24 px-8 text-center bg-white">
+<div class="w-20 h-20 mb-6 rounded-full bg-surface-container-low flex items-center justify-center text-primary transition-transform duration-500 group-hover:scale-110">
+<span class="material-symbols-outlined text-4xl" style="font-variation-settings: 'wght' 200;">upload_file</span>
+</div>
+<h3 class="font-headline text-2xl text-on-surface mb-2">Drop your menu file here</h3>
+<p class="text-on-surface-variant font-body mb-8">or <span class="text-primary font-semibold underline underline-offset-4 cursor-pointer">browse your files</span></p>
+<div class="flex items-center gap-4 bg-surface-container-low px-4 py-2 rounded-full">
+<span class="material-symbols-outlined text-emerald-700 text-sm">check_circle</span>
+<span class="text-xs font-label text-on-surface-variant uppercase tracking-wider">Accepted Format: .CSV only</span>
+</div>
+</div>
+<!-- Visual Texture Overlay -->
+<div class="absolute inset-0 pointer-events-none opacity-[0.03] primary-gradient"></div>
+</div>
+</div>
+<!-- Template & Instructions Area -->
+<div class="lg:col-span-4 flex flex-col gap-6">
+<!-- Template Card -->
+<div class="bg-surface-container-low p-8 rounded-2xl">
+<h4 class="font-headline text-lg text-tertiary mb-3">Quick Start</h4>
+<p class="text-sm text-on-surface-variant font-body mb-6 leading-relaxed">
+                                Not sure how to format your CSV? Download our master template with pre-defined headers for categories, allergens, and descriptions.
+                            </p>
+<a class="inline-flex items-center gap-2 text-primary font-semibold text-sm group" href="#">
+<span class="material-symbols-outlined">download</span>
+<span>Download .CSV Template</span>
+<span class="material-symbols-outlined text-xs transition-transform group-hover:translate-x-1">arrow_forward</span>
+</a>
+</div>
+<!-- Requirements Checklist -->
+<div class="bg-surface-container-highest/40 p-8 rounded-2xl">
+<h4 class="font-headline text-sm text-on-surface-variant uppercase tracking-widest font-bold mb-4">Requirements</h4>
+<ul class="flex flex-col gap-4">
+<li class="flex items-start gap-3">
+<span class="material-symbols-outlined text-primary text-xl">file_present</span>
+<span class="text-sm font-body text-on-surface/80">Maximum file size: 12MB</span>
+</li>
+<li class="flex items-start gap-3">
+<span class="material-symbols-outlined text-primary text-xl">table_rows</span>
+<span class="text-sm font-body text-on-surface/80">Header row must be present</span>
+</li>
+<li class="flex items-start gap-3">
+<span class="material-symbols-outlined text-primary text-xl">language</span>
+<span class="text-sm font-body text-on-surface/80">UTF-8 encoding recommended</span>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<!-- Action Footer -->
+<footer class="mt-16 pt-8 flex items-center justify-between">
+<button class="px-6 py-3 text-on-surface-variant font-semibold text-sm hover:text-primary transition-colors flex items-center gap-2">
+<span class="material-symbols-outlined text-lg">west</span>
+                        Back to Dashboard
+                    </button>
+<button class="primary-gradient px-10 py-4 rounded-xl text-white font-headline font-semibold text-lg editorial-shadow transition-transform hover:scale-[1.02] active:scale-95 disabled:opacity-50" disabled="">
+                        Process and Continue
+                    </button>
+</footer>
+</div>
+</main>
+</div>
+</body></html>
