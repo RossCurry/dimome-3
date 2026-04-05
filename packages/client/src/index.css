@@ -72,3 +72,18 @@
   background: rgba(0, 54, 41, 0.85);
   backdrop-filter: blur(20px);
 }
+
+@keyframes owner-action-footer-in {
+  from {
+    transform: translateY(100%);
+    opacity: 0.96;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+.owner-action-footer {
+  animation: owner-action-footer-in 0.38s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}

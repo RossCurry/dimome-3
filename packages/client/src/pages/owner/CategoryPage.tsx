@@ -1,27 +1,29 @@
-import { use } from "react";
+import { use, useState } from "react";
 import { Link, Navigate, useParams } from "react-router-dom";
-import { ArrowLeft, Eye, Plus } from "lucide-react";
+import { ArrowLeft, Eye, EyeOff, Plus } from "lucide-react";
+import type { OwnerCategoryPageData } from "@/mocks/mockApi";
 import { readOwnerCategoryPage } from "@/mocks/mockApi";
 
-export default function CategoryPage() {
-  const { menuId: menuIdParam, categoryId: categoryIdParam } = useParams<{
-    menuId: string;
-    categoryId: string;
-  }>();
-  const menuId = menuIdParam ?? "";
-  const categoryId = categoryIdParam ?? "";
-  const data = use(readOwnerCategoryPage(menuId, categoryId));
-
-  if (!data) {
-    return (
-      <Navigate to={menuId ? `/menus/${menuId}` : "/menus"} replace />
-    );
-  }
-
+function CategoryPageInner({
+  menuId,
+  categoryId,
+  data,
+}: {
+  menuId: string;
+  categoryId: string;
+  data: OwnerCategoryPageData;
+}) {
   const { categoryName, items } = data;
+  const [visibleById, setVisibleById] = useState<Record<string, boolean>>(() =>
+    Object.fromEntries(items.map((i) => [i.id, true] as const)),
+  );
+
+  const toggleVisible = (id: string) => {
+    setVisibleById((prev) => ({ ...prev, [id]: !prev[id] }));
+  };
 
   return (
-    <div className="max-w-5xl mx-auto px-6 py-10">
+    <div className="mx-auto max-w-5xl px-6 py-10">
       <Link
         to={`/menus/${menuId}`}
         className="mb-6 inline-flex items-center gap-2 text-sm font-medium text-primary"
@@ -29,9 +31,9 @@ export default function CategoryPage() {
         <ArrowLeft className="h-4 w-4" />
         Back to menu
       </Link>
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between mb-8">
+      <div className="mb-8 flex flex-col justify-between gap-4 sm:flex-row sm:items-start">
         <div>
-          <h1 className="text-3xl font-headline text-primary mb-2">{categoryName}</h1>
+          <h1 className="mb-2 font-headline text-3xl text-primary">{categoryName}</h1>
           <p className="text-on-surface-variant">
             Menu <span className="font-mono text-xs">{menuId}</span>
             {" · "}
@@ -47,60 +49,102 @@ export default function CategoryPage() {
             categoryId,
             menuId,
           }}
-          className="inline-flex items-center justify-center gap-2 primary-gradient text-on-primary px-5 py-2.5 rounded-xl text-sm font-semibold shrink-0"
+          className="primary-gradient inline-flex shrink-0 items-center justify-center gap-2 rounded-xl px-5 py-2.5 text-sm font-semibold text-on-primary"
         >
-          <Plus className="w-4 h-4" aria-hidden />
+          <Plus className="h-4 w-4" aria-hidden />
           Add item
         </Link>
       </div>
 
-      <div className="rounded-2xl bg-surface-container-lowest overflow-hidden shadow-[var(--shadow-ambient)]">
+      <div className="overflow-hidden rounded-2xl bg-surface-container-lowest shadow-[var(--shadow-ambient)]">
         <div className="overflow-x-auto">
           <table className="w-full text-left text-sm">
-            <thead className="bg-surface-container-low text-on-surface-variant text-xs uppercase tracking-wider">
+            <thead className="bg-surface-container-low text-xs font-semibold uppercase tracking-wider text-on-surface-variant">
               <tr>
-                <th className="px-6 py-4 font-semibold">Item</th>
-                <th className="px-6 py-4 font-semibold">Price</th>
-                <th className="px-6 py-4 font-semibold">Visible</th>
-                <th className="px-6 py-4 font-semibold" />
+                <th className="px-6 py-4">Item</th>
+                <th className="px-6 py-4">Price</th>
+                <th className="px-6 py-4">Visible</th>
+                <th className="px-6 py-4" />
               </tr>
             </thead>
             <tbody className="divide-y divide-outline-variant/10">
-              {items.map((item) => (
-                <tr key={item.id} className="hover:bg-surface-container-low/50">
-                  <td className="px-6 py-4">
-                    <div className="flex items-center gap-3">
-                      <div className="w-10 h-10 rounded-lg overflow-hidden bg-surface-container-low shrink-0">
-                        <img
-                          src={item.image}
-                          alt=""
-                          className="w-full h-full object-cover"
-                        />
+              {items.map((item) => {
+                const visible = visibleById[item.id] ?? true;
+                return (
+                  <tr key={item.id} className="hover:bg-surface-container-low/50">
+                    <td className="px-6 py-4">
+                      <div className="flex items-center gap-3">
+                        <div className="h-10 w-10 shrink-0 overflow-hidden rounded-lg bg-surface-container-low">
+                          <img
+                            src={item.image}
+                            alt=""
+                            className="h-full w-full object-cover"
+                          />
+                        </div>
+                        <span className="font-medium text-on-surface">{item.name}</span>
                       </div>
-                      <span className="font-medium text-on-surface">{item.name}</span>
-                    </div>
-                  </td>
-                  <td className="px-6 py-4 font-medium">${item.price.toFixed(2)}</td>
-                  <td className="px-6 py-4">
-                    <span className="inline-flex items-center gap-1 text-emerald-700 text-xs font-medium">
-                      <Eye className="w-4 h-4" />
-                      Yes
-                    </span>
-                  </td>
-                  <td className="px-6 py-4 text-right">
-                    <Link
-                      to={`/items/${item.id}/edit`}
-                      className="text-primary font-semibold text-sm"
-                    >
-                      Edit
-                    </Link>
-                  </td>
-                </tr>
-              ))}
+                    </td>
+                    <td className="px-6 py-4 font-medium">${item.price.toFixed(2)}</td>
+                    <td className="px-6 py-4">
+                      <button
+                        type="button"
+                        onClick={() => toggleVisible(item.id)}
+                        aria-pressed={visible}
+                        aria-label={
+                          visible
+                            ? "Visible on guest menu, click to hide"
+                            : "Hidden from guest menu, click to show"
+                        }
+                        className={`inline-flex items-center gap-1.5 rounded-lg px-2 py-1.5 text-xs font-medium transition-colors hover:bg-surface-container-low ${
+                          visible ? "text-emerald-700" : "text-on-surface-variant"
+                        }`}
+                      >
+                        {visible ? (
+                          <Eye className="h-4 w-4 shrink-0" aria-hidden />
+                        ) : (
+                          <EyeOff className="h-4 w-4 shrink-0" aria-hidden />
+                        )}
+                        {visible ? "Yes" : "No"}
+                      </button>
+                    </td>
+                    <td className="px-6 py-4 text-right">
+                      <Link
+                        to={`/items/${item.id}/edit`}
+                        className="text-sm font-semibold text-primary"
+                      >
+                        Edit
+                      </Link>
+                    </td>
+                  </tr>
+                );
+              })}
             </tbody>
           </table>
         </div>
       </div>
     </div>
+  );
+}
+
+export default function CategoryPage() {
+  const { menuId: menuIdParam, categoryId: categoryIdParam } = useParams<{
+    menuId: string;
+    categoryId: string;
+  }>();
+  const menuId = menuIdParam ?? "";
+  const categoryId = categoryIdParam ?? "";
+  const data = use(readOwnerCategoryPage(menuId, categoryId));
+
+  if (!data) {
+    return <Navigate to={menuId ? `/menus/${menuId}` : "/menus"} replace />;
+  }
+
+  return (
+    <CategoryPageInner
+      key={`${menuId}-${categoryId}`}
+      menuId={menuId}
+      categoryId={categoryId}
+      data={data}
+    />
   );
 }
