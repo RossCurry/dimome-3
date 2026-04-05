@@ -48,19 +48,25 @@ Snapshot of work completed in `dimome3` (product planning + frontend client scaf
 
 **MVP default:** `/` is the **owner** app (dashboard). **Guest** routes use **`/qr/:menuId`** for QR (`https://<host>/qr/<menuId>`) and **`/menu/:menuId`** as a readable alias.
 
-**Owner** (`OwnerLayout` at `/`):
+**Owner** (`OwnerLayout` at `/` — **sidebar** on `md+`: Overview, Menus, Categories, …):
 
 | Route | Page |
 |-------|------|
-| `/` | Dashboard — category cards, quick actions |
-| `/menus/:menuId` | Item browse table |
-| `/items/:itemId/edit` | Item editor (allergens, publishing toggles, SKU, photo — mock) |
+| `/` | Overview — active (+ archived) menus, quick actions |
+| `/menus` | All menus list (active / archived) |
+| `/menus/:menuId` | Menu hub — categories for that menu only |
+| `/menus/:menuId/category/:categoryId` | Category — item table; visibility toggle (mock local state) |
+| `/categories` | All categories across menus + Add Category modal |
+| `/items/new` | New menu item (from modal or category page) |
+| `/items/:itemId/edit` | Item editor + **sliding action footer** (Save → mock persist + back to category) |
 | `/import/csv` | CSV wizard step 1 |
 | `/import/csv/map` | Step 2 — column mapping + preview (`CsvImportContext`) |
 | `/import/csv/review` | Step 3 — mock rows + `readCsvPreview()` |
 | `/import/scan` | AI scan step 1 |
 | `/import/scan/progress` | Step 2 — fake progress → auto navigate |
 | `/import/scan/review` | Step 3 — editable table from `readScanDraft()` |
+
+**Owner UI primitives (for reuse):** `OwnerSlidingActionFooter`, `OwnerConfirmDialog` (dialog **not** wired yet — reserved for confirm/summary flows).
 
 **Guest** (`GuestLayout` at **`/qr/:menuId`** or **`/menu/:menuId`** — same subtree; `GuestPreferencesProvider` keyed by `menuId`):
 
@@ -79,7 +85,7 @@ Small **Owner** link on the guest menu points to `/` (dashboard).
 ### Loading / Suspense
 
 - **Route-level:** `React.lazy` pages with **skeleton fallbacks** in [`src/router.tsx`](./packages/client/src/router.tsx).
-- **Data-level:** `use()` on delayed mock promises (e.g. `readPublicMenu(menuId)`, owner dashboard, menu browse, item editor); inner **Suspense** + [`TableRowsSkeleton`](./packages/client/src/components/skeletons/TableRowsSkeleton.tsx) for CSV review and scan review tables.
+- **Data-level:** `use()` on delayed mock promises (e.g. `readPublicMenu(menuId)`, `readOwnerMenus`, `readOwnerCategories`, `readOwnerCategoryPage`, item editor); inner **Suspense** + [`TableRowsSkeleton`](./packages/client/src/components/skeletons/TableRowsSkeleton.tsx) for CSV review and scan review tables.
 - Reusable primitives under [`src/components/skeletons/`](./packages/client/src/components/skeletons/).
 
 ### Types
@@ -113,4 +119,4 @@ npm run build      # client production build
 
 ---
 
-*Last updated: owner at `/`, guest at `/menu/:menuId`, legacy `/owner/*` redirect.*
+*Last updated: owner shell with sidebar + routes above; guest QR `/qr/:menuId` (+ `/menu/:menuId` alias); legacy `/owner/*` redirect.*

@@ -19,7 +19,7 @@ Or from this package:
 npm run dev
 ```
 
-- **Owner dashboard (MVP home):** [http://localhost:5173/](http://localhost:5173/)
+- **Owner app (MVP home — overview):** [http://localhost:5173/](http://localhost:5173/) — also `/menus`, `/categories`, `/menus/:menuId`, etc.
 - **Guest menu (QR URL):** [http://localhost:5173/qr/menu-1](http://localhost:5173/qr/menu-1) — replace `menu-1` with the published menu id. Readable alias: `/menu/menu-1`.
 
 Old `/owner/...` links redirect to the same path without `/owner`.

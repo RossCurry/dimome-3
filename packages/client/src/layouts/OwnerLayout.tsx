@@ -1,5 +1,6 @@
+import { useState } from "react";
 import { Link, Outlet } from "react-router-dom";
-import { Bell, HelpCircle, User } from "lucide-react";
+import { Bell, HelpCircle, Menu, User } from "lucide-react";
 import { CategoryCreateModalProvider } from "@/context/CategoryCreateModalContext";
 import { OwnerSidebar } from "@/layouts/OwnerSidebar";
 
@@ -7,12 +8,24 @@ import { OwnerSidebar } from "@/layouts/OwnerSidebar";
 const DEMO_GUEST_MENU = "/qr/menu-1";
 
 export function OwnerLayout() {
+  const [mobileNavOpen, setMobileNavOpen] = useState(false);
+
   return (
     <CategoryCreateModalProvider>
       <div className="flex min-h-screen flex-col bg-surface text-on-surface">
         <header className="glass-header sticky top-0 z-50 text-on-primary">
           <div className="mx-auto flex w-full max-w-[1600px] items-center justify-between gap-4 px-6 py-3">
-            <div className="flex items-center gap-8">
+            <div className="flex items-center gap-3 md:gap-8">
+              <button
+                type="button"
+                className="rounded-lg p-2 text-emerald-200/90 hover:bg-white/10 md:hidden"
+                aria-label="Open menu"
+                aria-expanded={mobileNavOpen}
+                aria-controls="owner-mobile-nav"
+                onClick={() => setMobileNavOpen(true)}
+              >
+                <Menu className="h-6 w-6" aria-hidden />
+              </button>
               <Link
                 to="/"
                 className="text-xl font-bold italic font-headline tracking-tight text-emerald-50"
@@ -55,7 +68,10 @@ export function OwnerLayout() {
           </div>
         </header>
         <div className="flex min-h-0 flex-1">
-          <OwnerSidebar />
+          <OwnerSidebar
+            mobileOpen={mobileNavOpen}
+            onMobileOpenChange={setMobileNavOpen}
+          />
           <div className="flex min-h-0 min-w-0 flex-1 flex-col">
             <main className="min-h-0 flex-1 overflow-auto">
               <Outlet />

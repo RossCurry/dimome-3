@@ -1,7 +1,10 @@
+import { useCallback, useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import { ChevronLeft } from "lucide-react";
 import { EU_ALLERGEN_LABELS, GUEST_FILTER_SHORTLIST } from "@/mocks/constants";
 import { useGuestPreferences } from "@/context/GuestPreferencesContext";
+
+const SNACK_MS = 3200;
 
 export default function GuestFiltersPage() {
   const {
@@ -11,18 +14,72 @@ export default function GuestFiltersPage() {
     clearFilters,
   } = useGuestPreferences();
 
+  /** Message + key for remount animation; wire to a toast/snackbar when needed. */
+  const [, setSnack] = useState<{ text: string; key: number } | null>(null);
+  const snackTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  const dismissSnack = useCallback(() => {
+    if (snackTimerRef.current) {
+      clearTimeout(snackTimerRef.current);
+      snackTimerRef.current = null;
+    }
+    setSnack(null);
+  }, []);
+
+  const showSnack = useCallback(
+    (text: string) => {
+      if (snackTimerRef.current) clearTimeout(snackTimerRef.current);
+      setSnack({ text, key: Date.now() });
+      snackTimerRef.current = setTimeout(() => {
+        setSnack(null);
+        snackTimerRef.current = null;
+      }, SNACK_MS);
+    },
+    [],
+  );
+
+  useEffect(
+    () => () => {
+      dismissSnack();
+    },
+    [dismissSnack],
+  );
+
   return (
     <div className="min-h-screen bg-surface pb-28">
-      <header className="sticky top-0 z-20 bg-surface-container-lowest/90 backdrop-blur-xl px-6 py-4 flex items-center gap-4 border-b border-outline-variant/10">
+      <header className="sticky top-0 z-20 bg-surface-container-lowest/90 backdrop-blur-xl px-6 py-4 flex items-center gap-3 border-b border-outline-variant/10">
         <Link
           to=".."
           relative="path"
-          className="p-2 rounded-lg hover:bg-surface-container-low -ml-2"
+          className="shrink-0 p-2 rounded-lg hover:bg-surface-container-low -ml-2"
           aria-label="Back to menu"
         >
           <ChevronLeft className="w-6 h-6 text-primary" />
         </Link>
-        <h1 className="text-xl font-headline text-primary">Allergen filters</h1>
+        <h1 className="min-w-0 flex-1 text-xl font-headline text-primary">
+          Allergen filters
+        </h1>
+        <div className="flex shrink-0 items-center gap-2">
+          <button
+            type="button"
+            disabled={excludedAllergens.size === 0}
+            onClick={() => {
+              clearFilters();
+              showSnack("All filters cleared");
+            }}
+            className="rounded-xl px-3 py-2 text-sm font-medium text-on-surface-variant hover:bg-surface-container-low disabled:pointer-events-none disabled:opacity-40"
+          >
+            Clear filters
+          </button>
+          <Link
+            to=".."
+            relative="path"
+            className="primary-gradient rounded-xl px-4 py-2 text-sm font-semibold text-on-primary"
+            aria-label="Save choices and return to menu"
+          >
+            Save choices
+          </Link>
+        </div>
       </header>
 
       <div className="px-6 py-4 max-w-lg mx-auto">
@@ -54,7 +111,15 @@ export default function GuestFiltersPage() {
                 <button
                   key={s.id}
                   type="button"
-                  onClick={() => toggleShortlist(s.id)}
+                  onClick={() => {
+                    const wasActive = labels.some((l) => excludedAllergens.has(l));
+                    toggleShortlist(s.id);
+                    showSnack(
+                      wasActive
+                        ? `No longer hiding ${s.label.toLowerCase()}`
+                        : `Hiding dishes with ${s.label.toLowerCase()}`,
+                    );
+                  }}
                   className={`text-left p-5 rounded-2xl transition-all shadow-[var(--shadow-ambient)] ${
                     active
                       ? "bg-primary/5 ring-2 ring-primary/20"
@@ -98,7 +163,14 @@ export default function GuestFiltersPage() {
                     type="button"
                     role="switch"
                     aria-checked={on}
-                    onClick={() => toggleEuAllergen(label)}
+                    onClick={() => {
+                      toggleEuAllergen(label);
+                      showSnack(
+                        on
+                          ? `${label} filter off`
+                          : `Hiding dishes with ${label.toLowerCase()}`,
+                      );
+                    }}
                     className={`w-12 h-7 rounded-full relative transition-colors shrink-0 ${
                       on ? "bg-primary" : "bg-outline-variant/30"
                     }`}
@@ -117,7 +189,10 @@ export default function GuestFiltersPage() {
 
         <button
           type="button"
-          onClick={clearFilters}
+          onClick={() => {
+            clearFilters();
+            showSnack("All filters cleared");
+          }}
           className="w-full py-3 rounded-xl border border-outline-variant/30 text-on-surface-variant font-medium"
         >
           Clear all filters

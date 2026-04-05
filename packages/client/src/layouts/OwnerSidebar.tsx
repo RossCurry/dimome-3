@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
 import {
   BarChart3,
@@ -7,6 +8,7 @@ import {
   LayoutGrid,
   Layers,
   LogOut,
+  X,
 } from "lucide-react";
 import { FIXTURE_OWNER_CATEGORIES } from "@/mocks/fixtures";
 
@@ -22,7 +24,12 @@ const navClass =
 const navActiveClass =
   "bg-primary-fixed-dim/35 text-on-primary-fixed-variant ring-1 ring-primary/10";
 
-export function OwnerSidebar() {
+export type OwnerSidebarProps = {
+  mobileOpen: boolean;
+  onMobileOpenChange: (open: boolean) => void;
+};
+
+function OwnerSidebarInner({ onNavigate }: { onNavigate?: () => void }) {
   const { pathname } = useLocation();
   const venueName = FIXTURE_OWNER_CATEGORIES.venueName;
 
@@ -30,8 +37,12 @@ export function OwnerSidebar() {
   const menusActive = pathname === "/menus" || pathname.startsWith("/menus/");
   const categoriesActive = pathname === "/categories";
 
+  const afterNav = () => {
+    onNavigate?.();
+  };
+
   return (
-    <aside className="hidden w-64 shrink-0 flex-col border-r border-outline-variant/15 bg-surface-container-low md:flex md:w-72">
+    <>
       <div className="border-b border-outline-variant/10 p-4">
         <div className="flex items-center gap-3">
           <div
@@ -52,6 +63,7 @@ export function OwnerSidebar() {
       <nav className="flex flex-1 flex-col gap-1 overflow-y-auto p-3" aria-label="Owner">
         <Link
           to="/"
+          onClick={afterNav}
           className={`${navClass} ${overviewActive ? navActiveClass : ""}`}
         >
           <LayoutGrid className="h-5 w-5 shrink-0 opacity-80" aria-hidden />
@@ -59,6 +71,7 @@ export function OwnerSidebar() {
         </Link>
         <Link
           to="/menus"
+          onClick={afterNav}
           className={`${navClass} ${menusActive ? navActiveClass : ""}`}
         >
           <FileText className="h-5 w-5 shrink-0 opacity-80" aria-hidden />
@@ -66,6 +79,7 @@ export function OwnerSidebar() {
         </Link>
         <Link
           to="/categories"
+          onClick={afterNav}
           className={`${navClass} ${categoriesActive ? navActiveClass : ""}`}
         >
           <Layers className="h-5 w-5 shrink-0 opacity-80" aria-hidden />
@@ -90,6 +104,7 @@ export function OwnerSidebar() {
       <div className="mt-auto space-y-1 border-t border-outline-variant/10 p-3">
         <button
           type="button"
+          onClick={afterNav}
           className={`${navClass} w-full text-left text-on-surface-variant`}
           aria-label="Support (coming soon)"
         >
@@ -98,6 +113,7 @@ export function OwnerSidebar() {
         </button>
         <button
           type="button"
+          onClick={afterNav}
           className={`${navClass} w-full text-left text-on-surface-variant`}
           aria-label="Log out (mock)"
         >
@@ -105,6 +121,72 @@ export function OwnerSidebar() {
           Logout
         </button>
       </div>
-    </aside>
+    </>
+  );
+}
+
+export function OwnerSidebar({ mobileOpen, onMobileOpenChange }: OwnerSidebarProps) {
+  const closeMobile = () => onMobileOpenChange(false);
+
+  useEffect(() => {
+    if (!mobileOpen) return;
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") onMobileOpenChange(false);
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [mobileOpen, onMobileOpenChange]);
+
+  useEffect(() => {
+    if (!mobileOpen) return;
+    const prev = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    return () => {
+      document.body.style.overflow = prev;
+    };
+  }, [mobileOpen]);
+
+  return (
+    <>
+      <aside className="hidden w-64 shrink-0 flex-col border-r border-outline-variant/15 bg-surface-container-low md:flex md:w-72">
+        <OwnerSidebarInner />
+      </aside>
+
+      <div
+        className={`fixed inset-0 z-[80] md:hidden ${
+          mobileOpen ? "pointer-events-auto" : "pointer-events-none"
+        }`}
+        aria-hidden={!mobileOpen}
+      >
+        <div
+          className={`absolute inset-0 bg-black/45 transition-opacity duration-300 ease-out motion-reduce:transition-none ${
+            mobileOpen ? "opacity-100" : "opacity-0"
+          }`}
+          aria-hidden
+          onClick={closeMobile}
+        />
+        <aside
+          className={`absolute left-0 top-0 flex h-full w-72 max-w-[min(18rem,88vw)] flex-col border-r border-outline-variant/15 bg-surface-container-low pt-[env(safe-area-inset-top,0px)] shadow-[0_0_40px_rgba(0,0,0,0.12)] transition-transform duration-300 ease-out motion-reduce:transition-none ${
+            mobileOpen ? "translate-x-0" : "-translate-x-full"
+          }`}
+          id="owner-mobile-nav"
+          role="dialog"
+          aria-modal="true"
+          aria-label="Main navigation"
+        >
+          <div className="flex shrink-0 items-center justify-end border-b border-outline-variant/10 px-2 py-1">
+            <button
+              type="button"
+              onClick={closeMobile}
+              className="rounded-lg p-2 text-on-surface-variant hover:bg-surface-container-high"
+              aria-label="Close menu"
+            >
+              <X className="h-5 w-5" aria-hidden />
+            </button>
+          </div>
+          <OwnerSidebarInner onNavigate={closeMobile} />
+        </aside>
+      </div>
+    </>
   );
 }
