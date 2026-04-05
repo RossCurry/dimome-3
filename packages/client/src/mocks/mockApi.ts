@@ -2,7 +2,9 @@ import type {
   CsvPreviewData,
   MenuItem,
   MenuItemEditor,
-  OwnerDashboardData,
+  OwnerCategoriesData,
+  OwnerMenuCategoriesData,
+  OwnerMenuSummary,
   PublicMenuData,
   ScanDraftData,
 } from "@/types";
@@ -10,7 +12,8 @@ import { delay } from "@/mocks/delay";
 import {
   FIXTURE_CSV_HEADERS,
   FIXTURE_CSV_PREVIEW_ROWS,
-  FIXTURE_OWNER_DASHBOARD,
+  FIXTURE_OWNER_CATEGORIES,
+  FIXTURE_OWNER_MENUS,
   FIXTURE_SCAN_DRAFT_ROWS,
   getFixtureItemEditor,
   getPublicMenuForMenuId,
@@ -42,11 +45,44 @@ export function readPublicMenu(menuId: string): Promise<PublicMenuData> {
   return p;
 }
 
-/** Owner dashboard summary. */
-export const readOwnerDashboard = cachedPromise(async (): Promise<OwnerDashboardData> => {
+/** Owner `/categories` page — venue + category rows. */
+export const readOwnerCategories = cachedPromise(async (): Promise<OwnerCategoriesData> => {
   await delay(500);
-  return structuredClone(FIXTURE_OWNER_DASHBOARD);
+  return structuredClone(FIXTURE_OWNER_CATEGORIES);
 });
+
+/** Owner menus for overview + `/menus` list. */
+export const readOwnerMenus = cachedPromise(async (): Promise<OwnerMenuSummary[]> => {
+  await delay(420);
+  return structuredClone(FIXTURE_OWNER_MENUS);
+});
+
+const ownerMenuCategoriesCache = new Map<string, Promise<OwnerMenuCategoriesData | null>>();
+
+/**
+ * Owner menu hub `/menus/:menuId` — categories belonging to that menu only.
+ * `null` if the menu id is unknown to the owner mock.
+ */
+export function readOwnerMenuCategories(menuId: string): Promise<OwnerMenuCategoriesData | null> {
+  let p = ownerMenuCategoriesCache.get(menuId);
+  if (!p) {
+    p = (async () => {
+      await delay(480);
+      const menuMeta = FIXTURE_OWNER_MENUS.find((m) => m.id === menuId);
+      if (!menuMeta) return null;
+      const base = structuredClone(FIXTURE_OWNER_CATEGORIES);
+      const categories = base.categories.filter((c) => c.menuId === menuId);
+      return {
+        menuId,
+        menuName: menuMeta.name,
+        venueName: base.venueName,
+        categories,
+      };
+    })();
+    ownerMenuCategoriesCache.set(menuId, p);
+  }
+  return p;
+}
 
 export type OwnerCategoryPageData = {
   categoryName: string;

@@ -1,7 +1,8 @@
 import type {
   MenuItem,
   MenuItemEditor,
-  OwnerDashboardData,
+  OwnerCategoriesData,
+  OwnerMenuSummary,
   PublicMenuData,
   ScanDraftRow,
 } from "@/types";
@@ -88,7 +89,7 @@ export function getPublicMenuForMenuId(menuId: string): PublicMenuData {
   };
 }
 
-export const FIXTURE_OWNER_DASHBOARD: OwnerDashboardData = {
+export const FIXTURE_OWNER_CATEGORIES: OwnerCategoriesData = {
   venueName: "Emerald Hearth",
   categories: [
     {
@@ -147,6 +148,39 @@ export const FIXTURE_OWNER_DASHBOARD: OwnerDashboardData = {
     },
   ],
 };
+
+export const FIXTURE_OWNER_MENUS: OwnerMenuSummary[] = [
+  {
+    id: "menu-1",
+    name: "Dinner Service",
+    contextLabel: "Emerald Hearth · Primary dining",
+    lastUpdatedLabel: "Today, 10:24 AM",
+    categoryCount: 4,
+    itemCount: 6,
+    thumbnail: img,
+    isActive: true,
+  },
+  {
+    id: "menu-2",
+    name: "Seasonal Brunch",
+    contextLabel: "Emerald Hearth · Weekend service",
+    lastUpdatedLabel: "2 days ago",
+    categoryCount: 2,
+    itemCount: 4,
+    thumbnail: img,
+    isActive: true,
+  },
+  {
+    id: "menu-3",
+    name: "Winter tasting (archived)",
+    contextLabel: "Emerald Hearth · Archived version",
+    lastUpdatedLabel: "Jan 12, 2026",
+    categoryCount: 3,
+    itemCount: 12,
+    thumbnail: img,
+    isActive: false,
+  },
+];
 
 /** Same items as public menu for browse (menu-1). */
 export function getFixtureItemsList(): MenuItem[] {

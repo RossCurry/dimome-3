@@ -13,13 +13,15 @@ import { OwnerRouteSkeleton } from "@/components/skeletons/OwnerRouteSkeleton";
 import { OwnerDashboardSkeleton } from "@/components/skeletons/OwnerDashboardSkeleton";
 import { ItemEditorSkeleton } from "@/components/skeletons/ItemEditorSkeleton";
 import { CsvImportLayout } from "@/pages/owner/csv/CsvImportLayout";
-import MenuLegacyRedirect from "@/pages/owner/MenuLegacyRedirect";
 
 const GuestMenuPage = lazy(() => import("@/pages/guest/GuestMenuPage"));
 const GuestFiltersPage = lazy(() => import("@/pages/guest/GuestFiltersPage"));
 const OrderPage = lazy(() => import("@/pages/guest/OrderPage"));
 
-const OwnerDashboardPage = lazy(() => import("@/pages/owner/OwnerDashboardPage"));
+const OwnerOverviewPage = lazy(() => import("@/pages/owner/OwnerOverviewPage"));
+const OwnerCategoriesPage = lazy(() => import("@/pages/owner/OwnerCategoriesPage"));
+const MenusListPage = lazy(() => import("@/pages/owner/MenusListPage"));
+const OwnerMenuPage = lazy(() => import("@/pages/owner/OwnerMenuPage"));
 const CategoryPage = lazy(() => import("@/pages/owner/CategoryPage"));
 const ItemEditPage = lazy(() => import("@/pages/owner/ItemEditPage"));
 const NewMenuItemPage = lazy(() => import("@/pages/owner/NewMenuItemPage"));
@@ -48,7 +50,23 @@ export const router = createBrowserRouter([
         index: true,
         element: (
           <Suspense fallback={<OwnerDashboardSkeleton />}>
-            <OwnerDashboardPage />
+            <OwnerOverviewPage />
+          </Suspense>
+        ),
+      },
+      {
+        path: "categories",
+        element: (
+          <Suspense fallback={<OwnerDashboardSkeleton />}>
+            <OwnerCategoriesPage />
+          </Suspense>
+        ),
+      },
+      {
+        path: "menus",
+        element: (
+          <Suspense fallback={<OwnerDashboardSkeleton />}>
+            <MenusListPage />
           </Suspense>
         ),
       },
@@ -62,7 +80,11 @@ export const router = createBrowserRouter([
       },
       {
         path: "menus/:menuId",
-        element: <MenuLegacyRedirect />,
+        element: (
+          <Suspense fallback={<OwnerDashboardSkeleton />}>
+            <OwnerMenuPage />
+          </Suspense>
+        ),
       },
       {
         path: "items/new",

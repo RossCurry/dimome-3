@@ -13,7 +13,9 @@ export default function CategoryPage() {
   const data = use(readOwnerCategoryPage(menuId, categoryId));
 
   if (!data) {
-    return <Navigate to="/" replace />;
+    return (
+      <Navigate to={menuId ? `/menus/${menuId}` : "/menus"} replace />
+    );
   }
 
   const { categoryName, items } = data;
@@ -21,11 +23,11 @@ export default function CategoryPage() {
   return (
     <div className="max-w-5xl mx-auto px-6 py-10">
       <Link
-        to="/"
-        className="inline-flex items-center gap-2 text-sm text-primary font-medium mb-6"
+        to={`/menus/${menuId}`}
+        className="mb-6 inline-flex items-center gap-2 text-sm font-medium text-primary"
       >
-        <ArrowLeft className="w-4 h-4" />
-        Back to dashboard
+        <ArrowLeft className="h-4 w-4" />
+        Back to menu
       </Link>
       <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between mb-8">
         <div>

@@ -24,7 +24,7 @@ export interface PublicMenuData {
 }
 
 /**
- * Owner dashboard row: a category inside a published menu.
+ * Owner categories list row: a category inside a published menu.
  * URLs: `/menus/:menuId/category/:categoryId`
  */
 export interface CategorySummary {
@@ -41,9 +41,32 @@ export interface CategorySummary {
   itemCount: number;
 }
 
-export interface OwnerDashboardData {
+/** Owner `/categories` page — all categories across menus (mock). */
+export interface OwnerCategoriesData {
   venueName: string;
   categories: CategorySummary[];
+}
+
+/** Owner `/menus/:menuId` page — one menu and its categories only (mock). */
+export interface OwnerMenuCategoriesData {
+  menuId: string;
+  menuName: string;
+  venueName: string;
+  categories: CategorySummary[];
+}
+
+/** Owner menu row (overview + `/menus` list). */
+export interface OwnerMenuSummary {
+  id: string;
+  name: string;
+  /** Venue / channel / version hint (e.g. primary vs archived). */
+  contextLabel: string;
+  lastUpdatedLabel: string;
+  categoryCount: number;
+  itemCount: number;
+  thumbnail: string;
+  /** Shown on overview “active menus”; full list on `/menus`. */
+  isActive: boolean;
 }
 
 /** Full item for editor */

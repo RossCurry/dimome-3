@@ -4,6 +4,7 @@ import {
   CategoryCreateModalProvider,
   useCategoryCreateModal,
 } from "@/context/CategoryCreateModalContext";
+import { OwnerSidebar } from "@/layouts/OwnerSidebar";
 
 /** Demo guest URL for a published menu (QR would encode the same path with a real host). */
 const DEMO_GUEST_MENU = "/menu/menu-1";
@@ -20,9 +21,9 @@ function OwnerLayoutInner() {
   const { openAddCategoryModal } = useCategoryCreateModal();
 
   return (
-    <div className="min-h-screen bg-surface text-on-surface">
+    <div className="flex min-h-screen flex-col bg-surface text-on-surface">
       <header className="glass-header sticky top-0 z-50 text-on-primary">
-        <div className="max-w-6xl mx-auto px-6 py-3 flex items-center justify-between gap-4">
+        <div className="mx-auto flex w-full max-w-[1600px] items-center justify-between gap-4 px-6 py-3">
           <div className="flex items-center gap-8">
             <Link
               to="/"
@@ -72,14 +73,19 @@ function OwnerLayoutInner() {
           </div>
         </div>
       </header>
-      <main>
-        <Outlet />
-      </main>
-      <p className="text-center text-xs text-on-surface-variant py-4">
-        <Link to={DEMO_GUEST_MENU} className="underline hover:text-primary">
-          Open demo guest menu (QR → /menu/menu-1)
-        </Link>
-      </p>
+      <div className="flex min-h-0 flex-1">
+        <OwnerSidebar />
+        <div className="flex min-h-0 min-w-0 flex-1 flex-col">
+          <main className="min-h-0 flex-1 overflow-auto">
+            <Outlet />
+          </main>
+          <p className="shrink-0 py-4 text-center text-xs text-on-surface-variant">
+            <Link to={DEMO_GUEST_MENU} className="underline hover:text-primary">
+              Open demo guest menu (QR → /menu/menu-1)
+            </Link>
+          </p>
+        </div>
+      </div>
     </div>
   );
 }
