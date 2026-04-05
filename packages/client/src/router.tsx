@@ -13,14 +13,16 @@ import { OwnerRouteSkeleton } from "@/components/skeletons/OwnerRouteSkeleton";
 import { OwnerDashboardSkeleton } from "@/components/skeletons/OwnerDashboardSkeleton";
 import { ItemEditorSkeleton } from "@/components/skeletons/ItemEditorSkeleton";
 import { CsvImportLayout } from "@/pages/owner/csv/CsvImportLayout";
+import MenuLegacyRedirect from "@/pages/owner/MenuLegacyRedirect";
 
 const GuestMenuPage = lazy(() => import("@/pages/guest/GuestMenuPage"));
 const GuestFiltersPage = lazy(() => import("@/pages/guest/GuestFiltersPage"));
 const OrderPage = lazy(() => import("@/pages/guest/OrderPage"));
 
 const OwnerDashboardPage = lazy(() => import("@/pages/owner/OwnerDashboardPage"));
-const MenuBrowsePage = lazy(() => import("@/pages/owner/MenuBrowsePage"));
+const CategoryPage = lazy(() => import("@/pages/owner/CategoryPage"));
 const ItemEditPage = lazy(() => import("@/pages/owner/ItemEditPage"));
+const NewMenuItemPage = lazy(() => import("@/pages/owner/NewMenuItemPage"));
 
 const CsvStep1Page = lazy(() => import("@/pages/owner/csv/CsvStep1Page"));
 const CsvStep2Page = lazy(() => import("@/pages/owner/csv/CsvStep2Page"));
@@ -51,10 +53,22 @@ export const router = createBrowserRouter([
         ),
       },
       {
-        path: "menus/:menuId",
+        path: "menus/:menuId/category/:categoryId",
         element: (
           <Suspense fallback={<OwnerRouteSkeleton />}>
-            <MenuBrowsePage />
+            <CategoryPage />
+          </Suspense>
+        ),
+      },
+      {
+        path: "menus/:menuId",
+        element: <MenuLegacyRedirect />,
+      },
+      {
+        path: "items/new",
+        element: (
+          <Suspense fallback={<ItemEditorSkeleton />}>
+            <NewMenuItemPage />
           </Suspense>
         ),
       },

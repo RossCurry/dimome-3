@@ -23,9 +23,18 @@ export interface PublicMenuData {
   itemsById: Record<string, MenuItem>;
 }
 
-/** Owner dashboard menu card */
-export interface MenuSummary {
-  id: string;
+/**
+ * Owner dashboard row: a category inside a published menu.
+ * URLs: `/menus/:menuId/category/:categoryId`
+ */
+export interface CategorySummary {
+  /** Published menu id (guest URL `/menu/:menuId`). */
+  menuId: string;
+  /** Category id within that menu (`MenuCategory.id`, e.g. cat-1). */
+  categoryId: string;
+  /** Display name of the parent menu (dashboard context). */
+  menuName: string;
+  /** Category title shown on cards and category page. */
   name: string;
   thumbnail: string;
   lastUpdatedLabel: string;
@@ -34,7 +43,7 @@ export interface MenuSummary {
 
 export interface OwnerDashboardData {
   venueName: string;
-  menus: MenuSummary[];
+  categories: CategorySummary[];
 }
 
 /** Full item for editor */

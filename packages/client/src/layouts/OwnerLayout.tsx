@@ -1,10 +1,24 @@
 import { Link, Outlet } from "react-router-dom";
 import { Bell, HelpCircle, User } from "lucide-react";
+import {
+  CategoryCreateModalProvider,
+  useCategoryCreateModal,
+} from "@/context/CategoryCreateModalContext";
 
 /** Demo guest URL for a published menu (QR would encode the same path with a real host). */
 const DEMO_GUEST_MENU = "/menu/menu-1";
 
 export function OwnerLayout() {
+  return (
+    <CategoryCreateModalProvider>
+      <OwnerLayoutInner />
+    </CategoryCreateModalProvider>
+  );
+}
+
+function OwnerLayoutInner() {
+  const { openAddCategoryModal } = useCategoryCreateModal();
+
   return (
     <div className="min-h-screen bg-surface text-on-surface">
       <header className="glass-header sticky top-0 z-50 text-on-primary">
@@ -28,12 +42,13 @@ export function OwnerLayout() {
             </nav>
           </div>
           <div className="flex items-center gap-2">
-            <Link
-              to="/import/csv"
+            <button
+              type="button"
+              onClick={openAddCategoryModal}
               className="primary-gradient text-on-primary px-4 py-2 rounded-xl text-sm font-semibold hidden sm:inline"
             >
-              Add Menu
-            </Link>
+              Add Category
+            </button>
             <button
               type="button"
               className="p-2 rounded-lg text-emerald-200/80 hover:bg-white/10"
@@ -68,3 +83,4 @@ export function OwnerLayout() {
     </div>
   );
 }
+

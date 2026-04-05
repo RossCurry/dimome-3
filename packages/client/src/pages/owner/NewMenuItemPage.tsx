@@ -1,19 +1,47 @@
-import { use, useState } from "react";
-import { Link, Navigate, useParams } from "react-router-dom";
+import { useState } from "react";
+import { Link, Navigate, useLocation, useNavigate } from "react-router-dom";
 import { ArrowLeft, Camera, Trash2 } from "lucide-react";
-import { readItemEditor } from "@/mocks/mockApi";
-import { DIETARY_VEGAN, EU_ALLERGEN_LABELS } from "@/mocks/constants";
+import type { MenuItemEditor } from "@/types";
+import type { NewMenuItemLocationState } from "@/types/navigation";
+import {
+  DIETARY_VEGAN,
+  EU_ALLERGEN_LABELS,
+  PLACEHOLDER_IMAGE,
+} from "@/mocks/constants";
 
-export default function ItemEditPage() {
-  const { itemId } = useParams<{ itemId: string }>();
-  const id = itemId ?? "";
-  const loaded = use(readItemEditor(id));
+function emptyEditorForCategory(categoryId: string): MenuItemEditor {
+  return {
+    id: `item-${Date.now()}`,
+    name: "",
+    price: 0,
+    description: "",
+    allergens: [],
+    image: PLACEHOLDER_IMAGE,
+    category: categoryId,
+    ingredients: "",
+    visibleOnMenu: true,
+    featured: false,
+    sku: "",
+    stockStatus: "in_stock",
+    dietaryTags: [],
+  };
+}
 
-  if (!loaded) {
+export default function NewMenuItemPage() {
+  const navigate = useNavigate();
+  const location = useLocation();
+  const state = location.state as NewMenuItemLocationState | null;
+
+  if (!state?.categoryName?.trim() || !state?.categoryId) {
     return <Navigate to="/" replace />;
   }
 
-  const [item, setItem] = useState(loaded);
+  const { categoryName, categoryId, menuId } = state;
+  const returnTo =
+    menuId != null && menuId !== ""
+      ? `/menus/${menuId}/category/${categoryId}`
+      : "/";
+  const [item, setItem] = useState(() => emptyEditorForCategory(categoryId));
 
   const toggleAllergen = (label: string) => {
     setItem((prev) => ({
@@ -38,15 +66,65 @@ export default function ItemEditPage() {
 
   const vegan = item.dietaryTags.includes(DIETARY_VEGAN);
 
+  const addMenuItem = () => {
+    navigate(returnTo);
+  };
+
+  const fromExistingCategory = Boolean(menuId);
+
   return (
     <div className="max-w-6xl mx-auto px-6 py-10">
-      <Link
-        to={`/menus/menu-1/category/${item.category}`}
-        className="inline-flex items-center gap-2 text-sm text-primary font-medium mb-6"
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between mb-6">
+        <Link
+          to={returnTo}
+          className="inline-flex items-center gap-2 text-sm text-primary font-medium"
+        >
+          <ArrowLeft className="w-4 h-4" />
+          {fromExistingCategory ? "Back to category" : "Back to dashboard"}
+        </Link>
+        <div className="flex justify-end gap-3 shrink-0">
+          <button
+            type="button"
+            onClick={() => navigate(returnTo)}
+            className="px-5 py-2.5 rounded-xl text-sm font-medium text-on-surface-variant hover:bg-surface-container-low"
+          >
+            Cancel
+          </button>
+          <button
+            type="button"
+            onClick={addMenuItem}
+            className="primary-gradient text-on-primary px-5 py-2.5 rounded-xl text-sm font-semibold"
+          >
+            Add menu item
+          </button>
+        </div>
+      </div>
+
+      <div
+        role="status"
+        className="mb-6 rounded-2xl border border-primary/20 bg-primary-container/15 px-5 py-4 text-sm text-on-surface"
       >
-        <ArrowLeft className="w-4 h-4" />
-        Back to category
-      </Link>
+        {fromExistingCategory ? (
+          <>
+            <span className="font-semibold text-primary">Add menu item</span>
+            {" — "}
+            <span className="font-headline text-primary">{categoryName}</span>
+            <span className="text-on-surface-variant">
+              {" "}
+              (same form as editing an item; saved under this category in mock).
+            </span>
+          </>
+        ) : (
+          <>
+            <span className="font-semibold text-primary">New category:</span>{" "}
+            <span className="font-headline text-primary">{categoryName}</span>
+            <span className="text-on-surface-variant">
+              {" "}
+              — add the first menu item below. It will be saved under this category (mock).
+            </span>
+          </>
+        )}
+      </div>
 
       <div className="grid lg:grid-cols-12 gap-8">
         <div className="lg:col-span-8 space-y-8">
@@ -63,20 +141,14 @@ export default function ItemEditPage() {
                   className="w-full bg-surface-container-low border-none rounded-xl px-4 py-3 focus:ring-2 focus:ring-primary/40 focus:bg-surface-container-lowest"
                   value={item.name}
                   onChange={(e) => setItem({ ...item, name: e.target.value })}
+                  placeholder="e.g. House salad"
                 />
               </div>
               <div className="space-y-2">
                 <label className="text-xs font-semibold text-on-surface-variant">Category</label>
-                <select
-                  className="w-full bg-surface-container-low border-none rounded-xl px-4 py-3 focus:ring-2 focus:ring-primary/40"
-                  value={item.category}
-                  onChange={(e) => setItem({ ...item, category: e.target.value })}
-                >
-                  <option value="cat-1">Starters</option>
-                  <option value="cat-2">Mains</option>
-                  <option value="cat-3">Desserts</option>
-                  <option value="cat-4">Drinks</option>
-                </select>
+                <div className="w-full bg-surface-container-low/80 border border-outline-variant/10 rounded-xl px-4 py-3 text-sm text-on-surface">
+                  {categoryName}
+                </div>
               </div>
               <div className="space-y-2">
                 <label className="text-xs font-semibold text-on-surface-variant">Price ($)</label>
@@ -257,16 +329,6 @@ export default function ItemEditPage() {
             </div>
           </section>
         </div>
-      </div>
-
-      <div className="mt-12 pt-8 border-t border-outline-variant/20 flex justify-center">
-        <button
-          type="button"
-          className="text-error font-medium flex items-center gap-2 hover:bg-error-container/20 px-4 py-2 rounded-xl"
-        >
-          <Trash2 className="w-5 h-5" />
-          Archive menu item
-        </button>
       </div>
     </div>
   );

@@ -52,7 +52,7 @@ Snapshot of work completed in `dimome3` (product planning + frontend client scaf
 
 | Route | Page |
 |-------|------|
-| `/` | Dashboard — menu cards, quick actions |
+| `/` | Dashboard — category cards, quick actions |
 | `/menus/:menuId` | Item browse table |
 | `/items/:itemId/edit` | Item editor (allergens, publishing toggles, SKU, photo — mock) |
 | `/import/csv` | CSV wizard step 1 |

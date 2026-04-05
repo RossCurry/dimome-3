@@ -13,7 +13,6 @@ import {
   FIXTURE_OWNER_DASHBOARD,
   FIXTURE_SCAN_DRAFT_ROWS,
   getFixtureItemEditor,
-  getFixtureItemsList,
   getPublicMenuForMenuId,
 } from "@/mocks/fixtures";
 
@@ -49,17 +48,34 @@ export const readOwnerDashboard = cachedPromise(async (): Promise<OwnerDashboard
   return structuredClone(FIXTURE_OWNER_DASHBOARD);
 });
 
-/** Menu browse (items table) — keyed by menu id for future; same data for mocks. */
-const menuBrowseCache = new Map<string, Promise<MenuItem[]>>();
+export type OwnerCategoryPageData = {
+  categoryName: string;
+  items: MenuItem[];
+};
 
-export function readMenuBrowse(menuId: string): Promise<MenuItem[]> {
-  let p = menuBrowseCache.get(menuId);
+const ownerCategoryPageCache = new Map<string, Promise<OwnerCategoryPageData | null>>();
+
+/**
+ * Owner category page: items in one category of a menu. Resolves `null` if unknown menu/category.
+ */
+export function readOwnerCategoryPage(
+  menuId: string,
+  categoryId: string,
+): Promise<OwnerCategoryPageData | null> {
+  const key = `${menuId}:${categoryId}`;
+  let p = ownerCategoryPageCache.get(key);
   if (!p) {
     p = (async () => {
       await delay(450);
-      return getFixtureItemsList();
+      const menu = getPublicMenuForMenuId(menuId);
+      const cat = menu.categories.find((c) => c.id === categoryId);
+      if (!cat || categoryId === "cat-0") return null;
+      const items = cat.itemIds
+        .map((id) => menu.itemsById[id])
+        .filter((row): row is MenuItem => row != null);
+      return { categoryName: cat.name, items };
     })();
-    menuBrowseCache.set(menuId, p);
+    ownerCategoryPageCache.set(key, p);
   }
   return p;
 }
