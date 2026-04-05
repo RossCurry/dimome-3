@@ -1,11 +1,12 @@
 import { use, useMemo, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import { Filter, QrCode, Search, ShoppingBag } from "lucide-react";
 import { readPublicMenu } from "@/mocks/mockApi";
 import { useGuestPreferences, itemPassesAllergenFilters } from "@/context/GuestPreferencesContext";
 
 export default function GuestMenuPage() {
-  const data = use(readPublicMenu());
+  const { menuId = "" } = useParams<{ menuId: string }>();
+  const data = use(readPublicMenu(menuId));
   const { excludedAllergens, addToCart, cartCount } = useGuestPreferences();
   const [search, setSearch] = useState("");
   const [activeCategoryId, setActiveCategoryId] = useState("cat-0");
@@ -47,7 +48,7 @@ export default function GuestMenuPage() {
                 {data.venueName}
               </h1>
               <p className="text-[10px] uppercase tracking-widest text-emerald-200/80">
-                Digital menu
+                Digital menu · {data.menuId}
               </p>
             </div>
             <div className="flex items-center gap-2">
@@ -59,7 +60,7 @@ export default function GuestMenuPage() {
                 <QrCode className="w-5 h-5" />
               </button>
               <Link
-                to="/order"
+                to="order"
                 className="p-2 rounded-lg bg-primary-container relative hover:opacity-90 transition-opacity"
                 aria-label="Your order"
               >
@@ -117,7 +118,7 @@ export default function GuestMenuPage() {
 
       <div className="px-6 py-3 max-w-lg mx-auto">
         <Link
-          to="/filters"
+          to="filters"
           className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-tertiary-fixed text-on-tertiary-fixed-variant text-sm font-medium"
         >
           <Filter className="w-4 h-4" />
@@ -176,19 +177,19 @@ export default function GuestMenuPage() {
       </div>
 
       <nav className="fixed bottom-0 inset-x-0 z-30 bg-surface-container-lowest/80 backdrop-blur-xl border-t border-outline-variant/20 px-6 py-3 flex justify-around max-w-lg mx-auto rounded-t-2xl">
-        <Link to="/" className="text-primary text-xs font-semibold">
+        <Link to="." className="text-primary text-xs font-semibold">
           Menu
         </Link>
-        <Link to="/filters" className="text-on-surface-variant text-xs font-medium">
+        <Link to="filters" className="text-on-surface-variant text-xs font-medium">
           Filters
         </Link>
-        <Link to="/order" className="text-on-surface-variant text-xs font-medium">
+        <Link to="order" className="text-on-surface-variant text-xs font-medium">
           Order
         </Link>
       </nav>
 
       <Link
-        to="/owner"
+        to="/"
         className="fixed bottom-24 right-4 z-40 text-[10px] uppercase tracking-wider text-on-surface-variant hover:text-primary bg-surface-container-lowest/90 px-2 py-1 rounded-lg shadow-sm"
       >
         Owner

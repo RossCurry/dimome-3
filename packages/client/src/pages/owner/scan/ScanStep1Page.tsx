@@ -9,7 +9,7 @@ export default function ScanStep1Page() {
   return (
     <div className="max-w-4xl mx-auto px-6 py-12">
       <Link
-        to="/owner"
+        to="/"
         className="inline-flex items-center gap-2 text-sm text-on-surface-variant hover:text-primary mb-8"
       >
         <ArrowLeft className="w-4 h-4" />
@@ -33,7 +33,7 @@ export default function ScanStep1Page() {
           type="file"
           accept="image/*"
           className="hidden"
-          onChange={() => navigate("/owner/import/scan/progress")}
+          onChange={() => navigate("/import/scan/progress")}
         />
         <button
           type="button"
@@ -48,7 +48,7 @@ export default function ScanStep1Page() {
         </button>
         <button
           type="button"
-          onClick={() => navigate("/owner/import/scan/progress")}
+          onClick={() => navigate("/import/scan/progress")}
           className="mt-6 w-full py-3 rounded-xl border border-primary/30 text-primary font-semibold"
         >
           Skip upload — mock scan

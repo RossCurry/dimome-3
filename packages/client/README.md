@@ -1,6 +1,6 @@
 # DiMoMe — `packages/client`
 
-Vite + React 19 + TypeScript + Tailwind v4 + React Router. Owner and guest flows use **in-memory mocks** (`src/mocks/`) with artificial delays; swap `mockApi.ts` for real `fetch` calls when the Express API exists.
+Vite + React 19 + TypeScript + Tailwind v4 + React Router 7 (`react-router-dom`). Owner and guest flows use **in-memory mocks** (`src/mocks/`) with artificial delays; swap `mockApi.ts` for real `fetch` calls when the Express API exists.
 
 ## Run
 
@@ -19,8 +19,10 @@ Or from this package:
 npm run dev
 ```
 
-- **Guest menu:** [http://localhost:5173/](http://localhost:5173/)
-- **Owner dashboard:** [http://localhost:5173/owner](http://localhost:5173/owner)
+- **Owner dashboard (MVP home):** [http://localhost:5173/](http://localhost:5173/)
+- **Guest menu (QR URL shape):** [http://localhost:5173/menu/menu-1](http://localhost:5173/menu/menu-1) — replace `menu-1` with the published menu id.
+
+Old `/owner/...` links redirect to the same path without `/owner`.
 
 ## Placeholder image
 
@@ -29,7 +31,7 @@ All mock dishes use `public/images/placeholder-dish.jpg` (see `src/mocks/constan
 ## Suspense
 
 - **Route-level:** lazy-loaded pages with skeleton fallbacks in `src/router.tsx`.
-- **Data-level:** `React.use()` + `Suspense` around `readPublicMenu()`, `readCsvPreview()`, `readScanDraft()`, etc., in page components.
+- **Data-level:** `React.use()` + `Suspense` around `readPublicMenu(menuId)`, `readCsvPreview()`, `readScanDraft()`, etc., in page components.
 
 ## Design tokens
 

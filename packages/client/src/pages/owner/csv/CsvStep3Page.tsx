@@ -44,7 +44,7 @@ export default function CsvStep3Page() {
   return (
     <div className="max-w-5xl mx-auto px-6 py-12">
       <Link
-        to="/owner/import/csv/map"
+        to="/import/csv/map"
         className="inline-flex items-center gap-2 text-sm text-primary font-medium mb-8"
       >
         <ArrowLeft className="w-4 h-4" />
@@ -70,13 +70,13 @@ export default function CsvStep3Page() {
       <div className="mt-10 flex gap-4">
         <button
           type="button"
-          onClick={() => navigate("/owner")}
+          onClick={() => navigate("/")}
           className="primary-gradient text-on-primary px-8 py-3 rounded-xl font-semibold"
         >
           Complete import
         </button>
         <Link
-          to="/owner"
+          to="/"
           className="px-8 py-3 rounded-xl border border-outline-variant/30 text-on-surface-variant font-medium"
         >
           Cancel

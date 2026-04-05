@@ -15,7 +15,8 @@ export default function GuestFiltersPage() {
     <div className="min-h-screen bg-surface pb-28">
       <header className="sticky top-0 z-20 bg-surface-container-lowest/90 backdrop-blur-xl px-6 py-4 flex items-center gap-4 border-b border-outline-variant/10">
         <Link
-          to="/"
+          to=".."
+          relative="path"
           className="p-2 rounded-lg hover:bg-surface-container-low -ml-2"
           aria-label="Back to menu"
         >
@@ -124,13 +125,13 @@ export default function GuestFiltersPage() {
       </div>
 
       <nav className="fixed bottom-0 inset-x-0 z-30 bg-surface-container-lowest/80 backdrop-blur-xl border-t border-outline-variant/20 px-6 py-3 flex justify-around max-w-lg mx-auto rounded-t-2xl">
-        <Link to="/" className="text-on-surface-variant text-xs font-medium">
+        <Link to=".." relative="path" className="text-on-surface-variant text-xs font-medium">
           Menu
         </Link>
-        <Link to="/filters" className="text-primary text-xs font-semibold">
+        <Link to="." className="text-primary text-xs font-semibold">
           Filters
         </Link>
-        <Link to="/order" className="text-on-surface-variant text-xs font-medium">
+        <Link to="../order" relative="path" className="text-on-surface-variant text-xs font-medium">
           Order
         </Link>
       </nav>

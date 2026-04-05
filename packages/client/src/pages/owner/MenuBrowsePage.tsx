@@ -11,7 +11,7 @@ export default function MenuBrowsePage() {
   return (
     <div className="max-w-5xl mx-auto px-6 py-10">
       <Link
-        to="/owner"
+        to="/"
         className="inline-flex items-center gap-2 text-sm text-primary font-medium mb-6"
       >
         <ArrowLeft className="w-4 h-4" />
@@ -59,7 +59,7 @@ export default function MenuBrowsePage() {
                   </td>
                   <td className="px-6 py-4 text-right">
                     <Link
-                      to={`/owner/items/${item.id}/edit`}
+                      to={`/items/${item.id}/edit`}
                       className="text-primary font-semibold text-sm"
                     >
                       Edit

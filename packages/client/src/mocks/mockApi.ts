@@ -11,10 +11,10 @@ import {
   FIXTURE_CSV_HEADERS,
   FIXTURE_CSV_PREVIEW_ROWS,
   FIXTURE_OWNER_DASHBOARD,
-  FIXTURE_PUBLIC_MENU,
   FIXTURE_SCAN_DRAFT_ROWS,
   getFixtureItemEditor,
   getFixtureItemsList,
+  getPublicMenuForMenuId,
 } from "@/mocks/fixtures";
 
 function cachedPromise<T>(factory: () => Promise<T>): () => Promise<T> {
@@ -25,11 +25,23 @@ function cachedPromise<T>(factory: () => Promise<T>): () => Promise<T> {
   };
 }
 
-/** Guest menu — use with React `use()` inside `<Suspense>`. */
-export const readPublicMenu = cachedPromise(async (): Promise<PublicMenuData> => {
-  await delay(600);
-  return structuredClone(FIXTURE_PUBLIC_MENU);
-});
+const publicMenuCache = new Map<string, Promise<PublicMenuData>>();
+
+/**
+ * Guest menu for `/menu/:menuId` — use with React `use()` inside `<Suspense>`.
+ * Cached per `menuId` (QR / deep link).
+ */
+export function readPublicMenu(menuId: string): Promise<PublicMenuData> {
+  let p = publicMenuCache.get(menuId);
+  if (!p) {
+    p = (async () => {
+      await delay(600);
+      return getPublicMenuForMenuId(menuId);
+    })();
+    publicMenuCache.set(menuId, p);
+  }
+  return p;
+}
 
 /** Owner dashboard summary. */
 export const readOwnerDashboard = cachedPromise(async (): Promise<OwnerDashboardData> => {

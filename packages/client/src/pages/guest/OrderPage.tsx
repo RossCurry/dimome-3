@@ -1,11 +1,11 @@
 import { Link } from "react-router-dom";
 import { ChevronLeft } from "lucide-react";
-import { FIXTURE_PUBLIC_MENU } from "@/mocks/fixtures";
+import { getPublicMenuForMenuId } from "@/mocks/fixtures";
 import { useGuestPreferences } from "@/context/GuestPreferencesContext";
 
 export default function OrderPage() {
-  const { cart, setQty } = useGuestPreferences();
-  const items = FIXTURE_PUBLIC_MENU.itemsById;
+  const { cart, setQty, menuId } = useGuestPreferences();
+  const items = getPublicMenuForMenuId(menuId).itemsById;
   const lines = Object.entries(cart).filter(([, q]) => q > 0);
 
   const total = lines.reduce((sum, [id, q]) => {
@@ -16,7 +16,7 @@ export default function OrderPage() {
   return (
     <div className="min-h-screen bg-surface pb-40">
       <header className="sticky top-0 z-20 bg-surface-container-lowest/85 backdrop-blur-xl px-6 py-4 flex items-center gap-4">
-        <Link to="/" className="p-2 -ml-2 rounded-lg hover:bg-surface-container-low">
+        <Link to=".." relative="path" className="p-2 -ml-2 rounded-lg hover:bg-surface-container-low">
           <ChevronLeft className="w-6 h-6 text-primary" />
         </Link>
         <div>
@@ -34,7 +34,7 @@ export default function OrderPage() {
         {lines.length === 0 && (
           <p className="text-on-surface-variant text-center py-12">
             Nothing here yet.{" "}
-            <Link to="/" className="text-primary font-medium underline">
+            <Link to=".." relative="path" className="text-primary font-medium underline">
               Browse menu
             </Link>
           </p>
@@ -99,13 +99,13 @@ export default function OrderPage() {
           </>
         )}
         <nav className="flex justify-around py-3 border-t border-outline-variant/10">
-          <Link to="/" className="text-on-surface-variant text-xs font-medium">
+          <Link to=".." relative="path" className="text-on-surface-variant text-xs font-medium">
             Menu
           </Link>
-          <Link to="/filters" className="text-on-surface-variant text-xs font-medium">
+          <Link to="../filters" relative="path" className="text-on-surface-variant text-xs font-medium">
             Filters
           </Link>
-          <Link to="/order" className="text-primary text-xs font-semibold">
+          <Link to="." className="text-primary text-xs font-semibold">
             Order
           </Link>
         </nav>

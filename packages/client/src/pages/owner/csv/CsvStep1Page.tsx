@@ -25,7 +25,7 @@ export default function CsvStep1Page() {
         headers: headers.length ? headers : ["Column A", "Column B"],
         rawSampleLines: lines,
       });
-      navigate("/owner/import/csv/map");
+      navigate("map");
     };
     reader.readAsText(file.slice(0, 64 * 1024));
   };
@@ -33,7 +33,7 @@ export default function CsvStep1Page() {
   return (
     <div className="max-w-4xl mx-auto px-6 py-12">
       <Link
-        to="/owner"
+        to="/"
         className="inline-flex items-center gap-2 text-sm text-primary font-medium mb-8"
       >
         <ArrowLeft className="w-4 h-4" />

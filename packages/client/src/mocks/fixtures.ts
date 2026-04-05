@@ -68,6 +68,7 @@ const items: Record<string, MenuItem> = {
 };
 
 export const FIXTURE_PUBLIC_MENU: PublicMenuData = {
+  menuId: "menu-1",
   venueName: "The Green Table",
   categories: [
     { id: "cat-0", name: "All", itemIds: Object.keys(items) },
@@ -78,6 +79,14 @@ export const FIXTURE_PUBLIC_MENU: PublicMenuData = {
   ],
   itemsById: items,
 };
+
+/** Guest-facing menu for a given menu id (mock: same catalog; real API will scope by id). */
+export function getPublicMenuForMenuId(menuId: string): PublicMenuData {
+  return {
+    ...structuredClone(FIXTURE_PUBLIC_MENU),
+    menuId,
+  };
+}
 
 export const FIXTURE_OWNER_DASHBOARD: OwnerDashboardData = {
   venueName: "Emerald Hearth",

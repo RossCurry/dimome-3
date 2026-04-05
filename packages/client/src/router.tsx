@@ -1,5 +1,10 @@
 import { lazy, Suspense } from "react";
-import { createBrowserRouter, Navigate, Outlet } from "react-router-dom";
+import {
+  createBrowserRouter,
+  Navigate,
+  Outlet,
+  useLocation,
+} from "react-router-dom";
 import { GuestLayout } from "@/layouts/GuestLayout";
 import { OwnerLayout } from "@/layouts/OwnerLayout";
 import { GuestMenuSkeleton } from "@/components/skeletons/GuestMenuSkeleton";
@@ -25,39 +30,16 @@ const ScanStep1Page = lazy(() => import("@/pages/owner/scan/ScanStep1Page"));
 const ScanStep2Page = lazy(() => import("@/pages/owner/scan/ScanStep2Page"));
 const ScanStep3Page = lazy(() => import("@/pages/owner/scan/ScanStep3Page"));
 
+/** Old `/owner/...` bookmarks → same path without `/owner` prefix. */
+function LegacyOwnerRedirect() {
+  const { pathname, search, hash } = useLocation();
+  const to = pathname.replace(/^\/owner(?=\/|$)/, "") || "/";
+  return <Navigate to={`${to}${search}${hash}`} replace />;
+}
+
 export const router = createBrowserRouter([
   {
     path: "/",
-    element: <GuestLayout />,
-    children: [
-      {
-        index: true,
-        element: (
-          <Suspense fallback={<GuestMenuSkeleton />}>
-            <GuestMenuPage />
-          </Suspense>
-        ),
-      },
-      {
-        path: "filters",
-        element: (
-          <Suspense fallback={<GuestRouteSkeleton />}>
-            <GuestFiltersPage />
-          </Suspense>
-        ),
-      },
-      {
-        path: "order",
-        element: (
-          <Suspense fallback={<GuestRouteSkeleton />}>
-            <OrderPage />
-          </Suspense>
-        ),
-      },
-    ],
-  },
-  {
-    path: "/owner",
     element: <OwnerLayout />,
     children: [
       {
@@ -146,5 +128,36 @@ export const router = createBrowserRouter([
       },
     ],
   },
+  {
+    path: "/menu/:menuId",
+    element: <GuestLayout />,
+    children: [
+      {
+        index: true,
+        element: (
+          <Suspense fallback={<GuestMenuSkeleton />}>
+            <GuestMenuPage />
+          </Suspense>
+        ),
+      },
+      {
+        path: "filters",
+        element: (
+          <Suspense fallback={<GuestRouteSkeleton />}>
+            <GuestFiltersPage />
+          </Suspense>
+        ),
+      },
+      {
+        path: "order",
+        element: (
+          <Suspense fallback={<GuestRouteSkeleton />}>
+            <OrderPage />
+          </Suspense>
+        ),
+      },
+    ],
+  },
+  { path: "/owner/*", element: <LegacyOwnerRedirect /> },
   { path: "*", element: <Navigate to="/" replace /> },
 ]);

@@ -72,13 +72,13 @@ function ScanReviewBody() {
       <div className="mt-8 flex gap-4">
         <button
           type="button"
-          onClick={() => navigate("/owner")}
+          onClick={() => navigate("/")}
           className="primary-gradient text-on-primary px-8 py-3 rounded-xl font-semibold"
         >
           Confirm import
         </button>
         <Link
-          to="/owner"
+          to="/"
           className="px-8 py-3 rounded-xl border border-outline-variant/30 text-on-surface-variant font-medium"
         >
           Cancel
@@ -92,7 +92,7 @@ export default function ScanStep3Page() {
   return (
     <div className="max-w-5xl mx-auto px-6 py-12">
       <Link
-        to="/owner/import/scan/progress"
+        to="/import/scan/progress"
         className="inline-flex items-center gap-2 text-sm text-on-surface-variant hover:text-primary mb-8"
       >
         <ArrowLeft className="w-4 h-4" />

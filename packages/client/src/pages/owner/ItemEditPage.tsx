@@ -10,7 +10,7 @@ export default function ItemEditPage() {
   const loaded = use(readItemEditor(id));
 
   if (!loaded) {
-    return <Navigate to="/owner" replace />;
+    return <Navigate to="/" replace />;
   }
 
   const [item, setItem] = useState(loaded);
@@ -41,7 +41,7 @@ export default function ItemEditPage() {
   return (
     <div className="max-w-6xl mx-auto px-6 py-10">
       <Link
-        to="/owner/menus/menu-1"
+        to="/menus/menu-1"
         className="inline-flex items-center gap-2 text-sm text-primary font-medium mb-6"
       >
         <ArrowLeft className="w-4 h-4" />

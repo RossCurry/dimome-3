@@ -17,6 +17,8 @@ const SHORTLIST_MAP: Record<string, string[]> = {
 type CartState = Record<string, number>;
 
 type GuestPreferencesContextValue = {
+  /** Active public menu id from `/menu/:menuId`. */
+  menuId: string;
   excludedAllergens: Set<string>;
   toggleEuAllergen: (label: string) => void;
   toggleShortlist: (id: string) => void;
@@ -31,7 +33,13 @@ const GuestPreferencesContext = createContext<GuestPreferencesContextValue | nul
   null,
 );
 
-export function GuestPreferencesProvider({ children }: { children: ReactNode }) {
+export function GuestPreferencesProvider({
+  children,
+  menuId,
+}: {
+  children: ReactNode;
+  menuId: string;
+}) {
   const [excludedAllergens, setExcludedAllergens] = useState<Set<string>>(
     () => new Set(),
   );
@@ -82,6 +90,7 @@ export function GuestPreferencesProvider({ children }: { children: ReactNode }) 
 
   const value = useMemo(
     () => ({
+      menuId,
       excludedAllergens,
       toggleEuAllergen,
       toggleShortlist,
@@ -92,6 +101,7 @@ export function GuestPreferencesProvider({ children }: { children: ReactNode }) 
       cartCount,
     }),
     [
+      menuId,
       excludedAllergens,
       toggleEuAllergen,
       toggleShortlist,

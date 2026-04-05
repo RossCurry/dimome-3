@@ -16,6 +16,8 @@ export interface MenuCategory {
 }
 
 export interface PublicMenuData {
+  /** Menu id from the URL (QR targets `/menu/:menuId`). */
+  menuId: string;
   venueName: string;
   categories: MenuCategory[];
   itemsById: Record<string, MenuItem>;

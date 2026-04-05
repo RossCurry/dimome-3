@@ -25,7 +25,7 @@ export default function OwnerDashboardPage() {
           </p>
         </div>
         <Link
-          to="/owner/import/csv"
+          to="/import/csv"
           className="primary-gradient text-on-primary px-5 py-2.5 rounded-xl text-sm font-semibold text-center"
         >
           Add Menu
@@ -55,14 +55,14 @@ export default function OwnerDashboardPage() {
               </div>
               <div className="flex items-center gap-2 shrink-0">
                 <Link
-                  to="/"
+                  to={`/menu/${menu.id}`}
                   className="p-2 rounded-lg text-secondary hover:bg-surface-container-low"
-                  title="Customer view"
+                  title="Guest menu (QR URL)"
                 >
                   <ExternalLink className="w-5 h-5" />
                 </Link>
                 <Link
-                  to={`/owner/menus/${menu.id}`}
+                  to={`/menus/${menu.id}`}
                   className="flex items-center gap-2 bg-primary-container text-on-primary px-4 py-2 rounded-xl text-sm font-medium"
                 >
                   <Edit className="w-4 h-4" />
@@ -89,7 +89,7 @@ export default function OwnerDashboardPage() {
               Create new menu
             </h3>
             <Link
-              to="/owner/menus/menu-1"
+              to="/menus/menu-1"
               className="flex items-center gap-4 p-4 rounded-xl hover:bg-primary/5 transition-colors w-full text-left"
             >
               <div className="bg-primary/10 text-primary p-2 rounded-lg">
@@ -101,7 +101,7 @@ export default function OwnerDashboardPage() {
               </div>
             </Link>
             <Link
-              to="/owner/import/csv"
+              to="/import/csv"
               className="flex items-center gap-4 p-4 rounded-xl hover:bg-primary/5 transition-colors w-full text-left"
             >
               <div className="bg-primary/10 text-primary p-2 rounded-lg">
@@ -113,7 +113,7 @@ export default function OwnerDashboardPage() {
               </div>
             </Link>
             <Link
-              to="/owner/import/scan"
+              to="/import/scan"
               className="flex items-center gap-4 p-4 rounded-xl hover:bg-primary/5 transition-colors w-full text-left"
             >
               <div className="bg-primary/10 text-primary p-2 rounded-lg">

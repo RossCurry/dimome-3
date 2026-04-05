@@ -32,7 +32,7 @@ export default function CsvStep2Page() {
     return (
       <div className="max-w-4xl mx-auto px-6 py-12">
         <p className="text-on-surface-variant">No file selected.</p>
-        <Link to="/owner/import/csv" className="text-primary font-medium mt-4 inline-block">
+        <Link to="/import/csv" className="text-primary font-medium mt-4 inline-block">
           Go to step 1
         </Link>
       </div>
@@ -42,7 +42,7 @@ export default function CsvStep2Page() {
   return (
     <div className="max-w-6xl mx-auto px-6 py-12">
       <Link
-        to="/owner/import/csv"
+        to="/import/csv"
         className="inline-flex items-center gap-2 text-sm text-primary font-medium mb-8"
       >
         <ArrowLeft className="w-4 h-4" />
@@ -118,7 +118,7 @@ export default function CsvStep2Page() {
           <button
             type="button"
             disabled={!canContinue}
-            onClick={() => navigate("/owner/import/csv/review")}
+            onClick={() => navigate("/import/csv/review")}
             className="mt-8 w-full primary-gradient text-on-primary py-3 rounded-xl font-semibold disabled:opacity-40"
           >
             Complete mapping

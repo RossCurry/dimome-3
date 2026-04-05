@@ -1,6 +1,9 @@
 import { Link, Outlet } from "react-router-dom";
 import { Bell, HelpCircle, User } from "lucide-react";
 
+/** Demo guest URL for a published menu (QR would encode the same path with a real host). */
+const DEMO_GUEST_MENU = "/menu/menu-1";
+
 export function OwnerLayout() {
   return (
     <div className="min-h-screen bg-surface text-on-surface">
@@ -8,14 +11,14 @@ export function OwnerLayout() {
         <div className="max-w-6xl mx-auto px-6 py-3 flex items-center justify-between gap-4">
           <div className="flex items-center gap-8">
             <Link
-              to="/owner"
+              to="/"
               className="text-xl font-bold italic font-headline tracking-tight text-emerald-50"
             >
               DiMoMe
             </Link>
             <nav className="hidden md:flex items-center gap-6 text-sm font-headline">
               <Link
-                to="/owner"
+                to="/"
                 className="text-white border-b-2 border-emerald-400 pb-0.5"
               >
                 Dashboard
@@ -26,7 +29,7 @@ export function OwnerLayout() {
           </div>
           <div className="flex items-center gap-2">
             <Link
-              to="/owner/import/csv"
+              to="/import/csv"
               className="primary-gradient text-on-primary px-4 py-2 rounded-xl text-sm font-semibold hidden sm:inline"
             >
               Add Menu
@@ -58,8 +61,8 @@ export function OwnerLayout() {
         <Outlet />
       </main>
       <p className="text-center text-xs text-on-surface-variant py-4">
-        <Link to="/" className="underline hover:text-primary">
-          View guest menu
+        <Link to={DEMO_GUEST_MENU} className="underline hover:text-primary">
+          Open demo guest menu (QR → /menu/menu-1)
         </Link>
       </p>
     </div>

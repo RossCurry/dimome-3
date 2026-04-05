@@ -17,7 +17,7 @@ export default function ScanStep2Page() {
     const t0 = window.setInterval(() => {
       setPct((p) => Math.min(100, p + 3));
     }, 120);
-    const t1 = window.setTimeout(() => navigate("/owner/import/scan/review"), 2800);
+    const t1 = window.setTimeout(() => navigate("/import/scan/review"), 2800);
     return () => {
       window.clearInterval(t0);
       window.clearTimeout(t1);
@@ -32,7 +32,7 @@ export default function ScanStep2Page() {
   return (
     <div className="max-w-5xl mx-auto px-6 py-12">
       <Link
-        to="/owner/import/scan"
+        to="/import/scan"
         className="inline-flex items-center gap-2 text-sm text-on-surface-variant hover:text-primary mb-8"
       >
         <ArrowLeft className="w-4 h-4" />
