@@ -2,7 +2,7 @@ import { Navigate, Outlet, useParams } from "react-router-dom";
 import { GuestPreferencesProvider } from "@/context/GuestPreferencesContext";
 
 /**
- * Guest experience is always scoped to `/menu/:menuId` (e.g. QR code URL).
+ * Guest (mobile) experience under `/menu/:menuId` or QR path `/qr/:menuId`.
  * Cart + allergen filters reset when `menuId` changes (`key` on provider).
  */
 export function GuestLayout() {

@@ -17,7 +17,7 @@ const SHORTLIST_MAP: Record<string, string[]> = {
 type CartState = Record<string, number>;
 
 type GuestPreferencesContextValue = {
-  /** Active public menu id from `/menu/:menuId`. */
+  /** Active public menu id from guest routes `/qr/:menuId` or `/menu/:menuId`. */
   menuId: string;
   excludedAllergens: Set<string>;
   toggleEuAllergen: (label: string) => void;

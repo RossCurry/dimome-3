@@ -4,6 +4,10 @@ import { OwnerMenuCardsSection } from "@/components/owner/OwnerMenuCardsSection"
 
 export default function MenusListPage() {
   const menus = use(readOwnerMenus());
+  const orderedMenus = [...menus].sort((a, b) => {
+    if (a.isActive === b.isActive) return 0;
+    return a.isActive ? -1 : 1;
+  });
 
   return (
     <div className="mx-auto max-w-5xl px-6 py-10">
@@ -19,7 +23,7 @@ export default function MenusListPage() {
       <OwnerMenuCardsSection
         title="Your menus"
         subtitle="Open a menu to browse categories and items, or use guest view to preview the QR experience."
-        menus={menus}
+        menus={orderedMenus}
         showStatus
       />
     </div>

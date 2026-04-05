@@ -7,6 +7,7 @@ import { OwnerMenuCardsSection } from "@/components/owner/OwnerMenuCardsSection"
 export default function OwnerOverviewPage() {
   const menus = use(readOwnerMenus());
   const activeMenus = menus.filter((m) => m.isActive);
+  const archivedMenus = menus.filter((m) => !m.isActive);
 
   return (
     <div className="mx-auto max-w-5xl px-6 py-10">
@@ -24,6 +25,17 @@ export default function OwnerOverviewPage() {
         subtitle="Different menus can represent another location, service period, or published version."
         menus={activeMenus}
       />
+
+      {archivedMenus.length > 0 ? (
+        <div className="mt-10">
+          <OwnerMenuCardsSection
+            title="Archived menus"
+            subtitle="Inactive versions still appear here and on Menus — open to review or copy items."
+            menus={archivedMenus}
+            showStatus
+          />
+        </div>
+      ) : null}
 
       <section className="mt-12">
         <h2 className="mb-6 font-headline text-xl text-primary">Quick actions</h2>

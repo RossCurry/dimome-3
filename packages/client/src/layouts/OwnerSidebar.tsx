@@ -1,4 +1,4 @@
-import { Link, useLocation, useNavigate } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import {
   BarChart3,
   Droplet,
@@ -7,7 +7,6 @@ import {
   LayoutGrid,
   Layers,
   LogOut,
-  Plus,
 } from "lucide-react";
 import { FIXTURE_OWNER_CATEGORIES } from "@/mocks/fixtures";
 
@@ -24,25 +23,12 @@ const navActiveClass =
   "bg-primary-fixed-dim/35 text-on-primary-fixed-variant ring-1 ring-primary/10";
 
 export function OwnerSidebar() {
-  const navigate = useNavigate();
   const { pathname } = useLocation();
   const venueName = FIXTURE_OWNER_CATEGORIES.venueName;
 
   const overviewActive = pathname === "/";
   const menusActive = pathname === "/menus" || pathname.startsWith("/menus/");
   const categoriesActive = pathname === "/categories";
-
-  const firstCategory = FIXTURE_OWNER_CATEGORIES.categories[0]!;
-
-  const goNewItem = () => {
-    navigate("/items/new", {
-      state: {
-        menuId: firstCategory.menuId,
-        categoryId: firstCategory.categoryId,
-        categoryName: firstCategory.name,
-      },
-    });
-  };
 
   return (
     <aside className="hidden w-64 shrink-0 flex-col border-r border-outline-variant/15 bg-surface-container-low md:flex md:w-72">
@@ -100,17 +86,6 @@ export function OwnerSidebar() {
           Performance
         </span>
       </nav>
-
-      <div className="border-t border-outline-variant/10 p-3">
-        <button
-          type="button"
-          onClick={goNewItem}
-          className="primary-gradient flex w-full items-center justify-center gap-2 rounded-xl py-3 text-sm font-semibold text-on-primary"
-        >
-          <Plus className="h-4 w-4" aria-hidden />
-          New item
-        </button>
-      </div>
 
       <div className="mt-auto space-y-1 border-t border-outline-variant/10 p-3">
         <button

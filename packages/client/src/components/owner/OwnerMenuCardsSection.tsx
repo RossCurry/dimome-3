@@ -57,7 +57,7 @@ export function OwnerMenuCardsSection({
                 </div>
                 <div className="flex shrink-0 flex-wrap items-center gap-2 sm:flex-col sm:items-stretch md:flex-row">
                   <Link
-                    to={`/menu/${m.id}`}
+                    to={`/qr/${m.id}`}
                     className="inline-flex items-center justify-center gap-1 rounded-xl border border-outline-variant/20 px-4 py-2 text-sm font-medium text-secondary hover:bg-surface-container-low"
                   >
                     <ExternalLink className="h-4 w-4" aria-hidden />

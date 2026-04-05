@@ -49,7 +49,7 @@ export function OwnerCategoryRowList({
           </div>
           <div className="flex shrink-0 flex-wrap items-center gap-2">
             <Link
-              to={`/menu/${category.menuId}`}
+              to={`/qr/${category.menuId}`}
               className="rounded-lg p-2 text-secondary hover:bg-surface-container-low"
               title="Guest menu (QR URL)"
             >

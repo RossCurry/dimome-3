@@ -46,7 +46,7 @@ Snapshot of work completed in `dimome3` (product planning + frontend client scaf
 
 ### Routing (`createBrowserRouter`)
 
-**MVP default:** `/` is the **owner** app (dashboard). **Guest** routes live under **`/menu/:menuId`** (intended QR target: `https://<host>/menu/<menuId>`).
+**MVP default:** `/` is the **owner** app (dashboard). **Guest** routes use **`/qr/:menuId`** for QR (`https://<host>/qr/<menuId>`) and **`/menu/:menuId`** as a readable alias.
 
 **Owner** (`OwnerLayout` at `/`):
 
@@ -62,13 +62,13 @@ Snapshot of work completed in `dimome3` (product planning + frontend client scaf
 | `/import/scan/progress` | Step 2 — fake progress → auto navigate |
 | `/import/scan/review` | Step 3 — editable table from `readScanDraft()` |
 
-**Guest** (`GuestLayout` at `/menu/:menuId` — `GuestPreferencesProvider` keyed by `menuId` for cart + allergen filters):
+**Guest** (`GuestLayout` at **`/qr/:menuId`** or **`/menu/:menuId`** — same subtree; `GuestPreferencesProvider` keyed by `menuId`):
 
 | Route | Page |
 |-------|------|
-| `/menu/:menuId` | Menu — search, categories, filters, add to order |
-| `/menu/:menuId/filters` | Allergen filters |
-| `/menu/:menuId/order` | My order stub |
+| `/qr/:menuId`, `/menu/:menuId` | Menu — search, categories, filters, add to order |
+| `…/filters` | Allergen filters |
+| `…/order` | My order stub |
 
 **Legacy:** `/owner/*` redirects to the same path **without** the `/owner` prefix (e.g. `/owner/menus/x` → `/menus/x`).
 

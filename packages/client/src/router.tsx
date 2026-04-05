@@ -34,6 +34,36 @@ const ScanStep1Page = lazy(() => import("@/pages/owner/scan/ScanStep1Page"));
 const ScanStep2Page = lazy(() => import("@/pages/owner/scan/ScanStep2Page"));
 const ScanStep3Page = lazy(() => import("@/pages/owner/scan/ScanStep3Page"));
 
+/**
+ * Guest (mobile / QR) menu — shared by `/menu/:menuId` (readable) and `/qr/:menuId` (QR-obvious short path).
+ */
+const guestMenuChildRoutes = [
+  {
+    index: true,
+    element: (
+      <Suspense fallback={<GuestMenuSkeleton />}>
+        <GuestMenuPage />
+      </Suspense>
+    ),
+  },
+  {
+    path: "filters",
+    element: (
+      <Suspense fallback={<GuestRouteSkeleton />}>
+        <GuestFiltersPage />
+      </Suspense>
+    ),
+  },
+  {
+    path: "order",
+    element: (
+      <Suspense fallback={<GuestRouteSkeleton />}>
+        <OrderPage />
+      </Suspense>
+    ),
+  },
+];
+
 /** Old `/owner/...` bookmarks → same path without `/owner` prefix. */
 function LegacyOwnerRedirect() {
   const { pathname, search, hash } = useLocation();
@@ -167,32 +197,12 @@ export const router = createBrowserRouter([
   {
     path: "/menu/:menuId",
     element: <GuestLayout />,
-    children: [
-      {
-        index: true,
-        element: (
-          <Suspense fallback={<GuestMenuSkeleton />}>
-            <GuestMenuPage />
-          </Suspense>
-        ),
-      },
-      {
-        path: "filters",
-        element: (
-          <Suspense fallback={<GuestRouteSkeleton />}>
-            <GuestFiltersPage />
-          </Suspense>
-        ),
-      },
-      {
-        path: "order",
-        element: (
-          <Suspense fallback={<GuestRouteSkeleton />}>
-            <OrderPage />
-          </Suspense>
-        ),
-      },
-    ],
+    children: guestMenuChildRoutes,
+  },
+  {
+    path: "/qr/:menuId",
+    element: <GuestLayout />,
+    children: guestMenuChildRoutes,
   },
   { path: "/owner/*", element: <LegacyOwnerRedirect /> },
   { path: "*", element: <Navigate to="/" replace /> },

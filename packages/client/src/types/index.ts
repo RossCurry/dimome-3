@@ -16,7 +16,7 @@ export interface MenuCategory {
 }
 
 export interface PublicMenuData {
-  /** Menu id from the URL (QR targets `/menu/:menuId`). */
+  /** Menu id from the guest URL (QR uses `/qr/:menuId`; `/menu/:menuId` is a readable alias). */
   menuId: string;
   venueName: string;
   categories: MenuCategory[];
@@ -28,7 +28,7 @@ export interface PublicMenuData {
  * URLs: `/menus/:menuId/category/:categoryId`
  */
 export interface CategorySummary {
-  /** Published menu id (guest URL `/menu/:menuId`). */
+  /** Published menu id (guest URLs `/qr/:menuId` or `/menu/:menuId`). */
   menuId: string;
   /** Category id within that menu (`MenuCategory.id`, e.g. cat-1). */
   categoryId: string;
