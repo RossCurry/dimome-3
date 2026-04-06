@@ -1,6 +1,6 @@
 # DiMoMe — `packages/client`
 
-Vite + React 19 + TypeScript + Tailwind v4 + React Router 7 (`react-router-dom`). Owner and guest flows use **in-memory mocks** (`src/mocks/`) with artificial delays; swap `mockApi.ts` for real `fetch` calls when the Express API exists.
+Vite + React 19 + TypeScript + Tailwind v4 + React Router 7 (`react-router-dom`). Owner and guest flows still use **in-memory mocks** (`src/mocks/`) with artificial delays. An Express API now lives in **`packages/server`** — see [`../server/README.md`](../server/README.md). Wiring `fetch` + proxy / `VITE_API_URL` is the next step.
 
 ## Run
 

@@ -7,7 +7,11 @@
   "workspaces": ["packages/*"],
   "scripts": {
     "dev": "npm run dev -w client",
-    "build": "npm run build -w client",
-    "lint": "npm run lint -w client"
+    "dev:server": "npm run dev -w server",
+    "build": "npm run build -w client && npm run build -w server",
+    "build:server": "npm run build -w server",
+    "lint": "npm run lint -w client && npm run lint -w server",
+    "lint:server": "npm run lint -w server",
+    "db:seed": "npm run db:seed -w server"
   }
 }

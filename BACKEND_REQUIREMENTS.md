@@ -134,7 +134,7 @@ Concrete routes, request/response JSON schemas, and error envelope should be def
 
 Mirror [REQUIREMENTS.md §8](./REQUIREMENTS.md):
 
-- **Likely first backend slice:** Auth (minimal), venue/menu/category/item persistence, **public read** menu endpoint, health check, Mongo connection + one Mongo adapter behind ports.
+- **First backend slice (shipped in repo):** [packages/server](./packages/server/) — Docker **Mongo** for local dev, Express **`/api/v1/`**, Mongo **ports + adapters**, **`GET /health`**, **`GET /public/menus/:menuId`**, **`POST /auth/login`**, JWT + **owner** routes for menus / categories / items (CRUD subset), **`db:seed`**. The **Vite client** still uses mocks until pointed at this API ([STATUS.md](./STATUS.md)).
 - **Then:** R2 presign flow, CSV and AI job endpoints per product steps; **job state in Mongo** + **client polling** for status (§7.2).
 - **Defer:** Full ordering/POS, analytics, multi-location sync, unless product scope changes.
 
@@ -163,4 +163,4 @@ Carry over from product where relevant ([REQUIREMENTS.md §9](./REQUIREMENTS.md)
 
 ---
 
-*Last updated: **§3** Docker Compose for **Mongo** (and later Redis/RabbitMQ via profiles); **API on host**; **§7** async jobs — Mongo job store, **polling** first, then **SSE + Redis**, optional **RabbitMQ**.*
+*Last updated: **§9** — initial **`packages/server`** slice implemented (health, public menu, JWT auth, owner CRUD, seed). Still **§3** Compose + API on host; **§7** jobs/SSE/Redis/RabbitMQ not built yet.*

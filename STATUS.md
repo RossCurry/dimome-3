@@ -1,6 +1,6 @@
 # DiMoMe v3 — what has been done
 
-Snapshot of work completed in `dimome3` (product planning + frontend client scaffold). For full requirements and future scope, see [REQUIREMENTS.md](./REQUIREMENTS.md) and [OUTLINE.md](./OUTLINE.md).
+Snapshot of work completed in `dimome3` (product planning + **client + initial API**). For full requirements and future scope, see [REQUIREMENTS.md](./REQUIREMENTS.md) and [OUTLINE.md](./OUTLINE.md).
 
 ---
 
@@ -8,9 +8,12 @@ Snapshot of work completed in `dimome3` (product planning + frontend client scaf
 
 | Path | Purpose |
 |------|--------|
-| [`package.json`](./package.json) | npm **workspaces** (`packages/*`), scripts: `dev`, `build`, `lint` (all target the client) |
+| [`package.json`](./package.json) | npm **workspaces** (`packages/*`): `dev` / `build` / `lint` run **client + server**; also `dev:server`, `db:seed`, etc. |
+| [`docker-compose.yml`](./docker-compose.yml) | **MongoDB 7** for local dev (port 27017, named volume, healthcheck) |
+| [`.env.example`](./.env.example) | Template for `dimome3/.env` (`MONGODB_URI`, `JWT_SECRET`, `PORT`, …) |
 | [`.nvmrc`](./.nvmrc) / [`.node-version`](./.node-version) | **Node.js 24** (major pin) |
-| [`packages/client/`](./packages/client/) | Canonical **Vite + React** app |
+| [`packages/client/`](./packages/client/) | Canonical **Vite + React** app (still backed by **mocks**; API not wired in UI yet) |
+| [`packages/server/`](./packages/server/) | **Express** API — see [packages/server/README.md](./packages/server/README.md) |
 | [`prototype/`](./prototype/) | Earlier experiment; **unchanged** — not the active client |
 | [`design/`](./design/) | HTML references + [`design/emerald_hearth/DESIGN.md`](./design/emerald_hearth/DESIGN.md) (design system spec) |
 
@@ -100,24 +103,41 @@ Small **Owner** link on the guest menu points to `/` (dashboard).
 
 ---
 
+## `packages/server` — implemented (initial slice)
+
+- **Stack:** Express, TypeScript (ESM), **native `mongodb`**, `dotenv`, `cors`, `bcryptjs`, `jsonwebtoken`.
+- **Layout:** `ports/`, `adapters/persistence/mongo/`, `routes/v1/`, `domain/`, `http/errors`, `middleware/requireAuth`, `services/authService`.
+- **Endpoints:** `GET /api/v1/health` (incl. DB ping); **`GET /api/v1/public/menus/:menuId`** (published menus only, `PublicMenuData`-shaped JSON); **`POST /api/v1/auth/login`**; **`/api/v1/owner/*`** (JWT): menus list/create/patch, categories list/create/patch, items get/create/patch.
+- **Tooling:** `npm run db:seed` — resets collections and loads data aligned with client fixtures (`menu-1`, demo user **`dev@dimome.local` / `password`**).
+- **Docs:** [packages/server/README.md](./packages/server/README.md).
+
+**Still mocked in the SPA:** owner/guest pages continue to use `src/mocks/mockApi.ts` until the client is pointed at the API (proxy / `VITE_API_URL`).
+
+---
+
 ## Build & run
 
 From `dimome3` (with Node 24 active):
 
 ```bash
+docker compose up -d    # Mongo (first time / when DB needed)
+cp .env.example .env     # set MONGODB_URI + JWT_SECRET
 npm install
-npm run dev        # client dev server
-npm run build      # client production build
+npm run db:seed          # optional: demo data
+npm run dev              # Vite client
+npm run dev:server       # API (default :3000) — separate terminal
+npm run build            # client + server
 ```
 
 ---
 
 ## Not done yet (by design / later)
 
-- **`packages/server`** (Express, MongoDB, JWT, REST, R2 presigns, real CSV/AI pipelines).
-- **`docker-compose.yml`** at `dimome3/` (planned): **MongoDB** for local dev; optional **profiles** for **Redis** / **RabbitMQ** when those phases land — see [BACKEND_REQUIREMENTS.md §3](./BACKEND_REQUIREMENTS.md). API runs **on the host** initially.
-- **Shared `packages/types`** package (optional).
-- **Production deploy**, auth against a backend, persistence of edits/imports.
+- **Client → API:** replace mocks with `fetch`, CORS/proxy, Bearer token for owner routes.
+- **R2** presigned uploads, **CSV / AI** job documents + worker + **polling** ([BACKEND_REQUIREMENTS.md §7](./BACKEND_REQUIREMENTS.md)).
+- **SSE + Redis**, optional **RabbitMQ**; JWT **refresh** / revocation hardening.
+- **Shared `packages/types`** (optional).
+- **Production deploy** (managed Mongo, etc.).
 - **Removing or merging** `prototype/` — left as reference only.
 
 ---
@@ -131,7 +151,8 @@ npm run build      # client production build
 | **Owner — responsive** | `OwnerSidebar` is **`mobileOpen` / `onMobileOpenChange`** from `OwnerLayout`; mobile overlay **`z-[80]`** above the sticky header. |
 | **Git (repo root)** | Root **`.gitignore`**: `node_modules/`, `dimome1/`, `Dimome2/`. Removed from the index (not from disk): nested **gitlinks** under `dimome1/` + `Dimome2`, and hoisted **`dimome3/node_modules`** (~6k files) so they are no longer pushed to GitHub. |
 | **Backend / infra (docs)** | [BACKEND_REQUIREMENTS.md](./BACKEND_REQUIREMENTS.md) **§3**: **Docker Compose** under `dimome3/` for **Mongo** (and later Redis/RabbitMQ via **profiles**); **Express on host** for local dev. [REQUIREMENTS.md](./REQUIREMENTS.md) **§5** cross-reference. |
+| **Backend — first code slice** | [packages/server](./packages/server/): **docker-compose.yml** + **.env.example**, Express **`/api/v1/`**, Mongo **ports/adapters**, **JWT** login, **public menu** + **owner CRUD** routes, **`db:seed`**. [BE_PLAN.md](./BE_PLAN.md) Phases **A–F** checked off for shipped work; **R2 / jobs / SSE** remain future. |
 
 ---
 
-*Last updated: 2026-04-06 — guest filter/menu empty states + header actions; owner mobile drawer; root gitignore / untrack `node_modules` + legacy dirs; **Docker Compose + API-on-host** documented for backend deps.*
+*Last updated: 2026-04-07 — **`packages/server`** initial API (health, public menu, auth, owner menus/categories/items), **Compose + seed**; client still on mocks until wired to backend.*

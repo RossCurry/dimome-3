@@ -15,9 +15,9 @@ Incremental plan; extend this once product designs are ready.
 
 ## Technical direction (attempt 3)
 
-- **Repo shape** — **monorepo**, **two packages** (not a single Next-style runtime monolith).
+- **Repo shape** — **monorepo**, **two packages** under `dimome3/packages/` — **`client`** (Vite) and **`server`** (Express) (see [packages/server/README.md](./packages/server/README.md)).
 - **Client** — **Vite**, **React (current)**, **TypeScript**, **Tailwind**.
-- **Server** — **Express**, **MongoDB** with the **native driver** (see [BACKEND_REQUIREMENTS.md](./BACKEND_REQUIREMENTS.md)).
+- **Server** — **Express**, **MongoDB** with the **native driver** ([BACKEND_REQUIREMENTS.md](./BACKEND_REQUIREMENTS.md)); local **Mongo** via [docker-compose.yml](./docker-compose.yml).
 - **API** — **REST**, versioned prefix (e.g. `/api/v1/...`), consistent JSON errors (decide shape later).
 - **Auth** — **JWT** (access + refresh strategy TBD); suited for web + future non-web clients; decide storage/transport for web (e.g. Bearer vs cookies) when implementing.
 

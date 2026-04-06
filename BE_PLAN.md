@@ -4,19 +4,19 @@ Actionable build order for **`packages/server`**, aligned with [BACKEND_REQUIREM
 
 ## Checklist
 
-- [ ] **A — Compose & env:** `docker-compose.yml` (Mongo, volume, healthcheck), `.env.example`, root `package.json` scripts for `-w server`
-- [ ] **B — Server skeleton:** Express, TS, MongoClient, `GET /api/v1/health`, CORS, graceful shutdown
-- [ ] **C — Layout:** `ports/`, `adapters/persistence/mongo/`, routes, JSON error envelope
-- [ ] **D — Public menu:** `PublicMenuReadPort`, `GET /api/v1/public/menus/:menuId` → `PublicMenuData` shape, `db:seed` (incl. `menu-1`)
-- [ ] **E — Auth + owner reads:** `POST /api/v1/auth/login`, JWT middleware, `GET /api/v1/owner/menus` (etc.)
-- [ ] **F — Owner CRUD:** menus / categories / items behind ports; document in `packages/server/README.md`
+- [x] **A — Compose & env:** `docker-compose.yml` (Mongo, volume, healthcheck), `.env.example`, root `package.json` scripts for `-w server`
+- [x] **B — Server skeleton:** Express, TS, MongoClient, `GET /api/v1/health`, CORS, graceful shutdown
+- [x] **C — Layout:** `ports/`, `adapters/persistence/mongo/`, routes, JSON error envelope
+- [x] **D — Public menu:** `PublicMenuReadPort`, `GET /api/v1/public/menus/:menuId` → `PublicMenuData` shape, `db:seed` (incl. `menu-1`)
+- [x] **E — Auth + owner reads:** `POST /api/v1/auth/login`, JWT middleware, `GET /api/v1/owner/menus` (etc.)
+- [x] **F — Owner CRUD:** menus / categories / items behind ports; document in `packages/server/README.md`
 - [ ] **Later:** R2, CSV/AI jobs + polling, optional `packages/types`, SSE/Redis, RabbitMQ ([BACKEND_REQUIREMENTS.md §7](./BACKEND_REQUIREMENTS.md))
 
 ---
 
 ## Context
 
-- Workspace today: [package.json](./package.json) only runs **client**; no `packages/server` yet.
+- **`packages/server` exists** — first vertical slice shipped (2026-04-07); see [packages/server/README.md](./packages/server/README.md). **Client** still uses mocks until wired to the API.
 - Stack: [BACKEND_REQUIREMENTS.md](./BACKEND_REQUIREMENTS.md) — Express, **`/api/v1/`**, native **`mongodb`**, ports/adapters, **Docker Compose for Mongo**, **API on host**.
 - First vertical slice ([BACKEND_REQUIREMENTS.md §9](./BACKEND_REQUIREMENTS.md)): health, Mongo, minimal auth, persistence, **public read menu** — replaces client [`readPublicMenu`](./packages/client/src/mocks/mockApi.ts) when wired; payload shape [`PublicMenuData`](./packages/client/src/types/index.ts).
 
@@ -94,8 +94,8 @@ Then **CRUD** for menus / categories / items per [REQUIREMENTS.md](./REQUIREMENT
 
 ## Docs after implementation
 
-- [packages/server/README.md](./packages/server/README.md) — run, Compose, seed, env.
-- [STATUS.md](./STATUS.md) — mark server + Compose done when shipped.
+- [x] [packages/server/README.md](./packages/server/README.md) — run, Compose, seed, env, route table.
+- [x] [STATUS.md](./STATUS.md) — server + Compose + changelog updated.
 
 ---
 
@@ -105,4 +105,4 @@ Replace mock `readPublicMenu` with **`fetch`** to the public menu API: Vite prox
 
 ---
 
-*See [BACKEND_REQUIREMENTS.md](./BACKEND_REQUIREMENTS.md) for stack decisions and async-job phases.*
+*Checklist updated 2026-04-07. See [BACKEND_REQUIREMENTS.md](./BACKEND_REQUIREMENTS.md) for stack decisions and async-job phases.*
