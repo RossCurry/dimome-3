@@ -110,10 +110,11 @@ Entities implied by mocks (names may differ in implementation):
 
 - **REST**, versioned prefix (e.g. `/api/v1/`), consistent JSON error shape (define at implementation).
 - **JWT** access token; **refresh** and revocation strategy TBD (`OUTLINE.md`).
-- **MongoDB** with Express; ODM vs native driver TBD.
+- **MongoDB** with Express; **native driver** for v1 (see [BACKEND_REQUIREMENTS.md](./BACKEND_REQUIREMENTS.md)).
 - **R2**: Prefer **presigned uploads** for item and scan images; server validates type/size; public vs signed read policy TBD.
 - **AI menu parser**: Runs **only on server**; returns **draft** structured data; persisted only after **review** step.
 - **CSV**: Parse upload; return headers + sample rows for mapping; apply mapping; validate; commit or return issues per row.
+- **Local development (infra):** **Docker** and **Docker Compose** at **`dimome3/`** run **backing services** (**MongoDB** first; **Redis** / **RabbitMQ** later behind optional profiles). The **Express API** runs **on the host** for v1 (not containerised with Compose). Production may use **managed** databases/queues with the same env-style connection settings — see [BACKEND_REQUIREMENTS.md §3](./BACKEND_REQUIREMENTS.md).
 
 ---
 
@@ -155,6 +156,7 @@ Entities implied by mocks (names may differ in implementation):
 
 ## See also
 
+- [`BACKEND_REQUIREMENTS.md`](./BACKEND_REQUIREMENTS.md) — server stack, native Mongo driver, persistence ports/adapters, async jobs, **Docker Compose** for local deps (**§3**).
 - [`OUTLINE.md`](./OUTLINE.md) — monorepo layout, stack, env per package.
 - [`design/emerald_hearth/DESIGN.md`](./design/emerald_hearth/DESIGN.md) — UI specification.
 - `design/*/code.html` — screen-level reference implementations.

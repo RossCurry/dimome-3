@@ -20,6 +20,8 @@ Snapshot of work completed in `dimome3` (product planning + frontend client scaf
 
 - **[OUTLINE.md](./OUTLINE.md)** — Monorepo direction, stack choices (Express + Mongo later, R2, JWT, REST, AI menu parse, etc.).
 - **[REQUIREMENTS.md](./REQUIREMENTS.md)** — Product requirements derived from outline + design mocks (guest vs owner, CSV/AI flows, allergens, MVP hints).
+- **[BACKEND_REQUIREMENTS.md](./BACKEND_REQUIREMENTS.md)** — Server stack (Express, **native Mongo driver**, no Mongoose v1), REST `/api/v1/`, ports/adapters, async jobs (polling → SSE/Redis → optional RabbitMQ), **Docker Compose** for **Mongo** (and later Redis/RabbitMQ) with **API on host** for local dev.
+- **[BE_PLAN.md](./BE_PLAN.md)** — Step-by-step backend build checklist (Phases A–F) before/during implementation.
 
 ---
 
@@ -113,6 +115,7 @@ npm run build      # client production build
 ## Not done yet (by design / later)
 
 - **`packages/server`** (Express, MongoDB, JWT, REST, R2 presigns, real CSV/AI pipelines).
+- **`docker-compose.yml`** at `dimome3/` (planned): **MongoDB** for local dev; optional **profiles** for **Redis** / **RabbitMQ** when those phases land — see [BACKEND_REQUIREMENTS.md §3](./BACKEND_REQUIREMENTS.md). API runs **on the host** initially.
 - **Shared `packages/types`** package (optional).
 - **Production deploy**, auth against a backend, persistence of edits/imports.
 - **Removing or merging** `prototype/` — left as reference only.
@@ -127,7 +130,8 @@ npm run build      # client production build
 | **Guest — filters** | Sticky header: **Clear filters** (disabled when none active), **Save choices** (return to parent menu). Snackbar **UI removed**; **`showSnack` / `dismissSnack` / auto-clear timer** still run on toggles for future notifications; **`GuestFilterSnackbar`** component left in repo for reuse. |
 | **Owner — responsive** | `OwnerSidebar` is **`mobileOpen` / `onMobileOpenChange`** from `OwnerLayout`; mobile overlay **`z-[80]`** above the sticky header. |
 | **Git (repo root)** | Root **`.gitignore`**: `node_modules/`, `dimome1/`, `Dimome2/`. Removed from the index (not from disk): nested **gitlinks** under `dimome1/` + `Dimome2`, and hoisted **`dimome3/node_modules`** (~6k files) so they are no longer pushed to GitHub. |
+| **Backend / infra (docs)** | [BACKEND_REQUIREMENTS.md](./BACKEND_REQUIREMENTS.md) **§3**: **Docker Compose** under `dimome3/` for **Mongo** (and later Redis/RabbitMQ via **profiles**); **Express on host** for local dev. [REQUIREMENTS.md](./REQUIREMENTS.md) **§5** cross-reference. |
 
 ---
 
-*Last updated: 2026-04-06 — guest filter/menu empty states + header actions; owner mobile drawer; root gitignore / untrack `node_modules` + legacy dirs.*
+*Last updated: 2026-04-06 — guest filter/menu empty states + header actions; owner mobile drawer; root gitignore / untrack `node_modules` + legacy dirs; **Docker Compose + API-on-host** documented for backend deps.*

@@ -17,7 +17,7 @@ Incremental plan; extend this once product designs are ready.
 
 - **Repo shape** — **monorepo**, **two packages** (not a single Next-style runtime monolith).
 - **Client** — **Vite**, **React (current)**, **TypeScript**, **Tailwind**.
-- **Server** — **Express**, **MongoDB** (driver/ODM TBD when implementing).
+- **Server** — **Express**, **MongoDB** with the **native driver** (see [BACKEND_REQUIREMENTS.md](./BACKEND_REQUIREMENTS.md)).
 - **API** — **REST**, versioned prefix (e.g. `/api/v1/...`), consistent JSON errors (decide shape later).
 - **Auth** — **JWT** (access + refresh strategy TBD); suited for web + future non-web clients; decide storage/transport for web (e.g. Bearer vs cookies) when implementing.
 
