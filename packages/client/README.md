@@ -47,7 +47,7 @@ Semantic colors and fonts follow `../../design/emerald_hearth/DESIGN.md` (see `s
 
 ## Product notes (recent)
 
-Documented in detail in [`../../STATUS.md`](../../STATUS.md). Short list:
+Documented in detail in [`../../documentation/STATUS.md`](../../documentation/STATUS.md). Short list:
 
 - **Guest menu:** empty card when filters hide every dish that would otherwise appear for the current search/category; different messaging for empty search vs empty category.
 - **Guest filters:** header **Clear filters** / **Save choices**; in-page notification **logic** (`showSnack`, timers) without a visible snackbar for now — see `GuestFilterSnackbar.tsx` to re-enable.

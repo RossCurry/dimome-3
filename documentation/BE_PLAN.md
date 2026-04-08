@@ -9,16 +9,16 @@ Actionable build order for **`packages/server`**, aligned with [BACKEND_REQUIREM
 - [x] **C — Layout:** `ports/`, `adapters/persistence/mongo/`, routes, JSON error envelope
 - [x] **D — Public menu:** `PublicMenuReadPort`, `GET /api/v1/public/menus/:menuId` → `PublicMenuData` shape, `db:seed` (incl. `menu-1`)
 - [x] **E — Auth + owner reads:** `POST /api/v1/auth/login`, JWT middleware, `GET /api/v1/owner/menus` (etc.)
-- [x] **F — Owner CRUD:** menus / categories / items behind ports; document in `packages/server/README.md`
+- [x] **F — Owner CRUD:** menus / categories / items behind ports; document in `packages/server/README.md` (includes **list items** `GET .../menus/:menuId/items` for owner category views)
 - [ ] **Later:** R2, CSV/AI jobs + polling, optional `packages/types`, SSE/Redis, RabbitMQ ([BACKEND_REQUIREMENTS.md §7](./BACKEND_REQUIREMENTS.md))
 
 ---
 
 ## Context
 
-- **`packages/server` exists** — first vertical slice shipped (2026-04-07); see [packages/server/README.md](./packages/server/README.md). **Client** still uses mocks until wired to the API.
+- **`packages/server` exists** — first vertical slice (2026-04-07); see [packages/server/README.md](../packages/server/README.md). **Client** uses the **live API** by default (2026-04-08); optional **`VITE_USE_MOCK_API=true`** restores fixtures — see [CLIENT_API_MAP_2026-04-08.md](../CLIENT_API_MAP_2026-04-08.md) and [STATUS.md](./STATUS.md).
 - Stack: [BACKEND_REQUIREMENTS.md](./BACKEND_REQUIREMENTS.md) — Express, **`/api/v1/`**, native **`mongodb`**, ports/adapters, **Docker Compose for Mongo**, **API on host**.
-- First vertical slice ([BACKEND_REQUIREMENTS.md §9](./BACKEND_REQUIREMENTS.md)): health, Mongo, minimal auth, persistence, **public read menu** — replaces client [`readPublicMenu`](./packages/client/src/mocks/mockApi.ts) when wired; payload shape [`PublicMenuData`](./packages/client/src/types/index.ts).
+- **Owner items list (2026-04-08):** `GET /api/v1/owner/menus/:menuId/items` with optional **`categoryPublicId`** supports the owner category table (including non–guest-visible items).
 
 ```mermaid
 flowchart LR
@@ -37,9 +37,9 @@ flowchart LR
 
 ## Phase A — Local Mongo + workspace wiring
 
-1. Add [docker-compose.yml](./docker-compose.yml): **single `mongo` service**, port **27017**, **named volume**, **healthcheck** (BACKEND §3).
-2. Add [.env.example](./.env.example): `MONGODB_URI=mongodb://localhost:27017/dimome`; placeholders for `JWT_SECRET`, `PORT`.
-3. Extend root [package.json](./package.json): `dev:server`, `build:server`, `lint:server` with `-w server`.
+1. Add [docker-compose.yml](../docker-compose.yml): **single `mongo` service**, port **27017**, **named volume**, **healthcheck** (BACKEND §3).
+2. Add [.env.example](../.env.example): `MONGODB_URI=mongodb://localhost:27017/dimome`; placeholders for `JWT_SECRET`, `PORT`.
+3. Extend root [package.json](../package.json): `dev:server`, `build:server`, `lint:server` with `-w server`.
 
 ---
 
@@ -69,7 +69,7 @@ flowchart LR
 1. **Collections / shapes:** minimal schema; must serialize to **`PublicMenuData`** (`menuId`, `venueName`, `categories[]`, `itemsById`). Document choice in `packages/server/README.md`.
 2. **`PublicMenuReadPort`** + Mongo adapter: `getPublishedMenuByPublicId(menuId)`.
 3. **`GET /api/v1/public/menus/:menuId`** — no JWT; **404** if unknown/unpublished.
-4. **`db:seed`** script: data aligned with [fixtures.ts](./packages/client/src/mocks/fixtures.ts) so **`menu-1`** works for manual testing.
+4. **`db:seed`** script: data aligned with [fixtures.ts](../packages/client/src/mocks/fixtures.ts) so **`menu-1`** works for manual testing.
 
 ---
 
@@ -77,7 +77,7 @@ flowchart LR
 
 1. **`POST /api/v1/auth/login`:** seeded user + **`bcrypt`** + short-lived **JWT** (`sub`, optional `venueId`). Document **`JWT_SECRET`** / expiry in `.env.example`.
 2. **Auth middleware** for **`/api/v1/owner/*`**.
-3. **Owner reads first:** e.g. **`GET /api/v1/owner/menus`** → [`OwnerMenuSummary[]`](./packages/client/src/types/index.ts).
+3. **Owner reads first:** e.g. **`GET /api/v1/owner/menus`** → [`OwnerMenuSummary[]`](../packages/client/src/types/index.ts).
 
 Then **CRUD** for menus / categories / items per [REQUIREMENTS.md](./REQUIREMENTS.md) §4–5; keep handlers thin.
 
@@ -94,15 +94,17 @@ Then **CRUD** for menus / categories / items per [REQUIREMENTS.md](./REQUIREMENT
 
 ## Docs after implementation
 
-- [x] [packages/server/README.md](./packages/server/README.md) — run, Compose, seed, env, route table.
+- [x] [packages/server/README.md](../packages/server/README.md) — run, Compose, seed, env, route table, **API + Vite client together**.
 - [x] [STATUS.md](./STATUS.md) — server + Compose + changelog updated.
 
 ---
 
-## Client integration (follow-up)
+## Client integration
 
-Replace mock `readPublicMenu` with **`fetch`** to the public menu API: Vite proxy or **`VITE_API_URL`**, Suspense-friendly loading, Bearer token for owner. Can validate Phase D with **curl** first.
+**Shipped (2026-04-08):** Vite **`/api` proxy** (or **`VITE_API_URL`**), **`apiJson`** + Bearer token for owner routes, **`/login`**, **`mockApi`** branching on **`VITE_USE_MOCK_API`**, guest + owner reads, item editor path with **`menuId`**. Reference: [CLIENT_API_MAP_2026-04-08.md](../CLIENT_API_MAP_2026-04-08.md), [packages/client/README.md](../packages/client/README.md).
+
+**Next:** wire **mutations** (PATCH item, POST new item, …) and invalidate read caches as needed.
 
 ---
 
-*Checklist updated 2026-04-07. See [BACKEND_REQUIREMENTS.md](./BACKEND_REQUIREMENTS.md) for stack decisions and async-job phases.*
+*Checklist updated 2026-04-08. See [BACKEND_REQUIREMENTS.md](./BACKEND_REQUIREMENTS.md) for stack decisions and async-job phases.*

@@ -10,5 +10,6 @@ export function loginRequest(email: string, password: string): Promise<LoginResp
   return apiJson<LoginResponse>("/auth/login", {
     method: "POST",
     body: JSON.stringify({ email, password }),
+    showErrorSnack: false,
   });
 }

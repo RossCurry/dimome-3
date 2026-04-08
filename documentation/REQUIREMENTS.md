@@ -158,5 +158,7 @@ Entities implied by mocks (names may differ in implementation):
 
 - [`BACKEND_REQUIREMENTS.md`](./BACKEND_REQUIREMENTS.md) — server stack, native Mongo driver, persistence ports/adapters, async jobs, **Docker Compose** for local deps (**§3**).
 - [`OUTLINE.md`](./OUTLINE.md) — monorepo layout, stack, env per package.
-- [`design/emerald_hearth/DESIGN.md`](./design/emerald_hearth/DESIGN.md) — UI specification.
+- [`CLIENT_API_MAP_2026-04-08.md`](../CLIENT_API_MAP_2026-04-08.md) — client UI ↔ **`/api/v1/`** routes (integration reference).
+- [STATUS.md](./STATUS.md) — what is implemented in client + server.
+- [`design/emerald_hearth/DESIGN.md`](../design/emerald_hearth/DESIGN.md) — UI specification.
 - `design/*/code.html` — screen-level reference implementations.

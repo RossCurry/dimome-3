@@ -19,7 +19,7 @@ This document is a **living** companion to the product spec: update it when API 
 
 | Layer | Choice |
 |--------|--------|
-| Runtime | **Node.js** — same major as workspace ([`engines` in `package.json`](./package.json), e.g. **24.x**) |
+| Runtime | **Node.js** — same major as workspace ([`engines` in `package.json`](../package.json), e.g. **24.x**) |
 | HTTP | **Express** |
 | API style | **REST**, versioned prefix **`/api/v1/`** |
 | Database | **MongoDB** via the **official native driver** (`mongodb`) — **not Mongoose** for v1 |
@@ -134,8 +134,8 @@ Concrete routes, request/response JSON schemas, and error envelope should be def
 
 Mirror [REQUIREMENTS.md §8](./REQUIREMENTS.md):
 
-- **First backend slice (shipped in repo):** [packages/server](./packages/server/) — Docker **Mongo** for local dev, Express **`/api/v1/`**, Mongo **ports + adapters**, **`GET /health`**, **`GET /public/menus/:menuId`**, **`POST /auth/login`**, JWT + **owner** routes for menus / categories / items (CRUD subset), **`db:seed`**. The **Vite client** still uses mocks until pointed at this API ([STATUS.md](./STATUS.md)).
-- **Then:** R2 presign flow, CSV and AI job endpoints per product steps; **job state in Mongo** + **client polling** for status (§7.2).
+- **First backend slice (shipped in repo):** [packages/server](../packages/server/) — Docker **Mongo** for local dev, Express **`/api/v1/`**, Mongo **ports + adapters**, **`GET /health`**, **`GET /public/menus/:menuId`**, **`POST /auth/login`**, JWT + **owner** routes for menus / categories / items (including **list** `GET .../menus/:menuId/items` with optional **`categoryPublicId`**), **`db:seed`**. The **Vite client** calls this API **by default**; optional **`VITE_USE_MOCK_API=true`** for fixtures ([STATUS.md](./STATUS.md), [CLIENT_API_MAP_2026-04-08.md](../CLIENT_API_MAP_2026-04-08.md)).
+- **Then:** R2 presign flow, CSV and AI job endpoints per product steps; **job state in Mongo** + **client polling** for status (§7.2). **Owner UI mutations** (PATCH/POST from forms) still largely **out of scope** until wired.
 - **Defer:** Full ordering/POS, analytics, multi-location sync, unless product scope changes.
 
 ---
@@ -157,10 +157,11 @@ Carry over from product where relevant ([REQUIREMENTS.md §9](./REQUIREMENTS.md)
 |----------|------|
 | [REQUIREMENTS.md](./REQUIREMENTS.md) | Product requirements, IA, data model at requirements level |
 | [OUTLINE.md](./OUTLINE.md) | Monorepo shape, env per package, sequencing |
-| [STATUS.md](./STATUS.md) | Current **client** implementation vs mocks |
-| [packages/client/README.md](./packages/client/README.md) | How the SPA runs today |
+| [STATUS.md](./STATUS.md) | Current **client** + **server** implementation snapshot |
+| [CLIENT_API_MAP_2026-04-08.md](../CLIENT_API_MAP_2026-04-08.md) | UI routes ↔ REST endpoints (dated integration map at `dimome3/` root) |
+| [packages/client/README.md](../packages/client/README.md) | How the SPA runs (real API vs mocks, env, proxy) |
 | [BE_PLAN.md](./BE_PLAN.md) | Ordered implementation checklist and phases for **`packages/server`** |
 
 ---
 
-*Last updated: **§9** — initial **`packages/server`** slice implemented (health, public menu, JWT auth, owner CRUD, seed). Still **§3** Compose + API on host; **§7** jobs/SSE/Redis/RabbitMQ not built yet.*
+*Last updated: **§9** — **`packages/server`** slice + **client API wiring** (2026-04-08): health, public menu, JWT auth, owner routes (including owner item **list**), seed; Vite **proxy** / **`apiJson`**, login, reads. Still **§3** Compose + API on host; **§7** jobs/SSE/Redis/RabbitMQ not built yet.*

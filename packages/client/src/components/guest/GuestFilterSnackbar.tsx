@@ -3,15 +3,24 @@ import { X } from "lucide-react";
 export type GuestFilterSnackbarProps = {
   message: string;
   onDismiss: () => void;
+  /** Tailwind positioning for `bottom` (guest dock uses `bottom-20`). */
+  bottomClass?: string;
+  /** Stacking above headers / drawers when used app-wide. */
+  zClass?: string;
 };
 
 /**
  * Bottom snackbar above the guest tab bar; matches {@link OwnerSlidingActionFooter} surface (blur, border, shadow, slide-up).
  */
-export function GuestFilterSnackbar({ message, onDismiss }: GuestFilterSnackbarProps) {
+export function GuestFilterSnackbar({
+  message,
+  onDismiss,
+  bottomClass = "bottom-20",
+  zClass = "z-[35]",
+}: GuestFilterSnackbarProps) {
   return (
     <div
-      className="pointer-events-none fixed bottom-20 left-0 right-0 z-[35] flex justify-center px-4"
+      className={`pointer-events-none fixed left-0 right-0 flex justify-center px-4 ${bottomClass} ${zClass}`}
       role="status"
       aria-live="polite"
     >

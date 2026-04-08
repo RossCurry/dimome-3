@@ -1,6 +1,8 @@
 # DiMoMe v3 — what has been done
 
-Snapshot of work completed in `dimome3` (product planning + **client + initial API**). For full requirements and future scope, see [REQUIREMENTS.md](./REQUIREMENTS.md) and [OUTLINE.md](./OUTLINE.md).
+Snapshot of work completed in `dimome3` (product planning + **client + initial API**). **Planning docs** (this file, BE_PLAN, BACKEND_REQUIREMENTS, etc.) live under [`documentation/`](./). The dated **UI ↔ API** map is at the workspace root: [`CLIENT_API_MAP_2026-04-08.md`](../CLIENT_API_MAP_2026-04-08.md).
+
+For full requirements and future scope, see [REQUIREMENTS.md](./REQUIREMENTS.md) and [OUTLINE.md](./OUTLINE.md).
 
 ---
 
@@ -8,14 +10,14 @@ Snapshot of work completed in `dimome3` (product planning + **client + initial A
 
 | Path | Purpose |
 |------|--------|
-| [`package.json`](./package.json) | npm **workspaces** (`packages/*`): `dev` / `build` / `lint` run **client + server**; also `dev:server`, `db:seed`, etc. |
-| [`docker-compose.yml`](./docker-compose.yml) | **MongoDB 7** for local dev (port 27017, named volume, healthcheck) |
-| [`.env.example`](./.env.example) | Template for `dimome3/.env` (`MONGODB_URI`, `JWT_SECRET`, `PORT`, …) |
-| [`.nvmrc`](./.nvmrc) / [`.node-version`](./.node-version) | **Node.js 24** (major pin) |
-| [`packages/client/`](./packages/client/) | Canonical **Vite + React** app — **API-backed** by default; optional `VITE_USE_MOCK_API=true` for fixtures ([CLIENT_API_MAP_2026-04-08.md](../CLIENT_API_MAP_2026-04-08.md)) |
-| [`packages/server/`](./packages/server/) | **Express** API — see [packages/server/README.md](./packages/server/README.md) |
-| [`prototype/`](./prototype/) | Earlier experiment; **unchanged** — not the active client |
-| [`design/`](./design/) | HTML references + [`design/emerald_hearth/DESIGN.md`](./design/emerald_hearth/DESIGN.md) (design system spec) |
+| [`package.json`](../package.json) | npm **workspaces** (`packages/*`): `dev` / `build` / `lint` run **client + server**; also `dev:server`, `db:seed`, etc. |
+| [`docker-compose.yml`](../docker-compose.yml) | **MongoDB 7** for local dev (port 27017, named volume, healthcheck) |
+| [`.env.example`](../.env.example) | Template for `dimome3/.env` (`MONGODB_URI`, `JWT_SECRET`, `PORT`, …) |
+| [`.nvmrc`](../.nvmrc) / [`.node-version`](../.node-version) | **Node.js 24** (major pin) |
+| [`packages/client/`](../packages/client/) | Canonical **Vite + React** app — **API-backed** by default; optional `VITE_USE_MOCK_API=true` for fixtures ([CLIENT_API_MAP_2026-04-08.md](../CLIENT_API_MAP_2026-04-08.md)) |
+| [`packages/server/`](../packages/server/) | **Express** API — see [packages/server/README.md](../packages/server/README.md) |
+| [`prototype/`](../prototype/) | Earlier experiment; **unchanged** — not the active client |
+| [`design/`](../design/) | HTML references + [`design/emerald_hearth/DESIGN.md`](../design/emerald_hearth/DESIGN.md) (design system spec) |
 
 ---
 
@@ -26,6 +28,7 @@ Snapshot of work completed in `dimome3` (product planning + **client + initial A
 - **[BACKEND_REQUIREMENTS.md](./BACKEND_REQUIREMENTS.md)** — Server stack (Express, **native Mongo driver**, no Mongoose v1), REST `/api/v1/`, ports/adapters, async jobs (polling → SSE/Redis → optional RabbitMQ), **Docker Compose** for **Mongo** (and later Redis/RabbitMQ) with **API on host** for local dev.
 - **[BE_PLAN.md](./BE_PLAN.md)** — Step-by-step backend build checklist (Phases A–F) before/during implementation.
 - **[CLIENT_API_MAP_2026-04-08.md](../CLIENT_API_MAP_2026-04-08.md)** — UI routes ↔ REST endpoints (client integration).
+- **[2026-04-08-BE.md](./2026-04-08-BE.md)** — same-day work log (integration + snackbar + doc layout).
 
 ---
 
@@ -41,13 +44,13 @@ Snapshot of work completed in `dimome3` (product planning + **client + initial A
 
 ### Styling
 
-- [`src/index.css`](./packages/client/src/index.css) — `@theme` tokens aligned with **Emerald Hearth** / DESIGN.md (surfaces, primary, tertiary, fonts **Inter** + **Epilogue** via `index.html`).
+- [`src/index.css`](../packages/client/src/index.css) — `@theme` tokens aligned with **Emerald Hearth** / DESIGN.md (surfaces, primary, tertiary, fonts **Inter** + **Epilogue** via `index.html`).
 
 ### Data (API + optional mocks)
 
-- **Live:** [`src/api/`](./packages/client/src/api/) (`apiJson`, public + owner helpers), JWT in `sessionStorage`, [`AuthContext`](./packages/client/src/context/AuthContext.tsx), [`RequireAuth`](./packages/client/src/components/owner/RequireAuth.tsx). [`mockApi.ts`](./packages/client/src/mocks/mockApi.ts) calls the API unless **`VITE_USE_MOCK_API=true`**.
-- **Fixtures:** [`src/mocks/`](./packages/client/src/mocks/) — `fixtures.ts`, `constants.ts`, artificial delays when mocks are on. CSV / scan flows are **always** mock until job APIs exist.
-- **One shared dish image** for seeded/mock items: [`public/images/placeholder-dish.jpg`](./packages/client/public/images/placeholder-dish.jpg).
+- **Live:** [`src/api/`](../packages/client/src/api/) (`apiJson`, `ApiError`, public + owner helpers), JWT in `sessionStorage`, [`AuthContext`](../packages/client/src/context/AuthContext.tsx), [`RequireAuth`](../packages/client/src/components/owner/RequireAuth.tsx), [`SnackbarProvider`](../packages/client/src/context/SnackbarContext.tsx) + [`errorNotifier`](../packages/client/src/api/errorNotifier.ts) — failed API responses show [`GuestFilterSnackbar`](../packages/client/src/components/guest/GuestFilterSnackbar.tsx) (login uses `showErrorSnack: false` to avoid duplicate with inline form error). [`mockApi.ts`](../packages/client/src/mocks/mockApi.ts) calls the API unless **`VITE_USE_MOCK_API=true`**.
+- **Fixtures:** [`src/mocks/`](../packages/client/src/mocks/) — `fixtures.ts`, `constants.ts`, artificial delays when mocks are on. CSV / scan flows are **always** mock until job APIs exist.
+- **One shared dish image** for seeded/mock items: [`public/images/placeholder-dish.jpg`](../packages/client/public/images/placeholder-dish.jpg).
 - **Mapping:** [CLIENT_API_MAP_2026-04-08.md](../CLIENT_API_MAP_2026-04-08.md).
 
 ### Routing (`createBrowserRouter`)
@@ -80,7 +83,7 @@ Snapshot of work completed in `dimome3` (product planning + **client + initial A
 | Route | Page |
 |-------|------|
 | `/qr/:menuId`, `/menu/:menuId` | Menu — search, categories, filters, add to order; **empty state** when allergen filters hide every visible dish (`GuestMenuFilterEmptyState`); separate copy for no search hits / empty category |
-| `…/filters` | Allergen filters — header **Clear filters**, **Save choices** (back to menu); **notification timing/state** (`showSnack` / dismiss / timers) kept for future UI — `GuestFilterSnackbar` exists but is not mounted |
+| `…/filters` | Allergen filters — header **Clear filters**, **Save choices** (back to menu); in-page **`showSnack`** logic for filter toggles (optional future UI); **global** API errors use the same `GuestFilterSnackbar` component via `SnackbarProvider` |
 | `…/order` | My order stub |
 
 **Legacy:** `/owner/*` redirects to the same path **without** the `/owner` prefix (e.g. `/owner/menus/x` → `/menus/x`).
@@ -91,17 +94,17 @@ Small **Owner** link on the guest menu points to `/` (dashboard).
 
 ### Loading / Suspense
 
-- **Route-level:** `React.lazy` pages with **skeleton fallbacks** in [`src/router.tsx`](./packages/client/src/router.tsx).
-- **Data-level:** `use()` on promises from `mockApi` (API or mock); inner **Suspense** + [`TableRowsSkeleton`](./packages/client/src/components/skeletons/TableRowsSkeleton.tsx) for CSV review and scan review tables.
-- Reusable primitives under [`src/components/skeletons/`](./packages/client/src/components/skeletons/).
+- **Route-level:** `React.lazy` pages with **skeleton fallbacks** in [`src/router.tsx`](../packages/client/src/router.tsx).
+- **Data-level:** `use()` on promises from `mockApi` (API or mock); inner **Suspense** + [`TableRowsSkeleton`](../packages/client/src/components/skeletons/TableRowsSkeleton.tsx) for CSV review and scan review tables.
+- Reusable primitives under [`src/components/skeletons/`](../packages/client/src/components/skeletons/).
 
 ### Types
 
-- [`src/types/index.ts`](./packages/client/src/types/index.ts) — `PublicMenuData` includes **`menuId`**; owner dashboard summary, editor shape, CSV mapping/preview, scan draft rows, etc.
+- [`src/types/index.ts`](../packages/client/src/types/index.ts) — `PublicMenuData` includes **`menuId`**; owner dashboard summary, editor shape, CSV mapping/preview, scan draft rows, optional **`visibleOnMenu`** on `MenuItem` for owner tables.
 
 ### Docs
 
-- [`packages/client/README.md`](./packages/client/README.md) — how to run, mocks, placeholder image, Suspense notes.
+- [`packages/client/README.md`](../packages/client/README.md) — how to run, **Using the real API**, mocks, placeholder image, Suspense notes.
 
 ---
 
@@ -111,7 +114,7 @@ Small **Owner** link on the guest menu points to `/` (dashboard).
 - **Layout:** `ports/`, `adapters/persistence/mongo/`, `routes/v1/`, `domain/`, `http/errors`, `middleware/requireAuth`, `services/authService`.
 - **Endpoints:** `GET /api/v1/health` (incl. DB ping); **`GET /api/v1/public/menus/:menuId`** (published menus only, `PublicMenuData`-shaped JSON); **`POST /api/v1/auth/login`**; **`/api/v1/owner/*`** (JWT): menus list/create/patch, categories list/create/patch, items **list** (optional `?categoryPublicId=`), get/create/patch.
 - **Tooling:** `npm run db:seed` — resets collections and loads data aligned with client fixtures (`menu-1`, demo user **`dev@dimome.local` / `password`**).
-- **Docs:** [packages/server/README.md](./packages/server/README.md).
+- **Docs:** [packages/server/README.md](../packages/server/README.md) — includes **Run API + Vite client together** (two terminals, proxy, URLs).
 
 **Client:** default uses the API via `mockApi.ts` + `src/api/`; set **`VITE_USE_MOCK_API=true`** to force fixtures. **CSV / AI** steps remain mock-only.
 
@@ -148,13 +151,16 @@ npm run build            # client + server
 
 | Area | Change |
 |------|--------|
+| **2026-04-08 — Client ↔ API** | Vite **`/api` proxy**, `apiJson` / **`ApiError`**, optional **`VITE_API_URL`** / **`VITE_USE_MOCK_API`**. **`/login`**, JWT **`sessionStorage`**, **`RequireAuth`**, owner + guest reads via **`mockApi`** → API. Item editor route **`/menus/:menuId/items/:itemId/edit`**. Server **`GET /api/v1/owner/menus/:menuId/items`** (optional **`categoryPublicId`**). [CLIENT_API_MAP_2026-04-08.md](../CLIENT_API_MAP_2026-04-08.md). |
+| **2026-04-08 — API errors UI** | **`SnackbarProvider`** registers **`errorNotifier`**; **`apiJson`** shows **`GuestFilterSnackbar`** on failed requests (login **`showErrorSnack: false`**). Network failures show a short “API running?” message. |
+| **2026-04-08 — Docs / repo** | Planning markdown consolidated under **`documentation/`**; root **`.gitignore`** extended with **`dist/`**, **`build/`**, **`out/`**, **`*.tsbuildinfo`**. [packages/server/README.md](../packages/server/README.md) — **Run API + Vite client together**. |
 | **Guest — menu** | `GuestMenuFilterEmptyState` when the current category/search would show dishes but **all are hidden by allergen filters**; other empty states for **no search matches** and **empty section**. |
-| **Guest — filters** | Sticky header: **Clear filters** (disabled when none active), **Save choices** (return to parent menu). Snackbar **UI removed**; **`showSnack` / `dismissSnack` / auto-clear timer** still run on toggles for future notifications; **`GuestFilterSnackbar`** component left in repo for reuse. |
+| **Guest — filters** | Sticky header: **Clear filters**, **Save choices**. In-page **`showSnack`** on toggles; **global** snackbar reuse for API errors (see above). |
 | **Owner — responsive** | `OwnerSidebar` is **`mobileOpen` / `onMobileOpenChange`** from `OwnerLayout`; mobile overlay **`z-[80]`** above the sticky header. |
-| **Git (repo root)** | Root **`.gitignore`**: `node_modules/`, `dimome1/`, `Dimome2/`. Removed from the index (not from disk): nested **gitlinks** under `dimome1/` + `Dimome2`, and hoisted **`dimome3/node_modules`** (~6k files) so they are no longer pushed to GitHub. |
+| **Git (repo root)** | Root **`.gitignore`**: `node_modules/`, `dimome1/`, `Dimome2/`, build output dirs. (Historical) nested gitlinks / hoisted `node_modules` cleanup. |
 | **Backend / infra (docs)** | [BACKEND_REQUIREMENTS.md](./BACKEND_REQUIREMENTS.md) **§3**: **Docker Compose** under `dimome3/` for **Mongo** (and later Redis/RabbitMQ via **profiles**); **Express on host** for local dev. [REQUIREMENTS.md](./REQUIREMENTS.md) **§5** cross-reference. |
-| **Backend — first code slice** | [packages/server](./packages/server/): **docker-compose.yml** + **.env.example**, Express **`/api/v1/`**, Mongo **ports/adapters**, **JWT** login, **public menu** + **owner CRUD** routes, **`db:seed`**. [BE_PLAN.md](./BE_PLAN.md) Phases **A–F** checked off for shipped work; **R2 / jobs / SSE** remain future. |
+| **Backend — first code slice** | [packages/server](../packages/server/): **docker-compose.yml** + **.env.example**, Express **`/api/v1/`**, Mongo **ports/adapters**, **JWT** login, **public menu** + **owner CRUD** routes, **`db:seed`**. [BE_PLAN.md](./BE_PLAN.md) Phases **A–F** checked off; **R2 / jobs / SSE** remain future. |
 
 ---
 
-*Last updated: 2026-04-07 — **`packages/server`** initial API (health, public menu, auth, owner menus/categories/items), **Compose + seed**; client still on mocks until wired to backend.*
+*Last updated: 2026-04-08 — **Client wired to API** (reads + login + snackbar errors); **documentation** under `documentation/`; **owner mutations** still mostly local in UI.*

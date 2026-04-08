@@ -1,6 +1,6 @@
 # DiMoMe — `packages/server`
 
-Express + TypeScript + **native MongoDB driver** (`mongodb`). REST API under **`/api/v1/`**. Persistence follows **ports** (`src/ports/`) and **Mongo adapters** (`src/adapters/persistence/mongo/`). See [BACKEND_REQUIREMENTS.md](../../BACKEND_REQUIREMENTS.md) and [BE_PLAN.md](../../BE_PLAN.md).
+Express + TypeScript + **native MongoDB driver** (`mongodb`). REST API under **`/api/v1/`**. Persistence follows **ports** (`src/ports/`) and **Mongo adapters** (`src/adapters/persistence/mongo/`). See [BACKEND_REQUIREMENTS.md](../../documentation/BACKEND_REQUIREMENTS.md) and [BE_PLAN.md](../../documentation/BE_PLAN.md).
 
 ## Prerequisites
 
@@ -71,7 +71,7 @@ Errors: `{ error: { code, message } }`.
 
 ## Not implemented yet
 
-R2 uploads, CSV/AI **job** workers, SSE/Redis/RabbitMQ, refresh tokens — see [BACKEND_REQUIREMENTS.md](../../BACKEND_REQUIREMENTS.md) §7 and §9.
+R2 uploads, CSV/AI **job** workers, SSE/Redis/RabbitMQ, refresh tokens — see [BACKEND_REQUIREMENTS.md](../../documentation/BACKEND_REQUIREMENTS.md) §7 and §9.
 
 ## Client integration
 

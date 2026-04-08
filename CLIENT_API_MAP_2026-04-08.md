@@ -1,8 +1,8 @@
 # Client ↔ API mapping (DiMoMe v3)
 
-**Last updated:** 2026-04-08
+**Last updated:** 2026-04-08 (evening: API error snackbar via `SnackbarProvider` / `GuestFilterSnackbar`; login omits global snack.)
 
-Single source of truth for which HTTP routes power which UI areas. Canonical route summary: [packages/server/README.md](packages/server/README.md). Product types on the client: [packages/client/src/types/index.ts](packages/client/src/types/index.ts). Server DTOs: [packages/server/src/domain/menu.ts](packages/server/src/domain/menu.ts).
+Single source of truth for which HTTP routes power which UI areas. Planning docs live under [`documentation/`](documentation/). Canonical route summary: [packages/server/README.md](packages/server/README.md). Product types on the client: [packages/client/src/types/index.ts](packages/client/src/types/index.ts). Server DTOs: [packages/server/src/domain/menu.ts](packages/server/src/domain/menu.ts).
 
 ---
 
@@ -34,6 +34,8 @@ Non-2xx responses use JSON:
 ```
 
 See [errors.ts](packages/server/src/http/errors.ts).
+
+On the **client**, `apiJson` throws **`ApiError`** with the same `code` / `message` and, when **`showErrorSnack`** is not `false`, triggers a global **`GuestFilterSnackbar`** (see `packages/client/src/context/SnackbarContext.tsx`, `api/errorNotifier.ts`). **`POST /auth/login`** uses **`showErrorSnack: false`** so **`LoginPage`** can show a single inline error. **`fetch`** failures show a short network hint.
 
 ---
 
@@ -71,7 +73,7 @@ See [errors.ts](packages/server/src/http/errors.ts).
 | `/menus/:menuId/category/:categoryId` | `readOwnerCategoryPage(menuId, categoryId)` | `GET .../menus/:menuId/categories` (find row) + `GET .../menus/:menuId/items?categoryPublicId=:categoryId` | Owner item list includes **all** visibility states; avoids using the public menu for staff tables. |
 | `/menus/:menuId/items/:itemId/edit` | `readItemEditor(menuId, itemId)` | `GET /api/v1/owner/menus/:menuId/items/:itemId` | JWT. |
 | `/items/new` | local empty state | `POST /api/v1/owner/menus/:menuId/items` | Wire on save when mutations are implemented. |
-| CSV steps 1–3 | `readCsvPreview()` | — | No backend yet ([BACKEND_REQUIREMENTS.md](BACKEND_REQUIREMENTS.md) §7). |
+| CSV steps 1–3 | `readCsvPreview()` | — | No backend yet ([BACKEND_REQUIREMENTS.md](documentation/BACKEND_REQUIREMENTS.md) §7). |
 | Scan steps 1–3 | `readScanDraft()` | — | Same. |
 
 ---
@@ -86,6 +88,6 @@ Previously the mock built the category table from the **public** menu shape. The
 
 ## Related docs
 
-- [packages/server/README.md](packages/server/README.md) — run, seed, env, route summary.
-- [packages/client/README.md](packages/client/README.md) — dev, `VITE_*`, link back here.
-- [STATUS.md](STATUS.md) — high-level monorepo status.
+- [packages/server/README.md](packages/server/README.md) — run, seed, env, route summary, **two-terminal** local flow.
+- [packages/client/README.md](packages/client/README.md) — dev, `VITE_*`, **Using the real API**, link back here.
+- [documentation/STATUS.md](documentation/STATUS.md) — high-level monorepo status (planning docs in `documentation/`).
