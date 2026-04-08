@@ -1,6 +1,14 @@
 # DiMoMe — `packages/client`
 
-Vite + React 19 + TypeScript + Tailwind v4 + React Router 7 (`react-router-dom`). Owner and guest flows still use **in-memory mocks** (`src/mocks/`) with artificial delays. An Express API now lives in **`packages/server`** — see [`../server/README.md`](../server/README.md). Wiring `fetch` + proxy / `VITE_API_URL` is the next step.
+Vite + React 19 + TypeScript + Tailwind v4 + React Router 7 (`react-router-dom`). By default the owner app and guest menu call the **Express API** (`src/api/`, `src/mocks/mockApi.ts` delegates when not in mock mode). CSV and AI import steps still use **in-memory mocks** only.
+
+## Using the real API
+
+1. From `dimome3/`: `docker compose up -d`, copy `.env.example` → `.env`, run `npm run db:seed`, then `npm run dev:server` (API on `:3000`) and `npm run dev --workspace=client` (Vite on `:5173`).
+2. **Proxy:** Vite forwards `/api` → `http://localhost:3000`, so the browser can use same-origin `/api/v1/...` when **`VITE_API_URL` is unset** (see [`vite.config.ts`](vite.config.ts)).
+3. Optional **`VITE_API_URL`** (e.g. `http://localhost:3000`) if you prefer calling the API origin directly (CORS already allows the dev client).
+4. Set **`VITE_USE_MOCK_API=true`** to force fixtures for owner/guest menu data (see [`.env.example`](.env.example)).
+5. **UI ↔ routes:** [CLIENT_API_MAP_2026-04-08.md](../../CLIENT_API_MAP_2026-04-08.md). **Sign in:** `/login` — seed user `dev@dimome.local` / `password` after `db:seed`.
 
 ## Run
 
@@ -19,7 +27,7 @@ Or from this package:
 npm run dev
 ```
 
-- **Owner app (MVP home — overview):** [http://localhost:5173/](http://localhost:5173/) — also `/menus`, `/categories`, `/menus/:menuId`, etc.
+- **Owner app (MVP home — overview):** [http://localhost:5173/](http://localhost:5173/) redirects to **`/login`** until you sign in; then `/`, `/menus`, `/categories`, `/menus/:menuId`, etc.
 - **Guest menu (QR URL):** [http://localhost:5173/qr/menu-1](http://localhost:5173/qr/menu-1) — replace `menu-1` with the published menu id. Readable alias: `/menu/menu-1`.
 
 Old `/owner/...` links redirect to the same path without `/owner`.

@@ -2,7 +2,7 @@ import type { Db } from "mongodb";
 import type { PublicMenuReadPort } from "../../../ports/publicMenuReadPort.js";
 import type { PublicMenuDto, MenuCategoryDto, MenuItemDto } from "../../../domain/menu.js";
 import { COL } from "./collections.js";
-import type { CategoryDoc, ItemDoc, MenuDoc } from "./documents.js";
+import type { CategoryDoc, ItemDoc, MenuDoc } from "./types.js";
 
 export class MongoPublicMenuReadAdapter implements PublicMenuReadPort {
   constructor(private readonly db: Db) {}

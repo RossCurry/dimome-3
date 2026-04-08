@@ -1,6 +1,7 @@
 import { useState } from "react";
-import { Link, Outlet } from "react-router-dom";
-import { Bell, HelpCircle, Menu, User } from "lucide-react";
+import { Link, Outlet, useNavigate } from "react-router-dom";
+import { Bell, HelpCircle, LogOut, Menu, User } from "lucide-react";
+import { useAuth } from "@/context/AuthContext";
 import { CategoryCreateModalProvider } from "@/context/CategoryCreateModalContext";
 import { OwnerSidebar } from "@/layouts/OwnerSidebar";
 
@@ -9,6 +10,13 @@ const DEMO_GUEST_MENU = "/qr/menu-1";
 
 export function OwnerLayout() {
   const [mobileNavOpen, setMobileNavOpen] = useState(false);
+  const { logout } = useAuth();
+  const navigate = useNavigate();
+
+  const onLogout = () => {
+    logout();
+    navigate("/login", { replace: true });
+  };
 
   return (
     <CategoryCreateModalProvider>
@@ -57,6 +65,14 @@ export function OwnerLayout() {
                 aria-label="Help"
               >
                 <HelpCircle className="h-5 w-5" />
+              </button>
+              <button
+                type="button"
+                onClick={onLogout}
+                className="rounded-lg p-2 text-emerald-200/80 hover:bg-white/10"
+                aria-label="Sign out"
+              >
+                <LogOut className="h-5 w-5" />
               </button>
               <div
                 className="flex h-8 w-8 items-center justify-center rounded-full bg-primary-container"

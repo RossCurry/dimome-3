@@ -5,6 +5,7 @@ import {
   Outlet,
   useLocation,
 } from "react-router-dom";
+import { RequireAuth } from "@/components/owner/RequireAuth";
 import { GuestLayout } from "@/layouts/GuestLayout";
 import { OwnerLayout } from "@/layouts/OwnerLayout";
 import { GuestMenuSkeleton } from "@/components/skeletons/GuestMenuSkeleton";
@@ -25,6 +26,7 @@ const OwnerMenuPage = lazy(() => import("@/pages/owner/OwnerMenuPage"));
 const CategoryPage = lazy(() => import("@/pages/owner/CategoryPage"));
 const ItemEditPage = lazy(() => import("@/pages/owner/ItemEditPage"));
 const NewMenuItemPage = lazy(() => import("@/pages/owner/NewMenuItemPage"));
+const LoginPage = lazy(() => import("@/pages/owner/LoginPage"));
 
 const CsvStep1Page = lazy(() => import("@/pages/owner/csv/CsvStep1Page"));
 const CsvStep2Page = lazy(() => import("@/pages/owner/csv/CsvStep2Page"));
@@ -73,8 +75,20 @@ function LegacyOwnerRedirect() {
 
 export const router = createBrowserRouter([
   {
+    path: "/login",
+    element: (
+      <Suspense fallback={<OwnerRouteSkeleton />}>
+        <LoginPage />
+      </Suspense>
+    ),
+  },
+  {
     path: "/",
-    element: <OwnerLayout />,
+    element: (
+      <RequireAuth>
+        <OwnerLayout />
+      </RequireAuth>
+    ),
     children: [
       {
         index: true,
@@ -109,6 +123,14 @@ export const router = createBrowserRouter([
         ),
       },
       {
+        path: "menus/:menuId/items/:itemId/edit",
+        element: (
+          <Suspense fallback={<ItemEditorSkeleton />}>
+            <ItemEditPage />
+          </Suspense>
+        ),
+      },
+      {
         path: "menus/:menuId",
         element: (
           <Suspense fallback={<OwnerDashboardSkeleton />}>
@@ -121,14 +143,6 @@ export const router = createBrowserRouter([
         element: (
           <Suspense fallback={<ItemEditorSkeleton />}>
             <NewMenuItemPage />
-          </Suspense>
-        ),
-      },
-      {
-        path: "items/:itemId/edit",
-        element: (
-          <Suspense fallback={<ItemEditorSkeleton />}>
-            <ItemEditPage />
           </Suspense>
         ),
       },

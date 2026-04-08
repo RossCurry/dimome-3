@@ -115,6 +115,18 @@ export function ownerRouter(
     res.json(updated);
   });
 
+  r.get("/menus/:menuId/items", async (req, res) => {
+    const venueId = req.auth!.venueId;
+    const categoryPublicId =
+      typeof req.query.categoryPublicId === "string" ? req.query.categoryPublicId : undefined;
+    const list = await items.listItems(venueId, req.params.menuId, { categoryPublicId });
+    if (list === null) {
+      sendError(res, 404, "not_found", "Menu not found");
+      return;
+    }
+    res.json(list);
+  });
+
   r.get("/menus/:menuId/items/:itemId", async (req, res) => {
     const venueId = req.auth!.venueId;
     const item = await items.getItem(venueId, req.params.menuId, req.params.itemId);

@@ -1,4 +1,4 @@
-import type { MenuItemEditorDto } from "../domain/menu.js";
+import type { MenuItemDto, MenuItemEditorDto } from "../domain/menu.js";
 
 export type CreateItemInput = {
   publicId?: string;
@@ -32,6 +32,11 @@ export type UpdateItemInput = Partial<{
 }>;
 
 export interface OwnerItemsPort {
+  listItems(
+    venueId: string,
+    menuPublicId: string,
+    filter?: { categoryPublicId?: string },
+  ): Promise<MenuItemDto[] | null>;
   getItem(
     venueId: string,
     menuPublicId: string,

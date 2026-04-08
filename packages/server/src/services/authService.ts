@@ -1,8 +1,8 @@
 import bcrypt from "bcryptjs";
-import jwt, { type JwtPayload } from "jsonwebtoken";
+import jwt, { type JwtPayload, type SignOptions } from "jsonwebtoken";
 import { ObjectId, type Db } from "mongodb";
 import { COL } from "../adapters/persistence/mongo/collections.js";
-import type { UserDoc } from "../adapters/persistence/mongo/documents.js";
+import type { UserDoc } from "../adapters/persistence/mongo/types.js";
 
 export type LoginResult =
   | { ok: true; token: string; userId: string; venueId: string }
@@ -26,7 +26,7 @@ export class AuthService {
     const venueId = user.venueId.toHexString();
     const userId = user._id.toHexString();
     const token = jwt.sign({ sub: userId, venueId }, this.jwtSecret, {
-      expiresIn: this.jwtExpiresIn,
+      expiresIn: this.jwtExpiresIn as SignOptions["expiresIn"],
     });
     return { ok: true, token, userId, venueId };
   }

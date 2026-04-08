@@ -1,8 +1,10 @@
 import { use } from "react";
+import { useMocks } from "@/lib/env";
 import { readOwnerMenus } from "@/mocks/mockApi";
 import { OwnerMenuCardsSection } from "@/components/owner/OwnerMenuCardsSection";
 
 export default function MenusListPage() {
+  const mocks = useMocks();
   const menus = use(readOwnerMenus());
   const orderedMenus = [...menus].sort((a, b) => {
     if (a.isActive === b.isActive) return 0;
@@ -16,7 +18,8 @@ export default function MenusListPage() {
           Menus
         </h1>
         <p className="mt-2 text-on-surface-variant">
-          Every menu you own — including drafts and archived versions (mock).
+          Every menu you own — including drafts and archived versions
+          {mocks ? " (mock)." : "."}
         </p>
       </div>
 

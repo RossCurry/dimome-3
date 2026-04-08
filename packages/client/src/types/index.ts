@@ -7,6 +7,8 @@ export interface MenuItem {
   allergens: string[];
   image: string;
   category: string;
+  /** Owner category table only; guest menu payloads omit this. */
+  visibleOnMenu?: boolean;
 }
 
 export interface MenuCategory {

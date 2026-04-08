@@ -1,10 +1,12 @@
 import { use } from "react";
 import { Link } from "react-router-dom";
 import { Camera, ClipboardList, Upload } from "lucide-react";
+import { useMocks } from "@/lib/env";
 import { readOwnerMenus } from "@/mocks/mockApi";
 import { OwnerMenuCardsSection } from "@/components/owner/OwnerMenuCardsSection";
 
 export default function OwnerOverviewPage() {
+  const mocks = useMocks();
   const menus = use(readOwnerMenus());
   const activeMenus = menus.filter((m) => m.isActive);
   const archivedMenus = menus.filter((m) => !m.isActive);
@@ -16,7 +18,8 @@ export default function OwnerOverviewPage() {
           Overview
         </h1>
         <p className="mt-2 text-on-surface-variant">
-          Quick snapshot of menus you are running now — data is mocked.
+          Quick snapshot of menus you are running now
+          {mocks ? " — data is mocked." : "."}
         </p>
       </div>
 

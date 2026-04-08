@@ -1,15 +1,28 @@
-import { ObjectId, type Db } from "mongodb";
+import { ObjectId, type Db, type UpdateFilter } from "mongodb";
 import type {
   OwnerItemsPort,
   CreateItemInput,
   UpdateItemInput,
 } from "../../../ports/ownerItemsPort.js";
-import type { MenuItemEditorDto } from "../../../domain/menu.js";
+import type { MenuItemDto, MenuItemEditorDto } from "../../../domain/menu.js";
 import { COL } from "./collections.js";
-import type { ItemDoc, MenuDoc } from "./documents.js";
+import type { CategoryDoc, ItemDoc, MenuDoc } from "./types.js";
 
 function toVenueOid(venueId: string): ObjectId {
   return new ObjectId(venueId);
+}
+
+function toListDto(it: ItemDoc): MenuItemDto {
+  return {
+    id: it.publicId,
+    name: it.name,
+    price: it.price,
+    description: it.description,
+    allergens: it.allergens,
+    image: it.image,
+    category: it.categoryPublicId,
+    visibleOnMenu: it.visibleOnMenu,
+  };
 }
 
 function toEditorDto(it: ItemDoc): MenuItemEditorDto {
@@ -38,6 +51,28 @@ export class MongoOwnerItemsAdapter implements OwnerItemsPort {
       publicId: menuPublicId,
       venueId: toVenueOid(venueId),
     });
+  }
+
+  async listItems(
+    venueId: string,
+    menuPublicId: string,
+    filter?: { categoryPublicId?: string },
+  ): Promise<MenuItemDto[] | null> {
+    const menu = await this.assertMenuOwned(menuPublicId, venueId);
+    if (!menu) return null;
+    const q: Record<string, unknown> = {
+      menuPublicId,
+      venueId: toVenueOid(venueId),
+    };
+    if (filter?.categoryPublicId) {
+      q.categoryPublicId = filter.categoryPublicId;
+    }
+    const docs = await this.db
+      .collection<ItemDoc>(COL.items)
+      .find(q)
+      .sort({ updatedAt: -1 })
+      .toArray();
+    return docs.map(toListDto);
   }
 
   async getItem(
@@ -126,7 +161,7 @@ export class MongoOwnerItemsAdapter implements OwnerItemsPort {
     if (input.stockStatus !== undefined) $set.stockStatus = input.stockStatus;
     if (input.dietaryTags !== undefined) $set.dietaryTags = input.dietaryTags;
 
-    const r = await this.db.collection<ItemDoc>(COL.items).findOneAndUpdate(
+    const next = await this.db.collection<ItemDoc>(COL.items).findOneAndUpdate(
       {
         menuPublicId,
         publicId: itemPublicId,
@@ -135,7 +170,6 @@ export class MongoOwnerItemsAdapter implements OwnerItemsPort {
       { $set },
       { returnDocument: "after" },
     );
-    const next = r.value;
     if (!next) return null;
 
     if (input.categoryPublicId !== undefined && input.categoryPublicId !== existing.categoryPublicId) {
@@ -152,13 +186,14 @@ export class MongoOwnerItemsAdapter implements OwnerItemsPort {
     categoryPublicId: string,
     itemPublicId: string,
   ): Promise<void> {
-    await this.db.collection(COL.categories).updateOne(
+    const pullUpdate: UpdateFilter<CategoryDoc> = { $pull: { itemIds: itemPublicId } };
+    await this.db.collection<CategoryDoc>(COL.categories).updateOne(
       {
         menuPublicId,
         publicId: categoryPublicId,
         venueId: toVenueOid(venueId),
       },
-      { $pull: { itemIds: itemPublicId } },
+      pullUpdate,
     );
   }
 

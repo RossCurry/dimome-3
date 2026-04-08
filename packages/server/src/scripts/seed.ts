@@ -14,7 +14,7 @@ import type {
   MenuDoc,
   UserDoc,
   VenueDoc,
-} from "../adapters/persistence/mongo/documents.js";
+} from "../adapters/persistence/mongo/types.js";
 import { ensureIndexes } from "../adapters/persistence/mongo/ensureIndexes.js";
 
 const IMG = "/images/placeholder-dish.jpg";

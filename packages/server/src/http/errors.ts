@@ -1,4 +1,4 @@
-import type { Response } from "express";
+import type { NextFunction, Response, Request } from "express";
 
 export type ApiErrorBody = {
   error: {
@@ -26,4 +26,16 @@ export class HttpError extends Error {
     super(message);
     this.name = "HttpError";
   }
+}
+export function defaultErrorHandler(
+  err: unknown,
+  _req: Request,
+  res: Response,
+  next: NextFunction,
+){
+  if (err instanceof HttpError) {
+    sendError(res, err.status, err.code, err.message);
+    return;
+  }
+  next(err);
 }

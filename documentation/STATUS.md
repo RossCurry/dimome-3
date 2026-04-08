@@ -12,7 +12,7 @@ Snapshot of work completed in `dimome3` (product planning + **client + initial A
 | [`docker-compose.yml`](./docker-compose.yml) | **MongoDB 7** for local dev (port 27017, named volume, healthcheck) |
 | [`.env.example`](./.env.example) | Template for `dimome3/.env` (`MONGODB_URI`, `JWT_SECRET`, `PORT`, …) |
 | [`.nvmrc`](./.nvmrc) / [`.node-version`](./.node-version) | **Node.js 24** (major pin) |
-| [`packages/client/`](./packages/client/) | Canonical **Vite + React** app (still backed by **mocks**; API not wired in UI yet) |
+| [`packages/client/`](./packages/client/) | Canonical **Vite + React** app — **API-backed** by default; optional `VITE_USE_MOCK_API=true` for fixtures ([CLIENT_API_MAP_2026-04-08.md](../CLIENT_API_MAP_2026-04-08.md)) |
 | [`packages/server/`](./packages/server/) | **Express** API — see [packages/server/README.md](./packages/server/README.md) |
 | [`prototype/`](./prototype/) | Earlier experiment; **unchanged** — not the active client |
 | [`design/`](./design/) | HTML references + [`design/emerald_hearth/DESIGN.md`](./design/emerald_hearth/DESIGN.md) (design system spec) |
@@ -25,6 +25,7 @@ Snapshot of work completed in `dimome3` (product planning + **client + initial A
 - **[REQUIREMENTS.md](./REQUIREMENTS.md)** — Product requirements derived from outline + design mocks (guest vs owner, CSV/AI flows, allergens, MVP hints).
 - **[BACKEND_REQUIREMENTS.md](./BACKEND_REQUIREMENTS.md)** — Server stack (Express, **native Mongo driver**, no Mongoose v1), REST `/api/v1/`, ports/adapters, async jobs (polling → SSE/Redis → optional RabbitMQ), **Docker Compose** for **Mongo** (and later Redis/RabbitMQ) with **API on host** for local dev.
 - **[BE_PLAN.md](./BE_PLAN.md)** — Step-by-step backend build checklist (Phases A–F) before/during implementation.
+- **[CLIENT_API_MAP_2026-04-08.md](../CLIENT_API_MAP_2026-04-08.md)** — UI routes ↔ REST endpoints (client integration).
 
 ---
 
@@ -42,28 +43,29 @@ Snapshot of work completed in `dimome3` (product planning + **client + initial A
 
 - [`src/index.css`](./packages/client/src/index.css) — `@theme` tokens aligned with **Emerald Hearth** / DESIGN.md (surfaces, primary, tertiary, fonts **Inter** + **Epilogue** via `index.html`).
 
-### Data (all mocked)
+### Data (API + optional mocks)
 
-- No Express server in this package; **no real API**.
-- [`src/mocks/`](./packages/client/src/mocks/) — `delay.ts`, `fixtures.ts`, `constants.ts` (EU allergen labels, `PLACEHOLDER_IMAGE`), `mockApi.ts` (promises for `React.use()` + caching where useful).
-- **One shared dish image** for every mock item: [`public/images/placeholder-dish.jpg`](./packages/client/public/images/placeholder-dish.jpg).
-- **Public menu** is loaded by **`readPublicMenu(menuId)`** — same catalog in mocks for any id today; QR URLs carry the id for future API scoping.
+- **Live:** [`src/api/`](./packages/client/src/api/) (`apiJson`, public + owner helpers), JWT in `sessionStorage`, [`AuthContext`](./packages/client/src/context/AuthContext.tsx), [`RequireAuth`](./packages/client/src/components/owner/RequireAuth.tsx). [`mockApi.ts`](./packages/client/src/mocks/mockApi.ts) calls the API unless **`VITE_USE_MOCK_API=true`**.
+- **Fixtures:** [`src/mocks/`](./packages/client/src/mocks/) — `fixtures.ts`, `constants.ts`, artificial delays when mocks are on. CSV / scan flows are **always** mock until job APIs exist.
+- **One shared dish image** for seeded/mock items: [`public/images/placeholder-dish.jpg`](./packages/client/public/images/placeholder-dish.jpg).
+- **Mapping:** [CLIENT_API_MAP_2026-04-08.md](../CLIENT_API_MAP_2026-04-08.md).
 
 ### Routing (`createBrowserRouter`)
 
-**MVP default:** `/` is the **owner** app (dashboard). **Guest** routes use **`/qr/:menuId`** for QR (`https://<host>/qr/<menuId>`) and **`/menu/:menuId`** as a readable alias.
+**MVP default:** `/` is the **owner** app (dashboard), **JWT required** (redirect to `/login`). **Guest** routes use **`/qr/:menuId`** for QR (`https://<host>/qr/<menuId>`) and **`/menu/:menuId`** as a readable alias.
 
 **Owner** (`OwnerLayout` at `/` — **sidebar** on `md+`: Overview, Menus, Categories, …; **below `md`** the sidebar is hidden and a **header menu icon** opens a **slide-in drawer** from the left with scrim, close control, **Escape** to dismiss, and **body scroll lock** while open):
 
 | Route | Page |
 |-------|------|
+| `/login` | Owner sign-in (`POST /api/v1/auth/login`) |
 | `/` | Overview — active (+ archived) menus, quick actions |
 | `/menus` | All menus list (active / archived) |
 | `/menus/:menuId` | Menu hub — categories for that menu only |
-| `/menus/:menuId/category/:categoryId` | Category — item table; visibility toggle (mock local state) |
+| `/menus/:menuId/category/:categoryId` | Category — item table; visibility from API when live |
 | `/categories` | All categories across menus + Add Category modal |
 | `/items/new` | New menu item (from modal or category page) |
-| `/items/:itemId/edit` | Item editor + **sliding action footer** (Save → mock persist + back to category) |
+| `/menus/:menuId/items/:itemId/edit` | Item editor + **sliding action footer** (Save still local until PATCH wired) |
 | `/import/csv` | CSV wizard step 1 |
 | `/import/csv/map` | Step 2 — column mapping + preview (`CsvImportContext`) |
 | `/import/csv/review` | Step 3 — mock rows + `readCsvPreview()` |
@@ -90,7 +92,7 @@ Small **Owner** link on the guest menu points to `/` (dashboard).
 ### Loading / Suspense
 
 - **Route-level:** `React.lazy` pages with **skeleton fallbacks** in [`src/router.tsx`](./packages/client/src/router.tsx).
-- **Data-level:** `use()` on delayed mock promises (e.g. `readPublicMenu(menuId)`, `readOwnerMenus`, `readOwnerCategories`, `readOwnerCategoryPage`, item editor); inner **Suspense** + [`TableRowsSkeleton`](./packages/client/src/components/skeletons/TableRowsSkeleton.tsx) for CSV review and scan review tables.
+- **Data-level:** `use()` on promises from `mockApi` (API or mock); inner **Suspense** + [`TableRowsSkeleton`](./packages/client/src/components/skeletons/TableRowsSkeleton.tsx) for CSV review and scan review tables.
 - Reusable primitives under [`src/components/skeletons/`](./packages/client/src/components/skeletons/).
 
 ### Types
@@ -107,11 +109,11 @@ Small **Owner** link on the guest menu points to `/` (dashboard).
 
 - **Stack:** Express, TypeScript (ESM), **native `mongodb`**, `dotenv`, `cors`, `bcryptjs`, `jsonwebtoken`.
 - **Layout:** `ports/`, `adapters/persistence/mongo/`, `routes/v1/`, `domain/`, `http/errors`, `middleware/requireAuth`, `services/authService`.
-- **Endpoints:** `GET /api/v1/health` (incl. DB ping); **`GET /api/v1/public/menus/:menuId`** (published menus only, `PublicMenuData`-shaped JSON); **`POST /api/v1/auth/login`**; **`/api/v1/owner/*`** (JWT): menus list/create/patch, categories list/create/patch, items get/create/patch.
+- **Endpoints:** `GET /api/v1/health` (incl. DB ping); **`GET /api/v1/public/menus/:menuId`** (published menus only, `PublicMenuData`-shaped JSON); **`POST /api/v1/auth/login`**; **`/api/v1/owner/*`** (JWT): menus list/create/patch, categories list/create/patch, items **list** (optional `?categoryPublicId=`), get/create/patch.
 - **Tooling:** `npm run db:seed` — resets collections and loads data aligned with client fixtures (`menu-1`, demo user **`dev@dimome.local` / `password`**).
 - **Docs:** [packages/server/README.md](./packages/server/README.md).
 
-**Still mocked in the SPA:** owner/guest pages continue to use `src/mocks/mockApi.ts` until the client is pointed at the API (proxy / `VITE_API_URL`).
+**Client:** default uses the API via `mockApi.ts` + `src/api/`; set **`VITE_USE_MOCK_API=true`** to force fixtures. **CSV / AI** steps remain mock-only.
 
 ---
 
@@ -133,7 +135,7 @@ npm run build            # client + server
 
 ## Not done yet (by design / later)
 
-- **Client → API:** replace mocks with `fetch`, CORS/proxy, Bearer token for owner routes.
+- **Client → API:** guest + owner reads + login are wired; **mutations** (PATCH item, POST new item, etc.) still local or unimplemented.
 - **R2** presigned uploads, **CSV / AI** job documents + worker + **polling** ([BACKEND_REQUIREMENTS.md §7](./BACKEND_REQUIREMENTS.md)).
 - **SSE + Redis**, optional **RabbitMQ**; JWT **refresh** / revocation hardening.
 - **Shared `packages/types`** (optional).

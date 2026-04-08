@@ -1,6 +1,7 @@
 import { use, useState } from "react";
 import { Link, Navigate, useParams } from "react-router-dom";
 import { ArrowLeft, Eye, EyeOff, Plus } from "lucide-react";
+import { useMocks } from "@/lib/env";
 import type { OwnerCategoryPageData } from "@/mocks/mockApi";
 import { readOwnerCategoryPage } from "@/mocks/mockApi";
 
@@ -13,9 +14,12 @@ function CategoryPageInner({
   categoryId: string;
   data: OwnerCategoryPageData;
 }) {
+  const mocks = useMocks();
   const { categoryName, items } = data;
   const [visibleById, setVisibleById] = useState<Record<string, boolean>>(() =>
-    Object.fromEntries(items.map((i) => [i.id, true] as const)),
+    Object.fromEntries(
+      items.map((i) => [i.id, i.visibleOnMenu ?? true] as const),
+    ),
   );
 
   const toggleVisible = (id: string) => {
@@ -39,7 +43,8 @@ function CategoryPageInner({
             {" · "}
             Category <span className="font-mono text-xs">{categoryId}</span>
             {" — "}
-            {items.length} {items.length === 1 ? "item" : "items"} (mock).
+            {items.length} {items.length === 1 ? "item" : "items"}
+            {mocks ? " (mock)." : "."}
           </p>
         </div>
         <Link
@@ -109,7 +114,7 @@ function CategoryPageInner({
                     </td>
                     <td className="px-6 py-4 text-right">
                       <Link
-                        to={`/items/${item.id}/edit`}
+                        to={`/menus/${menuId}/items/${item.id}/edit`}
                         className="text-sm font-semibold text-primary"
                       >
                         Edit

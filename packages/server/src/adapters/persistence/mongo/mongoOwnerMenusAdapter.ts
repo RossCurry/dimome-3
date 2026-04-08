@@ -2,7 +2,7 @@ import { ObjectId, type Db } from "mongodb";
 import type { OwnerMenusPort, CreateMenuInput, UpdateMenuInput } from "../../../ports/ownerMenusPort.js";
 import type { OwnerMenuSummaryDto } from "../../../domain/menu.js";
 import { COL } from "./collections.js";
-import type { MenuDoc } from "./documents.js";
+import type { MenuDoc } from "./types.js";
 import { formatUpdatedLabel } from "./format.js";
 
 function toVenueOid(venueId: string): ObjectId {
@@ -84,12 +84,11 @@ export class MongoOwnerMenusAdapter implements OwnerMenusPort {
     if (input.isPublished !== undefined) $set.isPublished = input.isPublished;
     if (input.guestVenueName !== undefined) $set.guestVenueName = input.guestVenueName;
 
-    const r = await this.db.collection<MenuDoc>(COL.menus).findOneAndUpdate(
+    const m = await this.db.collection<MenuDoc>(COL.menus).findOneAndUpdate(
       { publicId: menuPublicId, venueId: vid },
       { $set },
       { returnDocument: "after" },
     );
-    const m = r?.value;
     if (!m) return null;
     const categoryCount = await this.db.collection(COL.categories).countDocuments({
       menuPublicId: m.publicId,

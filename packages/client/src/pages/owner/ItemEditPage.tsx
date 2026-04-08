@@ -2,15 +2,23 @@ import { use, useState } from "react";
 import { Link, Navigate, useNavigate, useParams } from "react-router-dom";
 import { ArrowLeft, Camera, Trash2 } from "lucide-react";
 import type { MenuItemEditor } from "@/types";
+import { useMocks } from "@/lib/env";
 import { readItemEditor } from "@/mocks/mockApi";
 import { DIETARY_VEGAN, EU_ALLERGEN_LABELS } from "@/mocks/constants";
 import { OwnerSlidingActionFooter } from "@/components/owner/OwnerSlidingActionFooter";
 // Future: import { OwnerConfirmDialog } from "@/components/owner/OwnerConfirmDialog" for a pre-save summary modal before API persist.
 
-function ItemEditPageForm({ initialItem }: { initialItem: MenuItemEditor }) {
+function ItemEditPageForm({
+  menuId,
+  initialItem,
+}: {
+  menuId: string;
+  initialItem: MenuItemEditor;
+}) {
+  const mocks = useMocks();
   const navigate = useNavigate();
   const [item, setItem] = useState(initialItem);
-  const backTo = `/menus/menu-1/category/${item.category}`;
+  const backTo = `/menus/${menuId}/category/${item.category}`;
 
   const toggleAllergen = (label: string) => {
     setItem((prev) => ({
@@ -264,7 +272,11 @@ function ItemEditPageForm({ initialItem }: { initialItem: MenuItemEditor }) {
 
       <OwnerSlidingActionFooter
         leading={
-          <span>Save applies changes locally then returns to the category list (mock — no API yet).</span>
+          <span>
+            {mocks
+              ? "Save applies changes locally then returns to the category list (mock — no API yet)."
+              : "Save still returns locally; PATCH item is not wired yet."}
+          </span>
         }
         onCancel={() => navigate(backTo)}
         onSave={() => navigate(backTo)}
@@ -274,13 +286,21 @@ function ItemEditPageForm({ initialItem }: { initialItem: MenuItemEditor }) {
 }
 
 export default function ItemEditPage() {
-  const { itemId } = useParams<{ itemId: string }>();
+  const { menuId: menuIdParam, itemId } = useParams<{
+    menuId: string;
+    itemId: string;
+  }>();
+  const menuId = menuIdParam ?? "";
   const id = itemId ?? "";
-  const loaded = use(readItemEditor(id));
+  const loaded = use(readItemEditor(menuId, id));
 
-  if (!loaded) {
-    return <Navigate to="/" replace />;
+  if (!menuId || !id) {
+    return <Navigate to="/menus" replace />;
   }
 
-  return <ItemEditPageForm key={id} initialItem={loaded} />;
+  if (!loaded) {
+    return <Navigate to={`/menus/${menuId}`} replace />;
+  }
+
+  return <ItemEditPageForm key={`${menuId}:${id}`} menuId={menuId} initialItem={loaded} />;
 }

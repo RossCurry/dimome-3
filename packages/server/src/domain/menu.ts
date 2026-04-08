@@ -7,6 +7,8 @@ export interface MenuItemDto {
   allergens: string[];
   image: string;
   category: string;
+  /** Present on owner list responses; omitted on public guest payloads. */
+  visibleOnMenu?: boolean;
 }
 
 export interface MenuCategoryDto {

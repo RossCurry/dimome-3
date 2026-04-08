@@ -8,14 +8,14 @@ import { MongoOwnerMenusAdapter } from "./adapters/persistence/mongo/mongoOwnerM
 import { MongoOwnerCategoriesAdapter } from "./adapters/persistence/mongo/mongoOwnerCategoriesAdapter.js";
 import { MongoOwnerItemsAdapter } from "./adapters/persistence/mongo/mongoOwnerItemsAdapter.js";
 import { COL } from "./adapters/persistence/mongo/collections.js";
-import type { VenueDoc } from "./adapters/persistence/mongo/documents.js";
+import type { VenueDoc } from "./adapters/persistence/mongo/types.js";
 import { AuthService } from "./services/authService.js";
 import { requireAuth } from "./middleware/requireAuth.js";
 import { healthRouter } from "./routes/v1/health.js";
 import { publicMenuRouter } from "./routes/v1/publicMenu.js";
 import { authRouter } from "./routes/v1/auth.js";
 import { ownerRouter } from "./routes/v1/owner.js";
-import { HttpError, sendError } from "./http/errors.js";
+import { defaultErrorHandler } from "./http/errors.js";
 
 export function createApp(db: Db, config: AppConfig): Express {
   const app = express();
@@ -40,30 +40,23 @@ export function createApp(db: Db, config: AppConfig): Express {
   v1.use(
     "/owner",
     requireAuth(auth),
-    ownerRouter(ownerMenus, ownerCategories, ownerItems, async (venueId: string) => {
-      const v = await db.collection<VenueDoc>(COL.venues).findOne({
-        _id: new ObjectId(venueId),
-      });
-      return v?.name ?? "";
-    }),
+    ownerRouter(
+      ownerMenus,
+      ownerCategories,
+      ownerItems,
+      async (venueId: string) => {
+        const v = await db.collection<VenueDoc>(COL.venues).findOne({
+          _id: new ObjectId(venueId),
+        });
+        return v?.name ?? "";
+      }
+    ),
   );
 
   app.use("/api/v1", v1);
 
-  app.use(
-    (
-      err: unknown,
-      _req: express.Request,
-      res: express.Response,
-      next: express.NextFunction,
-    ) => {
-      if (err instanceof HttpError) {
-        sendError(res, err.status, err.code, err.message);
-        return;
-      }
-      next(err);
-    },
-  );
+  // will catch final errors that bubble up
+  app.use(defaultErrorHandler);
 
   return app;
 }

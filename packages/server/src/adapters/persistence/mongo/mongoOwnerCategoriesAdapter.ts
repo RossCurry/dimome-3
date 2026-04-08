@@ -6,7 +6,7 @@ import type {
 } from "../../../ports/ownerCategoriesPort.js";
 import type { CategorySummaryDto } from "../../../domain/menu.js";
 import { COL } from "./collections.js";
-import type { CategoryDoc, MenuDoc } from "./documents.js";
+import type { CategoryDoc, MenuDoc } from "./types.js";
 import { formatUpdatedLabel } from "./format.js";
 
 function toVenueOid(venueId: string): ObjectId {
@@ -110,7 +110,7 @@ export class MongoOwnerCategoriesAdapter implements OwnerCategoriesPort {
       $set.menuName = menu.name;
     }
 
-    const r = await this.db.collection<CategoryDoc>(COL.categories).findOneAndUpdate(
+    const c = await this.db.collection<CategoryDoc>(COL.categories).findOneAndUpdate(
       {
         publicId: categoryPublicId,
         menuPublicId,
@@ -119,7 +119,6 @@ export class MongoOwnerCategoriesAdapter implements OwnerCategoriesPort {
       { $set },
       { returnDocument: "after" },
     );
-    const c = r.value;
     if (!c) return null;
     return mapCategory(c);
   }
