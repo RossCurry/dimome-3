@@ -2,23 +2,70 @@ import { use, useState } from "react";
 import { Link, Navigate, useNavigate, useParams } from "react-router-dom";
 import { ArrowLeft, Camera, Trash2 } from "lucide-react";
 import type { MenuItemEditor } from "@/types";
+import { patchItem } from "@/api/owner";
 import { useMocks } from "@/lib/env";
-import { readItemEditor } from "@/mocks/mockApi";
+import { clearReadCaches, readItemEditor } from "@/mocks/mockApi";
 import { DIETARY_VEGAN, EU_ALLERGEN_LABELS } from "@/mocks/constants";
 import { OwnerSlidingActionFooter } from "@/components/owner/OwnerSlidingActionFooter";
 // Future: import { OwnerConfirmDialog } from "@/components/owner/OwnerConfirmDialog" for a pre-save summary modal before API persist.
 
 function ItemEditPageForm({
   menuId,
+  itemId,
   initialItem,
 }: {
   menuId: string;
+  itemId: string;
   initialItem: MenuItemEditor;
 }) {
   const mocks = useMocks();
   const navigate = useNavigate();
   const [item, setItem] = useState(initialItem);
+  const [saving, setSaving] = useState(false);
   const backTo = `/menus/${menuId}/category/${item.category}`;
+
+  const persistAndLeave = async () => {
+    if (mocks) {
+      navigate(backTo);
+      return;
+    }
+    setSaving(true);
+    try {
+      await patchItem(menuId, itemId, {
+        categoryPublicId: item.category,
+        name: item.name,
+        price: item.price,
+        description: item.description,
+        allergens: item.allergens,
+        image: item.image,
+        ingredients: item.ingredients,
+        visibleOnMenu: item.visibleOnMenu,
+        featured: item.featured,
+        sku: item.sku,
+        stockStatus: item.stockStatus,
+        dietaryTags: item.dietaryTags,
+      });
+      clearReadCaches();
+      navigate(`/menus/${menuId}/category/${item.category}`);
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  const archiveAndLeave = async () => {
+    if (mocks) {
+      navigate(backTo);
+      return;
+    }
+    setSaving(true);
+    try {
+      await patchItem(menuId, itemId, { visibleOnMenu: false });
+      clearReadCaches();
+      navigate(backTo);
+    } finally {
+      setSaving(false);
+    }
+  };
 
   const toggleAllergen = (label: string) => {
     setItem((prev) => ({
@@ -263,10 +310,12 @@ function ItemEditPageForm({
       <div className="mt-12 flex justify-center border-t border-outline-variant/20 pt-8">
         <button
           type="button"
-          className="flex items-center gap-2 rounded-xl px-4 py-2 font-medium text-error hover:bg-error-container/20"
+          disabled={saving}
+          onClick={() => void archiveAndLeave()}
+          className="flex items-center gap-2 rounded-xl px-4 py-2 font-medium text-error hover:bg-error-container/20 disabled:opacity-50"
         >
           <Trash2 className="h-5 w-5" />
-          Archive menu item
+          Hide from guest menu
         </button>
       </div>
 
@@ -274,12 +323,16 @@ function ItemEditPageForm({
         leading={
           <span>
             {mocks
-              ? "Save applies changes locally then returns to the category list (mock — no API yet)."
-              : "Save still returns locally; PATCH item is not wired yet."}
+              ? "Save returns to the category list (mock — no API)."
+              : saving
+                ? "Saving…"
+                : "Save pushes changes to the server."}
           </span>
         }
         onCancel={() => navigate(backTo)}
-        onSave={() => navigate(backTo)}
+        onSave={() => void persistAndLeave()}
+        saveDisabled={saving}
+        saveLabel={saving ? "Saving…" : "Save"}
       />
     </div>
   );
@@ -302,5 +355,7 @@ export default function ItemEditPage() {
     return <Navigate to={`/menus/${menuId}`} replace />;
   }
 
-  return <ItemEditPageForm key={`${menuId}:${id}`} menuId={menuId} initialItem={loaded} />;
+  return (
+    <ItemEditPageForm key={`${menuId}:${id}`} menuId={menuId} itemId={id} initialItem={loaded} />
+  );
 }

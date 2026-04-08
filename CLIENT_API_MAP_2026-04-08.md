@@ -1,6 +1,6 @@
 # Client ↔ API mapping (DiMoMe v3)
 
-**Last updated:** 2026-04-08 (evening: API error snackbar via `SnackbarProvider` / `GuestFilterSnackbar`; login omits global snack.)
+**Last updated:** 2026-04-08 (owner writes + guest order read aligned with public menu; see matrix below).
 
 Single source of truth for which HTTP routes power which UI areas. Planning docs live under [`documentation/`](documentation/). Canonical route summary: [packages/server/README.md](packages/server/README.md). Product types on the client: [packages/client/src/types/index.ts](packages/client/src/types/index.ts). Server DTOs: [packages/server/src/domain/menu.ts](packages/server/src/domain/menu.ts).
 
@@ -65,14 +65,16 @@ On the **client**, `apiJson` throws **`ApiError`** with the same `code` / `messa
 | Client route / area | Data helper (client) | API (live mode) | Notes |
 |---------------------|----------------------|-----------------|-------|
 | `/qr/:menuId`, `/menu/:menuId` (guest menu) | `readPublicMenu(menuId)` | `GET /api/v1/public/menus/:menuId` | No JWT. Published menus only; guest payload excludes non–`visibleOnMenu` items ([mongoPublicMenuReadAdapter.ts](packages/server/src/adapters/persistence/mongo/mongoPublicMenuReadAdapter.ts)). |
-| `…/filters`, `…/order` | — | — | Filters use React context only; order stub. |
+| `…/filters` | — | — | Filters use React context only. |
+| `…/order` | `readPublicMenu(menuId)` | `GET /api/v1/public/menus/:menuId` | Cart line labels/prices match the same published menu as the guest menu route (`Suspense` + `use()`). |
 | `/login` | — | `POST /api/v1/auth/login` | Owner shell redirects here when unauthenticated. |
-| `/`, `/menus` | `readOwnerMenus()` | `GET /api/v1/owner/menus` | JWT. |
+| `/`, `/menus` | `readOwnerMenus()` | `GET /api/v1/owner/menus` | JWT. **Archive / Restore** (live): `patchMenu` → `PATCH .../owner/menus/:menuId` (`isActive`), then `clearReadCaches()` + Suspense remount. **Overview — Create menu** (live): `createMenu` → `POST /api/v1/owner/menus`. |
 | `/menus/:menuId` | `readOwnerMenuCategories(menuId)` | `GET /api/v1/owner/menus/:menuId/categories` + `GET /api/v1/owner/menus` + `GET /api/v1/owner/categories` (for `venueName`) | Categories endpoint returns an array only; client composes `OwnerMenuCategoriesData` (`menuName` from menus list, `venueName` from `/owner/categories`). |
 | `/categories` | `readOwnerCategories()` | `GET /api/v1/owner/categories` | Matches `OwnerCategoriesData`. |
-| `/menus/:menuId/category/:categoryId` | `readOwnerCategoryPage(menuId, categoryId)` | `GET .../menus/:menuId/categories` (find row) + `GET .../menus/:menuId/items?categoryPublicId=:categoryId` | Owner item list includes **all** visibility states; avoids using the public menu for staff tables. |
-| `/menus/:menuId/items/:itemId/edit` | `readItemEditor(menuId, itemId)` | `GET /api/v1/owner/menus/:menuId/items/:itemId` | JWT. |
-| `/items/new` | local empty state | `POST /api/v1/owner/menus/:menuId/items` | Wire on save when mutations are implemented. |
+| `/menus/:menuId/category/:categoryId` | `readOwnerCategoryPage(menuId, categoryId)` | `GET .../menus/:menuId/categories` (find row) + `GET .../menus/:menuId/items?categoryPublicId=:categoryId` | Owner item list includes **all** visibility states. **Row visibility toggle** (live): `patchItem` → `PATCH .../items/:itemId` (`visibleOnMenu`). |
+| `/menus/:menuId/items/:itemId/edit` | `readItemEditor(menuId, itemId)` | `GET /api/v1/owner/menus/:menuId/items/:itemId` | JWT. **Save / hide from guest menu** (live): `patchItem` → `PATCH .../items/:itemId`, then `clearReadCaches()` + navigate. |
+| `/items/new` | local empty editor | `POST /api/v1/owner/menus/:menuId/items` | Live: **Add menu item** calls `createItem` (requires `menuId` + `categoryPublicId` in location state). |
+| Add Category modal | — | `POST /api/v1/owner/menus/:menuId/categories` | Live: `createCategory` from `CategoryCreateModalContext`; `/menus/:menuId` passes `menuId`; `/categories` opens a **menu** picker then posts. |
 | CSV steps 1–3 | `readCsvPreview()` | — | No backend yet ([BACKEND_REQUIREMENTS.md](documentation/BACKEND_REQUIREMENTS.md) §7). |
 | Scan steps 1–3 | `readScanDraft()` | — | Same. |
 

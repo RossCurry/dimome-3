@@ -68,7 +68,7 @@ For full requirements and future scope, see [REQUIREMENTS.md](./REQUIREMENTS.md)
 | `/menus/:menuId/category/:categoryId` | Category — item table; visibility from API when live |
 | `/categories` | All categories across menus + Add Category modal |
 | `/items/new` | New menu item (from modal or category page) |
-| `/menus/:menuId/items/:itemId/edit` | Item editor + **sliding action footer** (Save still local until PATCH wired) |
+| `/menus/:menuId/items/:itemId/edit` | Item editor + **sliding action footer** — live API: **Save** / **hide** use `PATCH .../items/:itemId` |
 | `/import/csv` | CSV wizard step 1 |
 | `/import/csv/map` | Step 2 — column mapping + preview (`CsvImportContext`) |
 | `/import/csv/review` | Step 3 — mock rows + `readCsvPreview()` |
@@ -84,7 +84,7 @@ For full requirements and future scope, see [REQUIREMENTS.md](./REQUIREMENTS.md)
 |-------|------|
 | `/qr/:menuId`, `/menu/:menuId` | Menu — search, categories, filters, add to order; **empty state** when allergen filters hide every visible dish (`GuestMenuFilterEmptyState`); separate copy for no search hits / empty category |
 | `…/filters` | Allergen filters — header **Clear filters**, **Save choices** (back to menu); in-page **`showSnack`** logic for filter toggles (optional future UI); **global** API errors use the same `GuestFilterSnackbar` component via `SnackbarProvider` |
-| `…/order` | My order stub |
+| `…/order` | My order — loads **`readPublicMenu(menuId)`** so totals match the guest menu (API or mocks) |
 
 **Legacy:** `/owner/*` redirects to the same path **without** the `/owner` prefix (e.g. `/owner/menus/x` → `/menus/x`).
 
@@ -138,7 +138,7 @@ npm run build            # client + server
 
 ## Not done yet (by design / later)
 
-- **Client → API:** guest + owner reads + login are wired; **mutations** (PATCH item, POST new item, etc.) still local or unimplemented.
+- **Client → API:** guest + owner reads + login are wired; **owner mutations** for items, categories, and menus (create/patch/archive) call the API when mocks are off. **CSV / AI** flows remain mock-only until job APIs exist.
 - **R2** presigned uploads, **CSV / AI** job documents + worker + **polling** ([BACKEND_REQUIREMENTS.md §7](./BACKEND_REQUIREMENTS.md)).
 - **SSE + Redis**, optional **RabbitMQ**; JWT **refresh** / revocation hardening.
 - **Shared `packages/types`** (optional).
@@ -151,6 +151,7 @@ npm run build            # client + server
 
 | Area | Change |
 |------|--------|
+| **2026-04-08 — Owner writes (client)** | Guest **`/order`** uses **`readPublicMenu`**. Item editor **`patchItem`**; new item **`createItem`**; category modal **`createCategory`** (menu picker on `/categories`); category table **`visibleOnMenu`** via **`patchItem`**. Overview **Create menu** / menus list **Archive·Restore** via **`createMenu`** / **`patchMenu`**. |
 | **2026-04-08 — Client ↔ API** | Vite **`/api` proxy**, `apiJson` / **`ApiError`**, optional **`VITE_API_URL`** / **`VITE_USE_MOCK_API`**. **`/login`**, JWT **`sessionStorage`**, **`RequireAuth`**, owner + guest reads via **`mockApi`** → API. Item editor route **`/menus/:menuId/items/:itemId/edit`**. Server **`GET /api/v1/owner/menus/:menuId/items`** (optional **`categoryPublicId`**). [CLIENT_API_MAP_2026-04-08.md](../CLIENT_API_MAP_2026-04-08.md). |
 | **2026-04-08 — API errors UI** | **`SnackbarProvider`** registers **`errorNotifier`**; **`apiJson`** shows **`GuestFilterSnackbar`** on failed requests (login **`showErrorSnack: false`**). Network failures show a short “API running?” message. |
 | **2026-04-08 — Docs / repo** | Planning markdown consolidated under **`documentation/`**; root **`.gitignore`** extended with **`dist/`**, **`build/`**, **`out/`**, **`*.tsbuildinfo`**. [packages/server/README.md](../packages/server/README.md) — **Run API + Vite client together**. |
@@ -163,4 +164,4 @@ npm run build            # client + server
 
 ---
 
-*Last updated: 2026-04-08 — **Client wired to API** (reads + login + snackbar errors); **documentation** under `documentation/`; **owner mutations** still mostly local in UI.*
+*Last updated: 2026-04-08 — **Client wired to API** (reads, login, owner writes when not in mock mode, snackbar errors); **documentation** under `documentation/`.*

@@ -1,9 +1,11 @@
 import { use } from "react";
 import { useCategoryCreateModal } from "@/context/CategoryCreateModalContext";
+import { useMocks } from "@/lib/env";
 import { readOwnerCategories } from "@/mocks/mockApi";
 import { OwnerCategoryRowList } from "@/components/owner/OwnerCategoryRowList";
 
 export default function OwnerCategoriesPage() {
+  const mocks = useMocks();
   const data = use(readOwnerCategories());
   const { openAddCategoryModal } = useCategoryCreateModal();
 
@@ -15,12 +17,15 @@ export default function OwnerCategoriesPage() {
             Categories
           </h1>
           <p className="mt-2 text-on-surface-variant">
-            {data.venueName} — manage categories across menus (mock).
+            {data.venueName}
+            {mocks
+              ? " — manage categories across menus (mock)."
+              : " — manage categories across menus."}
           </p>
         </div>
         <button
           type="button"
-          onClick={openAddCategoryModal}
+          onClick={() => openAddCategoryModal()}
           className="primary-gradient rounded-xl px-5 py-2.5 text-center text-sm font-semibold text-on-primary"
         >
           Add Category

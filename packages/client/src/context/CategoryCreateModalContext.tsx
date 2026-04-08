@@ -11,38 +11,93 @@ import {
 } from "react";
 import { useNavigate } from "react-router-dom";
 import { X } from "lucide-react";
+import { createCategory } from "@/api/owner";
+import { useMocks } from "@/lib/env";
 import type { NewMenuItemLocationState } from "@/types/navigation";
+import type { OwnerMenuSummary } from "@/types";
+import { clearReadCaches, readOwnerMenus } from "@/mocks/mockApi";
 
 type CategoryCreateModalContextValue = {
-  openAddCategoryModal: () => void;
+  openAddCategoryModal: (menuId?: string) => void;
 };
 
 const CategoryCreateModalContext =
   createContext<CategoryCreateModalContextValue | null>(null);
 
 export function CategoryCreateModalProvider({ children }: { children: ReactNode }) {
+  const mocks = useMocks();
   const navigate = useNavigate();
   const [open, setOpen] = useState(false);
   const [name, setName] = useState("");
+  const [contextMenuId, setContextMenuId] = useState<string | null>(null);
+  const [menuPickerId, setMenuPickerId] = useState("");
+  const [menuOptions, setMenuOptions] = useState<OwnerMenuSummary[]>([]);
+  const [submitting, setSubmitting] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
   const titleId = useId();
 
   const close = useCallback(() => {
     setOpen(false);
     setName("");
+    setContextMenuId(null);
+    setMenuPickerId("");
+    setMenuOptions([]);
+    setSubmitting(false);
   }, []);
 
-  const submit = useCallback(() => {
-    const trimmed = name.trim();
-    if (!trimmed) return;
-    const categoryId = `cat-${Date.now()}`;
-    const state: NewMenuItemLocationState = {
-      categoryName: trimmed,
-      categoryId,
+  const openModal = useCallback((menuId?: string) => {
+    setContextMenuId(menuId?.trim() ? menuId : null);
+    setMenuPickerId("");
+    setMenuOptions([]);
+    setName("");
+    setOpen(true);
+  }, []);
+
+  useEffect(() => {
+    if (!open || mocks || contextMenuId != null) return;
+    let cancelled = false;
+    void readOwnerMenus().then((list) => {
+      if (!cancelled) setMenuOptions(list);
+    });
+    return () => {
+      cancelled = true;
     };
-    close();
-    navigate("/items/new", { state });
-  }, [name, navigate, close]);
+  }, [open, mocks, contextMenuId]);
+
+  const submit = useCallback(async () => {
+    const trimmed = name.trim();
+    if (!trimmed || submitting) return;
+
+    const effectiveMenuId = contextMenuId ?? menuPickerId.trim();
+    if (!mocks && !effectiveMenuId) return;
+
+    if (mocks) {
+      const categoryId = `cat-${Date.now()}`;
+      const state: NewMenuItemLocationState = {
+        categoryName: trimmed,
+        categoryId,
+        ...(contextMenuId ? { menuId: contextMenuId } : {}),
+      };
+      close();
+      navigate("/items/new", { state });
+      return;
+    }
+
+    setSubmitting(true);
+    try {
+      const created = await createCategory(effectiveMenuId, { name: trimmed });
+      clearReadCaches();
+      const state: NewMenuItemLocationState = {
+        categoryName: created.name,
+        categoryId: created.categoryId,
+        menuId: created.menuId,
+      };
+      close();
+      navigate("/items/new", { state });
+    } finally {
+      setSubmitting(false);
+    }
+  }, [name, submitting, mocks, contextMenuId, menuPickerId, navigate, close]);
 
   useEffect(() => {
     if (!open) return;
@@ -60,9 +115,15 @@ export function CategoryCreateModalProvider({ children }: { children: ReactNode 
   }, [open, close]);
 
   const value = useMemo<CategoryCreateModalContextValue>(
-    () => ({ openAddCategoryModal: () => setOpen(true) }),
-    [],
+    () => ({ openAddCategoryModal: openModal }),
+    [openModal],
   );
+
+  const needsMenuPicker = !mocks && contextMenuId == null;
+  const canSubmit =
+    trimmedName(name) &&
+    (!needsMenuPicker || menuPickerId.trim() !== "") &&
+    !submitting;
 
   return (
     <CategoryCreateModalContext.Provider value={value}>
@@ -88,6 +149,25 @@ export function CategoryCreateModalProvider({ children }: { children: ReactNode 
             >
               Category name
             </h2>
+            {needsMenuPicker ? (
+              <div className="mb-4 space-y-2">
+                <label className="text-xs font-semibold text-on-surface-variant uppercase tracking-wide">
+                  Menu
+                </label>
+                <select
+                  value={menuPickerId}
+                  onChange={(e) => setMenuPickerId(e.target.value)}
+                  className="w-full bg-surface-container-low border border-outline-variant/10 rounded-xl px-4 py-3 text-sm text-on-surface"
+                >
+                  <option value="">Select a menu…</option>
+                  {menuOptions.map((m) => (
+                    <option key={m.id} value={m.id}>
+                      {m.name}
+                    </option>
+                  ))}
+                </select>
+              </div>
+            ) : null}
             <div className="relative mb-6">
               <input
                 ref={inputRef}
@@ -111,18 +191,19 @@ export function CategoryCreateModalProvider({ children }: { children: ReactNode 
             <div className="flex justify-end gap-3">
               <button
                 type="button"
+                disabled={submitting}
                 onClick={close}
-                className="px-4 py-2.5 rounded-xl text-sm font-medium text-on-surface-variant hover:bg-surface-container-low"
+                className="px-4 py-2.5 rounded-xl text-sm font-medium text-on-surface-variant hover:bg-surface-container-low disabled:opacity-50"
               >
                 Cancel
               </button>
               <button
                 type="button"
-                onClick={submit}
-                disabled={!name.trim()}
+                onClick={() => void submit()}
+                disabled={!canSubmit}
                 className="primary-gradient text-on-primary px-5 py-2.5 rounded-xl text-sm font-semibold disabled:opacity-40 disabled:pointer-events-none"
               >
-                Add Category
+                {submitting ? "Saving…" : "Add Category"}
               </button>
             </div>
           </div>
@@ -130,6 +211,10 @@ export function CategoryCreateModalProvider({ children }: { children: ReactNode 
       )}
     </CategoryCreateModalContext.Provider>
   );
+}
+
+function trimmedName(name: string): boolean {
+  return name.trim().length > 0;
 }
 
 export function useCategoryCreateModal() {

@@ -75,3 +75,124 @@ export function fetchItemEditor(menuId: string, itemId: string): Promise<MenuIte
     { token: tokenOrThrow() },
   );
 }
+
+export type PatchItemBody = Partial<{
+  categoryPublicId: string;
+  name: string;
+  price: number;
+  description: string;
+  allergens: string[];
+  image: string;
+  ingredients: string;
+  visibleOnMenu: boolean;
+  featured: boolean;
+  sku: string;
+  stockStatus: "in_stock" | "low" | "out";
+  dietaryTags: string[];
+}>;
+
+export function patchItem(
+  menuId: string,
+  itemId: string,
+  body: PatchItemBody,
+): Promise<MenuItemEditor> {
+  return apiJson<MenuItemEditor>(
+    `/owner/menus/${encodeURIComponent(menuId)}/items/${encodeURIComponent(itemId)}`,
+    {
+      method: "PATCH",
+      body: JSON.stringify(body),
+      token: tokenOrThrow(),
+    },
+  );
+}
+
+export type CreateItemBody = {
+  categoryPublicId: string;
+  name: string;
+  price: number;
+  description?: string;
+  allergens?: string[];
+  image?: string;
+  ingredients?: string;
+  visibleOnMenu?: boolean;
+  featured?: boolean;
+  sku?: string;
+  stockStatus?: "in_stock" | "low" | "out";
+  dietaryTags?: string[];
+};
+
+export function createItem(menuId: string, body: CreateItemBody): Promise<MenuItemEditor> {
+  return apiJson<MenuItemEditor>(`/owner/menus/${encodeURIComponent(menuId)}/items`, {
+    method: "POST",
+    body: JSON.stringify({
+      categoryPublicId: body.categoryPublicId,
+      name: body.name,
+      price: body.price,
+      description: body.description ?? "",
+      allergens: body.allergens ?? [],
+      image: body.image ?? "/images/placeholder-dish.jpg",
+      ingredients: body.ingredients,
+      visibleOnMenu: body.visibleOnMenu,
+      featured: body.featured,
+      sku: body.sku,
+      stockStatus: body.stockStatus,
+      dietaryTags: body.dietaryTags,
+    }),
+    token: tokenOrThrow(),
+  });
+}
+
+export function createCategory(
+  menuId: string,
+  input: { name: string; thumbnail?: string },
+): Promise<CategorySummary> {
+  return apiJson<CategorySummary>(`/owner/menus/${encodeURIComponent(menuId)}/categories`, {
+    method: "POST",
+    body: JSON.stringify({
+      name: input.name,
+      thumbnail: input.thumbnail ?? "/images/placeholder-dish.jpg",
+    }),
+    token: tokenOrThrow(),
+  });
+}
+
+export type PatchMenuBody = Partial<{
+  name: string;
+  contextLabel: string;
+  thumbnail: string;
+  isActive: boolean;
+  isPublished: boolean;
+  guestVenueName: string;
+}>;
+
+export function patchMenu(menuId: string, body: PatchMenuBody): Promise<OwnerMenuSummary> {
+  return apiJson<OwnerMenuSummary>(`/owner/menus/${encodeURIComponent(menuId)}`, {
+    method: "PATCH",
+    body: JSON.stringify(body),
+    token: tokenOrThrow(),
+  });
+}
+
+export type CreateMenuBody = {
+  name: string;
+  contextLabel?: string;
+  thumbnail?: string;
+  isActive?: boolean;
+  isPublished?: boolean;
+  guestVenueName?: string;
+};
+
+export function createMenu(body: CreateMenuBody): Promise<OwnerMenuSummary> {
+  return apiJson<OwnerMenuSummary>("/owner/menus", {
+    method: "POST",
+    body: JSON.stringify({
+      name: body.name,
+      contextLabel: body.contextLabel,
+      thumbnail: body.thumbnail,
+      isActive: body.isActive,
+      isPublished: body.isPublished,
+      guestVenueName: body.guestVenueName,
+    }),
+    token: tokenOrThrow(),
+  });
+}

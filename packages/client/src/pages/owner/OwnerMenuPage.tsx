@@ -2,10 +2,12 @@ import { use } from "react";
 import { Link, Navigate, useParams } from "react-router-dom";
 import { ArrowLeft } from "lucide-react";
 import { useCategoryCreateModal } from "@/context/CategoryCreateModalContext";
+import { useMocks } from "@/lib/env";
 import { readOwnerMenuCategories } from "@/mocks/mockApi";
 import { OwnerCategoryRowList } from "@/components/owner/OwnerCategoryRowList";
 
 export default function OwnerMenuPage() {
+  const mocks = useMocks();
   const { menuId: menuIdParam } = useParams<{ menuId: string }>();
   const menuId = menuIdParam ?? "";
   const data = use(readOwnerMenuCategories(menuId));
@@ -31,13 +33,13 @@ export default function OwnerMenuPage() {
             {data.menuName}
           </h1>
           <p className="mt-2 text-on-surface-variant">
-            {data.venueName} · Menu <span className="font-mono text-xs">{data.menuId}</span>{" "}
-            — categories in this menu only (mock).
+            {data.venueName} · Menu <span className="font-mono text-xs">{data.menuId}</span>
+            {mocks ? " — categories in this menu only (mock)." : " — categories in this menu."}
           </p>
         </div>
         <button
           type="button"
-          onClick={openAddCategoryModal}
+          onClick={() => openAddCategoryModal(menuId)}
           className="primary-gradient rounded-xl px-5 py-2.5 text-center text-sm font-semibold text-on-primary"
         >
           Add Category

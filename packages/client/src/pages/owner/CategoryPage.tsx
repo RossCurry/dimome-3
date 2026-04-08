@@ -1,9 +1,10 @@
 import { use, useState } from "react";
 import { Link, Navigate, useParams } from "react-router-dom";
 import { ArrowLeft, Eye, EyeOff, Plus } from "lucide-react";
+import { patchItem } from "@/api/owner";
 import { useMocks } from "@/lib/env";
 import type { OwnerCategoryPageData } from "@/mocks/mockApi";
-import { readOwnerCategoryPage } from "@/mocks/mockApi";
+import { clearReadCaches, readOwnerCategoryPage } from "@/mocks/mockApi";
 
 function CategoryPageInner({
   menuId,
@@ -23,7 +24,21 @@ function CategoryPageInner({
   );
 
   const toggleVisible = (id: string) => {
-    setVisibleById((prev) => ({ ...prev, [id]: !prev[id] }));
+    const current = visibleById[id] ?? true;
+    const next = !current;
+    if (!mocks) {
+      void (async () => {
+        try {
+          await patchItem(menuId, id, { visibleOnMenu: next });
+          clearReadCaches();
+          setVisibleById((prev) => ({ ...prev, [id]: next }));
+        } catch {
+          /* snackbar from apiJson */
+        }
+      })();
+      return;
+    }
+    setVisibleById((prev) => ({ ...prev, [id]: next }));
   };
 
   return (

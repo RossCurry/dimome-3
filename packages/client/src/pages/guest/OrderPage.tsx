@@ -1,11 +1,14 @@
+import { Suspense, use } from "react";
 import { Link } from "react-router-dom";
 import { ChevronLeft } from "lucide-react";
-import { getPublicMenuForMenuId } from "@/mocks/fixtures";
+import { readPublicMenu } from "@/mocks/mockApi";
 import { useGuestPreferences } from "@/context/GuestPreferencesContext";
+import { GuestRouteSkeleton } from "@/components/skeletons/GuestRouteSkeleton";
 
-export default function OrderPage() {
-  const { cart, setQty, menuId } = useGuestPreferences();
-  const items = getPublicMenuForMenuId(menuId).itemsById;
+function OrderPageInner({ menuId }: { menuId: string }) {
+  const { cart, setQty } = useGuestPreferences();
+  const data = use(readPublicMenu(menuId));
+  const items = data.itemsById;
   const lines = Object.entries(cart).filter(([, q]) => q > 0);
 
   const total = lines.reduce((sum, [id, q]) => {
@@ -25,7 +28,7 @@ export default function OrderPage() {
           </span>
           <h1 className="font-headline text-2xl font-bold text-on-surface">My order</h1>
           <p className="text-on-surface-variant text-sm mt-0.5">
-            Review selections before placing (mock).
+            Review selections before placing (UI stub — no payment).
           </p>
         </div>
       </header>
@@ -111,5 +114,15 @@ export default function OrderPage() {
         </nav>
       </div>
     </div>
+  );
+}
+
+export default function OrderPage() {
+  const { menuId } = useGuestPreferences();
+
+  return (
+    <Suspense fallback={<GuestRouteSkeleton />}>
+      <OrderPageInner menuId={menuId} />
+    </Suspense>
   );
 }

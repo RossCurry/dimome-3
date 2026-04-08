@@ -9,6 +9,7 @@ export type OwnerSlidingActionFooterProps = {
   onSave: () => void;
   cancelLabel?: string;
   saveLabel?: string;
+  saveDisabled?: boolean;
 };
 
 /**
@@ -22,6 +23,7 @@ export function OwnerSlidingActionFooter({
   onSave,
   cancelLabel = "Cancel",
   saveLabel = "Save",
+  saveDisabled = false,
 }: OwnerSlidingActionFooterProps) {
   if (hidden) return null;
 
@@ -52,7 +54,8 @@ export function OwnerSlidingActionFooter({
           <button
             type="button"
             onClick={onSave}
-            className="primary-gradient rounded-xl px-5 py-2.5 text-sm font-semibold text-on-primary"
+            disabled={saveDisabled}
+            className="primary-gradient rounded-xl px-5 py-2.5 text-sm font-semibold text-on-primary disabled:opacity-50 disabled:pointer-events-none"
           >
             {saveLabel}
           </button>

@@ -3,6 +3,9 @@ import { Link, Navigate, useLocation, useNavigate } from "react-router-dom";
 import { ArrowLeft, Camera, Trash2 } from "lucide-react";
 import type { MenuItemEditor } from "@/types";
 import type { NewMenuItemLocationState } from "@/types/navigation";
+import { createItem } from "@/api/owner";
+import { useMocks } from "@/lib/env";
+import { clearReadCaches } from "@/mocks/mockApi";
 import {
   DIETARY_VEGAN,
   EU_ALLERGEN_LABELS,
@@ -28,6 +31,7 @@ function emptyEditorForCategory(categoryId: string): MenuItemEditor {
 }
 
 export default function NewMenuItemPage() {
+  const mocks = useMocks();
   const navigate = useNavigate();
   const location = useLocation();
   const state = location.state as NewMenuItemLocationState | null;
@@ -37,11 +41,16 @@ export default function NewMenuItemPage() {
   }
 
   const { categoryName, categoryId, menuId } = state;
+  if (!mocks && (!menuId || !menuId.trim())) {
+    return <Navigate to="/menus" replace />;
+  }
+
   const returnTo =
     menuId != null && menuId !== ""
       ? `/menus/${menuId}/category/${categoryId}`
       : "/";
   const [item, setItem] = useState(() => emptyEditorForCategory(categoryId));
+  const [saving, setSaving] = useState(false);
 
   const toggleAllergen = (label: string) => {
     setItem((prev) => ({
@@ -66,8 +75,37 @@ export default function NewMenuItemPage() {
 
   const vegan = item.dietaryTags.includes(DIETARY_VEGAN);
 
-  const addMenuItem = () => {
-    navigate(returnTo);
+  const saveItem = async () => {
+    if (!item.name.trim()) return;
+    if (mocks) {
+      navigate(returnTo);
+      return;
+    }
+    if (!menuId?.trim()) {
+      navigate("/menus");
+      return;
+    }
+    setSaving(true);
+    try {
+      await createItem(menuId, {
+        categoryPublicId: categoryId,
+        name: item.name.trim(),
+        price: item.price,
+        description: item.description,
+        allergens: item.allergens,
+        image: item.image,
+        ingredients: item.ingredients,
+        visibleOnMenu: item.visibleOnMenu,
+        featured: item.featured,
+        sku: item.sku.trim() || undefined,
+        stockStatus: item.stockStatus,
+        dietaryTags: item.dietaryTags,
+      });
+      clearReadCaches();
+      navigate(returnTo);
+    } finally {
+      setSaving(false);
+    }
   };
 
   const fromExistingCategory = Boolean(menuId);
@@ -85,17 +123,19 @@ export default function NewMenuItemPage() {
         <div className="flex justify-end gap-3 shrink-0">
           <button
             type="button"
+            disabled={saving}
             onClick={() => navigate(returnTo)}
-            className="px-5 py-2.5 rounded-xl text-sm font-medium text-on-surface-variant hover:bg-surface-container-low"
+            className="px-5 py-2.5 rounded-xl text-sm font-medium text-on-surface-variant hover:bg-surface-container-low disabled:opacity-50"
           >
             Cancel
           </button>
           <button
             type="button"
-            onClick={addMenuItem}
-            className="primary-gradient text-on-primary px-5 py-2.5 rounded-xl text-sm font-semibold"
+            disabled={saving}
+            onClick={() => void saveItem()}
+            className="primary-gradient text-on-primary px-5 py-2.5 rounded-xl text-sm font-semibold disabled:opacity-50"
           >
-            Add menu item
+            {saving ? "Saving…" : "Add menu item"}
           </button>
         </div>
       </div>
@@ -111,7 +151,9 @@ export default function NewMenuItemPage() {
             <span className="font-headline text-primary">{categoryName}</span>
             <span className="text-on-surface-variant">
               {" "}
-              (same form as editing an item; saved under this category in mock).
+              {mocks
+                ? "(same form as editing an item; saved under this category in mock)."
+                : "Same form as editing an item; saved under this category when you confirm."}
             </span>
           </>
         ) : (
@@ -120,7 +162,9 @@ export default function NewMenuItemPage() {
             <span className="font-headline text-primary">{categoryName}</span>
             <span className="text-on-surface-variant">
               {" "}
-              — add the first menu item below. It will be saved under this category (mock).
+              {mocks
+                ? "— add the first menu item below. It will be saved under this category (mock)."
+                : "— add the first menu item below; it will be saved under this category."}
             </span>
           </>
         )}

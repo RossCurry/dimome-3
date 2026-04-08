@@ -8,6 +8,9 @@ type Props = {
   menus: OwnerMenuSummary[];
   /** When true, show active/archived pill (full menus list). */
   showStatus?: boolean;
+  /** Live API: archive or restore a menu (hidden when omitted). */
+  onToggleArchive?: (menu: OwnerMenuSummary) => void | Promise<void>;
+  togglingMenuId?: string | null;
 };
 
 export function OwnerMenuCardsSection({
@@ -15,6 +18,8 @@ export function OwnerMenuCardsSection({
   subtitle,
   menus,
   showStatus = false,
+  onToggleArchive,
+  togglingMenuId = null,
 }: Props) {
   return (
     <section className="rounded-2xl bg-surface-container-lowest p-6 shadow-[var(--shadow-ambient)] md:p-8">
@@ -56,6 +61,20 @@ export function OwnerMenuCardsSection({
                   </p>
                 </div>
                 <div className="flex shrink-0 flex-wrap items-center gap-2 sm:flex-col sm:items-stretch md:flex-row">
+                  {onToggleArchive ? (
+                    <button
+                      type="button"
+                      disabled={togglingMenuId === m.id}
+                      onClick={() => void onToggleArchive(m)}
+                      className="inline-flex items-center justify-center rounded-xl border border-outline-variant/20 px-4 py-2 text-sm font-medium text-on-surface-variant hover:bg-surface-container-low disabled:opacity-50"
+                    >
+                      {togglingMenuId === m.id
+                        ? "…"
+                        : m.isActive
+                          ? "Archive"
+                          : "Restore"}
+                    </button>
+                  ) : null}
                   <Link
                     to={`/qr/${m.id}`}
                     className="inline-flex items-center justify-center gap-1 rounded-xl border border-outline-variant/20 px-4 py-2 text-sm font-medium text-secondary hover:bg-surface-container-low"
