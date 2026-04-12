@@ -84,12 +84,14 @@ export interface MenuItemEditor extends MenuItem {
 export type CsvFieldKey =
   | "name"
   | "price"
+  | "category"
   | "description"
   | "allergens";
 
 export interface CsvColumnMapping {
   name: string | null;
   price: string | null;
+  category: string | null;
   description: string | null;
   allergens: string | null;
 }
@@ -99,7 +101,11 @@ export interface CsvPreviewRow {
   price: string;
   description: string;
   allergens: string;
+  category?: string;
+  allergenLabels?: string[];
+  allergensDisplay?: string;
   flagged?: boolean;
+  issues?: string[];
 }
 
 export interface CsvPreviewData {

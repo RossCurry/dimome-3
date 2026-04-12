@@ -1,6 +1,6 @@
 # DiMoMe — `packages/client`
 
-Vite + React 19 + TypeScript + Tailwind v4 + React Router 7 (`react-router-dom`). By default the owner app and guest menu call the **Express API** (`src/api/`, `src/mocks/mockApi.ts` delegates when not in mock mode). CSV and AI import steps still use **in-memory mocks** only.
+Vite + React 19 + TypeScript + Tailwind v4 + React Router 7 (`react-router-dom`). By default the owner app and guest menu call the **Express API** (`src/api/`, `src/mocks/mockApi.ts` delegates when not in mock mode). **CSV import** uses **`/menus/:menuId/import/csv/...`** and [`src/api/csvImportJobs.ts`](src/api/csvImportJobs.ts) against **`csv-import-jobs`** endpoints when mocks are off. **AI scan** steps still use **in-memory mocks** only.
 
 ## Using the real API
 
@@ -8,7 +8,8 @@ Vite + React 19 + TypeScript + Tailwind v4 + React Router 7 (`react-router-dom`)
 2. **Proxy:** Vite forwards `/api` → `http://localhost:3000`, so the browser can use same-origin `/api/v1/...` when **`VITE_API_URL` is unset** (see [`vite.config.ts`](vite.config.ts)).
 3. Optional **`VITE_API_URL`** (e.g. `http://localhost:3000`) if you prefer calling the API origin directly (CORS already allows the dev client).
 4. Set **`VITE_USE_MOCK_API=true`** to force fixtures for owner/guest menu data (see [`.env.example`](.env.example)).
-5. **UI ↔ routes:** [CLIENT_API_MAP_2026-04-08.md](../../CLIENT_API_MAP_2026-04-08.md). **Sign in:** `/login` — seed user `dev@dimome.local` / `password` after `db:seed`.
+5. **UI ↔ routes:** [CLIENT_API_MAP_2026-04-08.md](../../CLIENT_API_MAP_2026-04-08.md) (includes CSV job routes). **Sign in:** `/login` — seed user `dev@dimome.local` / `password` after `db:seed`.
+6. **CSV details:** [CSV_IMPORT_IMPLEMENTATION.md](../../documentation/CSV_IMPORT_IMPLEMENTATION.md).
 
 ## Run
 

@@ -10,7 +10,8 @@ Actionable build order for **`packages/server`**, aligned with [BACKEND_REQUIREM
 - [x] **D — Public menu:** `PublicMenuReadPort`, `GET /api/v1/public/menus/:menuId` → `PublicMenuData` shape, `db:seed` (incl. `menu-1`)
 - [x] **E — Auth + owner reads:** `POST /api/v1/auth/login`, JWT middleware, `GET /api/v1/owner/menus` (etc.)
 - [x] **F — Owner CRUD:** menus / categories / items behind ports; document in `packages/server/README.md` (includes **list items** `GET .../menus/:menuId/items` for owner category views)
-- [ ] **Later:** R2, CSV/AI jobs + polling, optional `packages/types`, SSE/Redis, RabbitMQ ([BACKEND_REQUIREMENTS.md §7](./BACKEND_REQUIREMENTS.md))
+- [x] **G — CSV import (MVP):** [`packages/jobs`](../packages/jobs/) job store + worker loop; server **`csv-import-jobs`** routes + `csv-parse` + in-process worker; client nested **`/menus/:menuId/import/csv`** — see [CSV_IMPORT_IMPLEMENTATION.md](./CSV_IMPORT_IMPLEMENTATION.md)
+- [ ] **Later:** R2, **AI scan** jobs + polling, optional `packages/types`, SSE/Redis, RabbitMQ ([BACKEND_REQUIREMENTS.md §7](./BACKEND_REQUIREMENTS.md))
 
 ---
 

@@ -13,6 +13,7 @@ import { GuestRouteSkeleton } from "@/components/skeletons/GuestRouteSkeleton";
 import { OwnerRouteSkeleton } from "@/components/skeletons/OwnerRouteSkeleton";
 import { OwnerDashboardSkeleton } from "@/components/skeletons/OwnerDashboardSkeleton";
 import { ItemEditorSkeleton } from "@/components/skeletons/ItemEditorSkeleton";
+import { OwnerMenuOutlet } from "@/layouts/OwnerMenuOutlet";
 import { CsvImportLayout } from "@/pages/owner/csv/CsvImportLayout";
 
 const GuestMenuPage = lazy(() => import("@/pages/guest/GuestMenuPage"));
@@ -143,9 +144,49 @@ export const router = createBrowserRouter([
         path: "menus/:menuId",
         element: (
           <Suspense fallback={<OwnerDashboardSkeleton />}>
-            <OwnerMenuPage />
+            <OwnerMenuOutlet />
           </Suspense>
         ),
+        children: [
+          {
+            index: true,
+            element: (
+              <Suspense fallback={<OwnerDashboardSkeleton />}>
+                <OwnerMenuPage />
+              </Suspense>
+            ),
+          },
+          {
+            path: "import/csv",
+            element: <CsvImportLayout />,
+            children: [
+              {
+                index: true,
+                element: (
+                  <Suspense fallback={<OwnerRouteSkeleton />}>
+                    <CsvStep1Page />
+                  </Suspense>
+                ),
+              },
+              {
+                path: ":jobId/map",
+                element: (
+                  <Suspense fallback={<OwnerRouteSkeleton />}>
+                    <CsvStep2Page />
+                  </Suspense>
+                ),
+              },
+              {
+                path: ":jobId/review",
+                element: (
+                  <Suspense fallback={<OwnerRouteSkeleton />}>
+                    <CsvStep3Page />
+                  </Suspense>
+                ),
+              },
+            ],
+          },
+        ],
       },
       {
         path: "items/new",
@@ -157,33 +198,7 @@ export const router = createBrowserRouter([
       },
       {
         path: "import/csv",
-        element: <CsvImportLayout />,
-        children: [
-          {
-            index: true,
-            element: (
-              <Suspense fallback={<OwnerRouteSkeleton />}>
-                <CsvStep1Page />
-              </Suspense>
-            ),
-          },
-          {
-            path: "map",
-            element: (
-              <Suspense fallback={<OwnerRouteSkeleton />}>
-                <CsvStep2Page />
-              </Suspense>
-            ),
-          },
-          {
-            path: "review",
-            element: (
-              <Suspense fallback={<OwnerRouteSkeleton />}>
-                <CsvStep3Page />
-              </Suspense>
-            ),
-          },
-        ],
+        element: <Navigate to="/menus/create" replace />,
       },
       {
         path: "import/scan",

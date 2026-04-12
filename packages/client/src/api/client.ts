@@ -30,7 +30,9 @@ type ApiJsonOptions = RequestInit & {
 export async function apiJson<T>(path: string, init: ApiJsonOptions = {}): Promise<T> {
   const { token, showErrorSnack = true, headers: hdrs, ...rest } = init;
   const headers = new Headers(hdrs);
-  if (!headers.has("Content-Type") && rest.body !== undefined) {
+  const isFormData =
+    typeof FormData !== "undefined" && rest.body instanceof FormData;
+  if (!headers.has("Content-Type") && rest.body !== undefined && !isFormData) {
     headers.set("Content-Type", "application/json");
   }
   if (token) {

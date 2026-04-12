@@ -110,6 +110,8 @@ Concrete routes, request/response JSON schemas, and error envelope should be def
 - After creating a job, the client uses **`GET /api/v1/…/jobs/:jobId`** (or equivalent) on a **short interval** while `status` is `pending` or `processing`, with backoff when idle or terminal.
 - **No SSE, no Redis, no message broker** required for this phase — simplest to ship and test.
 
+**Implemented (2026-04-12):** CSV import follows this polling model under **`/api/v1/owner/menus/:menuId/csv-import-jobs`** with job documents in collection **`csv_import_jobs`**. Concrete statuses, limits, and worker wiring are documented in [CSV_IMPORT_IMPLEMENTATION.md](./CSV_IMPORT_IMPLEMENTATION.md) (companion to this section).
+
 ### 7.3 Phase 2 (later): SSE + Redis
 
 - Add **Server-Sent Events (SSE)** so the server can **push** lightweight events (e.g. progress, `completed`, `failed`) over a long-lived HTTP connection.

@@ -44,6 +44,35 @@ function useCreateDraftMenu(onAfterDraftCreated?: () => void) {
   return { createDraft, creatingMenu };
 }
 
+function useStartCsvImport(onAfterDraftCreated?: () => void) {
+  const mocks = useMocks();
+  const navigate = useNavigate();
+  const [busy, setBusy] = useState(false);
+
+  const startCsv = useCallback(async () => {
+    if (mocks) {
+      navigate("/menus/menu-1/import/csv");
+      return;
+    }
+    setBusy(true);
+    try {
+      const created = await createMenu({
+        name: "Untitled menu",
+        contextLabel: "CSV import",
+      });
+      clearReadCaches();
+      onAfterDraftCreated?.();
+      navigate(`/menus/${created.id}/import/csv`);
+    } catch {
+      /* snackbar */
+    } finally {
+      setBusy(false);
+    }
+  }, [mocks, navigate, onAfterDraftCreated]);
+
+  return { startCsv, busy };
+}
+
 const optionRowClass =
   "flex items-center gap-4 rounded-xl p-4 text-left transition-colors hover:bg-primary/5";
 const optionColClass =
@@ -56,6 +85,7 @@ export function MenuCreationOptions({
 }: MenuCreationOptionsProps) {
   const mocks = useMocks();
   const { createDraft, creatingMenu } = useCreateDraftMenu(onAfterDraftCreated);
+  const { startCsv, busy: csvBusy } = useStartCsvImport(onAfterDraftCreated);
 
   const buildDescription = mocks
     ? "Edit items manually (mock)"
@@ -84,15 +114,22 @@ export function MenuCreationOptions({
               <p className="text-xs text-on-surface-variant">{buildDescription}</p>
             </div>
           </button>
-          <Link to="/import/csv" className={`${optionRowClass} w-full`}>
+          <button
+            type="button"
+            disabled={csvBusy}
+            onClick={() => void startCsv()}
+            className={`${optionRowClass} w-full disabled:opacity-50`}
+          >
             <div className="rounded-lg bg-primary/10 p-2 text-primary">
               <Upload className="h-5 w-5" />
             </div>
             <div>
               <p className="text-sm font-semibold">Upload CSV</p>
-              <p className="text-xs text-on-surface-variant">Bulk import (mock)</p>
+              <p className="text-xs text-on-surface-variant">
+                {mocks ? "Bulk import (mock)" : "Creates a draft menu, then column mapping"}
+              </p>
             </div>
-          </Link>
+          </button>
           <Link to="/import/scan" className={`${optionRowClass} w-full`}>
             <div className="rounded-lg bg-primary/10 p-2 text-primary">
               <Camera className="h-5 w-5" />
@@ -124,15 +161,22 @@ export function MenuCreationOptions({
           </div>
           <p className="text-xs text-on-surface-variant">{buildDescription}</p>
         </button>
-        <Link to="/import/csv" className={optionColClass}>
+        <button
+          type="button"
+          disabled={csvBusy}
+          onClick={() => void startCsv()}
+          className={`${optionColClass} disabled:opacity-50`}
+        >
           <div className="flex shrink-0 items-center gap-3">
             <div className="rounded-lg bg-primary/10 p-2 text-primary">
               <Upload className="h-5 w-5" />
             </div>
             <p className="text-sm font-semibold">Upload CSV</p>
           </div>
-          <p className="text-xs text-on-surface-variant">Bulk import (mock)</p>
-        </Link>
+          <p className="text-xs text-on-surface-variant">
+            {mocks ? "Bulk import (mock)" : "Creates a draft menu, then column mapping"}
+          </p>
+        </button>
         <Link to="/import/scan" className={optionColClass}>
           <div className="flex shrink-0 items-center gap-3">
             <div className="rounded-lg bg-primary/10 p-2 text-primary">

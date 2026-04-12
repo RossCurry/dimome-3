@@ -1,6 +1,6 @@
 # Client ↔ API mapping (DiMoMe v3)
 
-**Last updated:** 2026-04-08 (owner writes + guest order read aligned with public menu; see matrix below).
+**Last updated:** 2026-04-12 (CSV import jobs + nested client routes; see matrix below).
 
 Single source of truth for which HTTP routes power which UI areas. Planning docs live under [`documentation/`](documentation/). Canonical route summary: [packages/server/README.md](packages/server/README.md). Product types on the client: [packages/client/src/types/index.ts](packages/client/src/types/index.ts). Server DTOs: [packages/server/src/domain/menu.ts](packages/server/src/domain/menu.ts).
 
@@ -10,7 +10,7 @@ Single source of truth for which HTTP routes power which UI areas. Planning docs
 
 - All API routes are under **`/api/v1/`** (see [createApp.ts](packages/server/src/createApp.ts)).
 - **Local client:** use Vite dev server with optional **`server.proxy`** so requests to `/api/v1/...` forward to the API (default `http://localhost:3000`), **or** set **`VITE_API_URL`** (e.g. `http://localhost:3000`) and call the API directly (CORS allows `http://localhost:5173` by default — [config.ts](packages/server/src/config.ts)).
-- **Mocks:** set **`VITE_USE_MOCK_API=true`** in [packages/client/.env.example](packages/client/.env.example) to keep in-memory data (CSV/scan steps always mock until backends exist).
+- **Mocks:** set **`VITE_USE_MOCK_API=true`** in [packages/client/.env.example](packages/client/.env.example) to keep in-memory owner/guest menu data. **CSV** still uses nested wizard URLs; step 3 uses fixture **`readCsvPreview()`** in mock mode (no job HTTP). **Scan** remains mock-only.
 
 ---
 
@@ -57,6 +57,10 @@ On the **client**, `apiJson` throws **`ApiError`** with the same `code` / `messa
 | GET | `/api/v1/owner/menus/:menuId/items/:itemId` | JWT | `MenuItemEditor` |
 | POST | `/api/v1/owner/menus/:menuId/items` | JWT | created item |
 | PATCH | `/api/v1/owner/menus/:menuId/items/:itemId` | JWT | updated item |
+| POST | `/api/v1/owner/menus/:menuId/csv-import-jobs` | JWT | multipart field **`file`** → `{ id }` job id ([csvImportJobs.ts](packages/server/src/routes/v1/csvImportJobs.ts)) |
+| GET | `/api/v1/owner/menus/:menuId/csv-import-jobs/:jobId` | JWT | CSV job JSON (poll); see [CSV_IMPORT_IMPLEMENTATION.md](documentation/CSV_IMPORT_IMPLEMENTATION.md) |
+| PATCH | `/api/v1/owner/menus/:menuId/csv-import-jobs/:jobId` | JWT | body `{ mapping }` → worker validates → `ready_for_review` |
+| POST | `/api/v1/owner/menus/:menuId/csv-import-jobs/:jobId/commit` | JWT | enqueue commit (`202`); worker creates categories/items |
 
 ---
 
@@ -75,7 +79,10 @@ On the **client**, `apiJson` throws **`ApiError`** with the same `code` / `messa
 | `/menus/:menuId/items/:itemId/edit` | `readItemEditor(menuId, itemId)` | `GET /api/v1/owner/menus/:menuId/items/:itemId` | JWT. **Save / hide from guest menu** (live): `patchItem` → `PATCH .../items/:itemId`, then `clearReadCaches()` + navigate. |
 | `/items/new` | local empty editor | `POST /api/v1/owner/menus/:menuId/items` | Live: **Add menu item** calls `createItem` (requires `menuId` + `categoryPublicId` in location state). |
 | Add Category modal | — | `POST /api/v1/owner/menus/:menuId/categories` | Live: `createCategory` from `CategoryCreateModalContext`; `/menus/:menuId` passes `menuId`; `/categories` opens a **menu** picker then posts. |
-| CSV steps 1–3 | `readCsvPreview()` | — | No backend yet ([BACKEND_REQUIREMENTS.md](documentation/BACKEND_REQUIREMENTS.md) §7). |
+| `/menus/:menuId/import/csv` | `createCsvImportJob` after file pick (live) | `POST .../csv-import-jobs` (multipart) | Then navigate to `.../:jobId/map`. Mock: navigate to `.../local/map` with client-parsed headers ([CsvStep1Page](packages/client/src/pages/owner/csv/CsvStep1Page.tsx)). |
+| `/menus/:menuId/import/csv/:jobId/map` | `fetchCsvImportJob` (poll), `patchCsvImportMapping` | `GET` / `PATCH .../csv-import-jobs/:jobId` | Poll until `awaiting_mapping`. |
+| `/menus/:menuId/import/csv/:jobId/review` | `fetchCsvImportJob` (poll), `commitCsvImportJob`, `clearReadCaches` | `GET` / `POST .../commit` | Poll until `ready_for_review`. Mock step 3: `readCsvPreview()` only. |
+| Legacy `/import/csv` | — | — | Redirects to **`/menus/create`**. |
 | Scan steps 1–3 | `readScanDraft()` | — | Same. |
 
 ---
@@ -93,3 +100,4 @@ Previously the mock built the category table from the **public** menu shape. The
 - [packages/server/README.md](packages/server/README.md) — run, seed, env, route summary, **two-terminal** local flow.
 - [packages/client/README.md](packages/client/README.md) — dev, `VITE_*`, **Using the real API**, link back here.
 - [documentation/STATUS.md](documentation/STATUS.md) — high-level monorepo status (planning docs in `documentation/`).
+- [documentation/CSV_IMPORT_IMPLEMENTATION.md](documentation/CSV_IMPORT_IMPLEMENTATION.md) — CSV job state machine and limits.

@@ -229,6 +229,7 @@ export const FIXTURE_SCAN_DRAFT_ROWS: ScanDraftRow[] = [
 export const FIXTURE_CSV_HEADERS = [
   "Dish Name",
   "Price_USD",
+  "Category",
   "Details",
   "Allergen Info",
 ];
@@ -237,6 +238,7 @@ export const FIXTURE_CSV_PREVIEW_ROWS = [
   {
     name: "Wild Mushroom Risotto",
     price: "24.50",
+    category: "Mains",
     description: "Creamy arborio rice",
     allergens: "Milk (including lactose)",
     flagged: false,
@@ -244,6 +246,7 @@ export const FIXTURE_CSV_PREVIEW_ROWS = [
   {
     name: "Pan-Seared Scallops",
     price: "32.00",
+    category: "Starters",
     description: "",
     allergens: "Molluscs",
     flagged: true,

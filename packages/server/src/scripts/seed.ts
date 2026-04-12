@@ -7,6 +7,7 @@ loadEnv();
 
 import bcrypt from "bcryptjs";
 import { MongoClient, ObjectId } from "mongodb";
+import { CSV_IMPORT_JOBS_COLLECTION } from "jobs";
 import { COL } from "../adapters/persistence/mongo/collections.js";
 import type {
   CategoryDoc,
@@ -138,7 +139,7 @@ async function main() {
   await client.connect();
   const db = client.db(process.env.MONGODB_DB?.trim() || dbNameFromUri(uri));
 
-  for (const c of Object.values(COL)) {
+  for (const c of [...Object.values(COL), CSV_IMPORT_JOBS_COLLECTION]) {
     await db.collection(c).deleteMany({});
   }
 
