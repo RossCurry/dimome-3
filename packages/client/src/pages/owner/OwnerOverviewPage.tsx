@@ -4,12 +4,10 @@ import { patchMenu } from "@/api/owner";
 import { MenuCreationOptions } from "@/components/owner/MenuCreationOptions";
 import { OwnerMenuCardsSection } from "@/components/owner/OwnerMenuCardsSection";
 import { OwnerDashboardSkeleton } from "@/components/skeletons/OwnerDashboardSkeleton";
-import { useMocks } from "@/lib/env";
 import type { OwnerMenuSummary } from "@/types";
 import { clearReadCaches, readOwnerMenus } from "@/mocks/mockApi";
 
 function OwnerOverviewBody({ onMenusChanged }: { onMenusChanged: () => void }) {
-  const mocks = useMocks();
   const menus = use(readOwnerMenus());
   const [togglingId, setTogglingId] = useState<string | null>(null);
 
@@ -17,7 +15,6 @@ function OwnerOverviewBody({ onMenusChanged }: { onMenusChanged: () => void }) {
   const archivedMenus = menus.filter((m) => !m.isActive);
 
   const handleToggleArchive = async (m: OwnerMenuSummary) => {
-    if (mocks) return;
     setTogglingId(m.id);
     try {
       await patchMenu(m.id, { isActive: !m.isActive });
@@ -36,7 +33,7 @@ function OwnerOverviewBody({ onMenusChanged }: { onMenusChanged: () => void }) {
         title="Your active menus"
         subtitle="Different menus can represent another location, service period, or published version."
         menus={activeMenus}
-        onToggleArchive={mocks ? undefined : handleToggleArchive}
+        onToggleArchive={handleToggleArchive}
         togglingMenuId={togglingId}
       />
 
@@ -47,7 +44,7 @@ function OwnerOverviewBody({ onMenusChanged }: { onMenusChanged: () => void }) {
             subtitle="Inactive versions still appear here and on Menus — open to review or copy items."
             menus={archivedMenus}
             showStatus
-            onToggleArchive={mocks ? undefined : handleToggleArchive}
+            onToggleArchive={handleToggleArchive}
             togglingMenuId={togglingId}
           />
         </div>
@@ -65,7 +62,6 @@ function OwnerOverviewBody({ onMenusChanged }: { onMenusChanged: () => void }) {
 }
 
 export default function OwnerOverviewPage() {
-  const mocks = useMocks();
   const [bodyKey, setBodyKey] = useState(0);
 
   return (
@@ -75,8 +71,7 @@ export default function OwnerOverviewPage() {
           Overview
         </h1>
         <p className="mt-2 text-on-surface-variant">
-          Quick snapshot of menus you are running now
-          {mocks ? " — data is mocked." : "."}
+          Quick snapshot of menus you are running now.
         </p>
       </div>
 

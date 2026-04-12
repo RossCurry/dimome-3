@@ -1,9 +1,7 @@
 import { use, useState } from "react";
 import { Link, Navigate, useParams } from "react-router-dom";
 import { ArrowLeft, Eye, EyeOff, Plus } from "lucide-react";
-import { patchItem } from "@/api/owner";
-import { useMocks } from "@/lib/env";
-import type { OwnerCategoryPageData } from "@/mocks/mockApi";
+import { patchItem, type OwnerCategoryPageData } from "@/api/owner";
 import { clearReadCaches, readOwnerCategoryPage } from "@/mocks/mockApi";
 
 function CategoryPageInner({
@@ -15,7 +13,6 @@ function CategoryPageInner({
   categoryId: string;
   data: OwnerCategoryPageData;
 }) {
-  const mocks = useMocks();
   const { categoryName, items } = data;
   const [visibleById, setVisibleById] = useState<Record<string, boolean>>(() =>
     Object.fromEntries(
@@ -26,19 +23,15 @@ function CategoryPageInner({
   const toggleVisible = (id: string) => {
     const current = visibleById[id] ?? true;
     const next = !current;
-    if (!mocks) {
-      void (async () => {
-        try {
-          await patchItem(menuId, id, { visibleOnMenu: next });
-          clearReadCaches();
-          setVisibleById((prev) => ({ ...prev, [id]: next }));
-        } catch {
-          /* snackbar from apiJson */
-        }
-      })();
-      return;
-    }
-    setVisibleById((prev) => ({ ...prev, [id]: next }));
+    void (async () => {
+      try {
+        await patchItem(menuId, id, { visibleOnMenu: next });
+        clearReadCaches();
+        setVisibleById((prev) => ({ ...prev, [id]: next }));
+      } catch {
+        /* snackbar from apiJson */
+      }
+    })();
   };
 
   return (
@@ -58,8 +51,7 @@ function CategoryPageInner({
             {" · "}
             Category <span className="font-mono text-xs">{categoryId}</span>
             {" — "}
-            {items.length} {items.length === 1 ? "item" : "items"}
-            {mocks ? " (mock)." : "."}
+            {items.length} {items.length === 1 ? "item" : "items"}.
           </p>
         </div>
         <Link

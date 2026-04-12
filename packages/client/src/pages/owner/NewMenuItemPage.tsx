@@ -4,7 +4,6 @@ import { ArrowLeft, Camera, Trash2 } from "lucide-react";
 import type { MenuItemEditor } from "@/types";
 import type { NewMenuItemLocationState } from "@/types/navigation";
 import { createItem } from "@/api/owner";
-import { useMocks } from "@/lib/env";
 import { clearReadCaches } from "@/mocks/mockApi";
 import {
   DIETARY_VEGAN,
@@ -31,19 +30,15 @@ function emptyEditorForCategory(categoryId: string): MenuItemEditor {
 }
 
 export default function NewMenuItemPage() {
-  const mocks = useMocks();
   const navigate = useNavigate();
   const location = useLocation();
   const state = location.state as NewMenuItemLocationState | null;
 
-  if (!state?.categoryName?.trim() || !state?.categoryId) {
-    return <Navigate to="/" replace />;
+  if (!state?.categoryName?.trim() || !state?.categoryId || !state?.menuId?.trim()) {
+    return <Navigate to="/menus" replace />;
   }
 
   const { categoryName, categoryId, menuId } = state;
-  if (!mocks && (!menuId || !menuId.trim())) {
-    return <Navigate to="/menus" replace />;
-  }
 
   const returnTo =
     menuId != null && menuId !== ""
@@ -77,10 +72,6 @@ export default function NewMenuItemPage() {
 
   const saveItem = async () => {
     if (!item.name.trim()) return;
-    if (mocks) {
-      navigate(returnTo);
-      return;
-    }
     if (!menuId?.trim()) {
       navigate("/menus");
       return;
@@ -151,9 +142,7 @@ export default function NewMenuItemPage() {
             <span className="font-headline text-primary">{categoryName}</span>
             <span className="text-on-surface-variant">
               {" "}
-              {mocks
-                ? "(same form as editing an item; saved under this category in mock)."
-                : "Same form as editing an item; saved under this category when you confirm."}
+              Same form as editing an item; saved under this category when you confirm.
             </span>
           </>
         ) : (
@@ -162,9 +151,7 @@ export default function NewMenuItemPage() {
             <span className="font-headline text-primary">{categoryName}</span>
             <span className="text-on-surface-variant">
               {" "}
-              {mocks
-                ? "— add the first menu item below. It will be saved under this category (mock)."
-                : "— add the first menu item below; it will be saved under this category."}
+              — add the first menu item below; it will be saved under this category.
             </span>
           </>
         )}
@@ -232,7 +219,7 @@ export default function NewMenuItemPage() {
               onChange={(e) => setItem({ ...item, ingredients: e.target.value })}
             />
             <p className="text-xs text-on-surface-variant italic">
-              Used for kitchen tracking and smart allergen hints (mock).
+              Used for kitchen tracking and smart allergen hints.
             </p>
           </section>
 
@@ -307,7 +294,7 @@ export default function NewMenuItemPage() {
               </button>
             </div>
             <p className="text-[10px] text-on-surface-variant text-center">
-              Mock: single placeholder image for all items.
+              Placeholder image until you upload a photo.
             </p>
           </section>
 

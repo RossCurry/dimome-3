@@ -5,12 +5,10 @@ import { Plus } from "lucide-react";
 import { patchMenu } from "@/api/owner";
 import { OwnerMenuCardsSection } from "@/components/owner/OwnerMenuCardsSection";
 import { OwnerDashboardSkeleton } from "@/components/skeletons/OwnerDashboardSkeleton";
-import { useMocks } from "@/lib/env";
 import type { OwnerMenuSummary } from "@/types";
 import { clearReadCaches, readOwnerMenus } from "@/mocks/mockApi";
 
 function MenusListBody({ onMenusChanged }: { onMenusChanged: () => void }) {
-  const mocks = useMocks();
   const menus = use(readOwnerMenus());
   const [togglingId, setTogglingId] = useState<string | null>(null);
 
@@ -20,7 +18,6 @@ function MenusListBody({ onMenusChanged }: { onMenusChanged: () => void }) {
   });
 
   const handleToggleArchive = async (m: OwnerMenuSummary) => {
-    if (mocks) return;
     setTogglingId(m.id);
     try {
       await patchMenu(m.id, { isActive: !m.isActive });
@@ -39,14 +36,13 @@ function MenusListBody({ onMenusChanged }: { onMenusChanged: () => void }) {
       subtitle="Open a menu to browse categories and items, or use guest view to preview the QR experience."
       menus={orderedMenus}
       showStatus
-      onToggleArchive={mocks ? undefined : handleToggleArchive}
+      onToggleArchive={handleToggleArchive}
       togglingMenuId={togglingId}
     />
   );
 }
 
 export default function MenusListPage() {
-  const mocks = useMocks();
   const [bodyKey, setBodyKey] = useState(0);
 
   return (
@@ -57,8 +53,7 @@ export default function MenusListPage() {
             Menus
           </h1>
           <p className="mt-2 text-on-surface-variant">
-            Every menu you own — including drafts and archived versions
-            {mocks ? " (mock)." : "."}
+            Every menu you own — including drafts and archived versions.
           </p>
         </div>
         <Link

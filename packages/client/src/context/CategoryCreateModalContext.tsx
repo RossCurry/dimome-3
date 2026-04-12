@@ -12,7 +12,6 @@ import {
 import { useNavigate } from "react-router-dom";
 import { X } from "lucide-react";
 import { createCategory } from "@/api/owner";
-import { useMocks } from "@/lib/env";
 import type { NewMenuItemLocationState } from "@/types/navigation";
 import type { OwnerMenuSummary } from "@/types";
 import { clearReadCaches, readOwnerMenus } from "@/mocks/mockApi";
@@ -25,7 +24,6 @@ const CategoryCreateModalContext =
   createContext<CategoryCreateModalContextValue | null>(null);
 
 export function CategoryCreateModalProvider({ children }: { children: ReactNode }) {
-  const mocks = useMocks();
   const navigate = useNavigate();
   const [open, setOpen] = useState(false);
   const [name, setName] = useState("");
@@ -54,7 +52,7 @@ export function CategoryCreateModalProvider({ children }: { children: ReactNode 
   }, []);
 
   useEffect(() => {
-    if (!open || mocks || contextMenuId != null) return;
+    if (!open || contextMenuId != null) return;
     let cancelled = false;
     void readOwnerMenus().then((list) => {
       if (!cancelled) setMenuOptions(list);
@@ -62,26 +60,14 @@ export function CategoryCreateModalProvider({ children }: { children: ReactNode 
     return () => {
       cancelled = true;
     };
-  }, [open, mocks, contextMenuId]);
+  }, [open, contextMenuId]);
 
   const submit = useCallback(async () => {
     const trimmed = name.trim();
     if (!trimmed || submitting) return;
 
     const effectiveMenuId = contextMenuId ?? menuPickerId.trim();
-    if (!mocks && !effectiveMenuId) return;
-
-    if (mocks) {
-      const categoryId = `cat-${Date.now()}`;
-      const state: NewMenuItemLocationState = {
-        categoryName: trimmed,
-        categoryId,
-        ...(contextMenuId ? { menuId: contextMenuId } : {}),
-      };
-      close();
-      navigate("/items/new", { state });
-      return;
-    }
+    if (!effectiveMenuId) return;
 
     setSubmitting(true);
     try {
@@ -97,7 +83,7 @@ export function CategoryCreateModalProvider({ children }: { children: ReactNode 
     } finally {
       setSubmitting(false);
     }
-  }, [name, submitting, mocks, contextMenuId, menuPickerId, navigate, close]);
+  }, [name, submitting, contextMenuId, menuPickerId, navigate, close]);
 
   useEffect(() => {
     if (!open) return;
@@ -119,7 +105,7 @@ export function CategoryCreateModalProvider({ children }: { children: ReactNode 
     [openModal],
   );
 
-  const needsMenuPicker = !mocks && contextMenuId == null;
+  const needsMenuPicker = contextMenuId == null;
   const canSubmit =
     trimmedName(name) &&
     (!needsMenuPicker || menuPickerId.trim() !== "") &&

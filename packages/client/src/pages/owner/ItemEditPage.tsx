@@ -3,7 +3,6 @@ import { Link, Navigate, useNavigate, useParams } from "react-router-dom";
 import { ArrowLeft, Camera, Trash2 } from "lucide-react";
 import type { MenuItemEditor } from "@/types";
 import { patchItem } from "@/api/owner";
-import { useMocks } from "@/lib/env";
 import { clearReadCaches, readItemEditor } from "@/mocks/mockApi";
 import { DIETARY_VEGAN, EU_ALLERGEN_LABELS } from "@/mocks/constants";
 import { OwnerSlidingActionFooter } from "@/components/owner/OwnerSlidingActionFooter";
@@ -18,17 +17,12 @@ function ItemEditPageForm({
   itemId: string;
   initialItem: MenuItemEditor;
 }) {
-  const mocks = useMocks();
   const navigate = useNavigate();
   const [item, setItem] = useState(initialItem);
   const [saving, setSaving] = useState(false);
   const backTo = `/menus/${menuId}/category/${item.category}`;
 
   const persistAndLeave = async () => {
-    if (mocks) {
-      navigate(backTo);
-      return;
-    }
     setSaving(true);
     try {
       await patchItem(menuId, itemId, {
@@ -53,10 +47,6 @@ function ItemEditPageForm({
   };
 
   const archiveAndLeave = async () => {
-    if (mocks) {
-      navigate(backTo);
-      return;
-    }
     setSaving(true);
     try {
       await patchItem(menuId, itemId, { visibleOnMenu: false });
@@ -168,7 +158,7 @@ function ItemEditPageForm({
               onChange={(e) => setItem({ ...item, ingredients: e.target.value })}
             />
             <p className="text-xs italic text-on-surface-variant">
-              Used for kitchen tracking and smart allergen hints (mock).
+              Used for kitchen tracking and smart allergen hints.
             </p>
           </section>
 
@@ -239,7 +229,7 @@ function ItemEditPageForm({
               </button>
             </div>
             <p className="text-center text-[10px] text-on-surface-variant">
-              Mock: single placeholder image for all items.
+              Placeholder image until you upload a photo.
             </p>
           </section>
 
@@ -322,11 +312,7 @@ function ItemEditPageForm({
       <OwnerSlidingActionFooter
         leading={
           <span>
-            {mocks
-              ? "Save returns to the category list (mock — no API)."
-              : saving
-                ? "Saving…"
-                : "Save pushes changes to the server."}
+            {saving ? "Saving…" : "Save pushes changes to the server."}
           </span>
         }
         onCancel={() => navigate(backTo)}

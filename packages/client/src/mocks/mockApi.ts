@@ -1,5 +1,4 @@
 import type {
-  CsvPreviewData,
   MenuItemEditor,
   OwnerCategoriesData,
   OwnerMenuCategoriesData,
@@ -7,30 +6,19 @@ import type {
   PublicMenuData,
   ScanDraftData,
 } from "@/types";
-import { fetchItemEditor, fetchOwnerCategories, fetchOwnerCategoryPage, fetchOwnerMenuCategoriesData, fetchOwnerMenus } from "@/api/owner";
+import {
+  fetchItemEditor,
+  fetchOwnerCategories,
+  fetchOwnerCategoryPage,
+  fetchOwnerMenuCategoriesData,
+  fetchOwnerMenus,
+} from "@/api/owner";
 import { fetchPublicMenu } from "@/api/publicMenu";
 import { ApiError } from "@/api/client";
-import { useMocks } from "@/lib/env";
 import { delay } from "@/mocks/delay";
-import {
-  FIXTURE_CSV_HEADERS,
-  FIXTURE_CSV_PREVIEW_ROWS,
-  FIXTURE_OWNER_CATEGORIES,
-  FIXTURE_OWNER_MENUS,
-  FIXTURE_SCAN_DRAFT_ROWS,
-  getFixtureItemEditor,
-  getPublicMenuForMenuId,
-} from "@/mocks/fixtures";
+import { FIXTURE_SCAN_DRAFT_ROWS } from "@/mocks/fixtures";
 
 export type { OwnerCategoryPageData } from "@/api/owner";
-
-function cachedPromise<T>(factory: () => Promise<T>): () => Promise<T> {
-  let p: Promise<T> | null = null;
-  return () => {
-    if (!p) p = factory();
-    return p;
-  };
-}
 
 const publicMenuCache = new Map<string, Promise<PublicMenuData>>();
 const ownerMenuCategoriesCache = new Map<string, Promise<OwnerMenuCategoriesData | null>>();
@@ -50,33 +38,11 @@ export function clearReadCaches(): void {
   liveOwnerCategoriesCache.p = null;
 }
 
-const mockReadOwnerMenus = cachedPromise(async (): Promise<OwnerMenuSummary[]> => {
-  await delay(420);
-  return structuredClone(FIXTURE_OWNER_MENUS);
-});
-
-const mockReadOwnerCategories = cachedPromise(async (): Promise<OwnerCategoriesData> => {
-  await delay(500);
-  return structuredClone(FIXTURE_OWNER_CATEGORIES);
-});
-
 /**
  * Guest menu for `/qr/:menuId` or `/menu/:menuId` — use with React `use()` inside `<Suspense>`.
  * Cached per `menuId` (QR / deep link).
  */
 export function readPublicMenu(menuId: string): Promise<PublicMenuData> {
-  if (useMocks()) {
-    let p = publicMenuCache.get(menuId);
-    if (!p) {
-      p = (async () => {
-        await delay(600);
-        return getPublicMenuForMenuId(menuId);
-      })();
-      publicMenuCache.set(menuId, p);
-    }
-    return p;
-  }
-
   let p = publicMenuCache.get(menuId);
   if (!p) {
     p = fetchPublicMenu(menuId).catch((e) => {
@@ -90,9 +56,6 @@ export function readPublicMenu(menuId: string): Promise<PublicMenuData> {
 
 /** Owner overview + `/menus` — menu summaries. */
 export function readOwnerMenus(): Promise<OwnerMenuSummary[]> {
-  if (useMocks()) {
-    return mockReadOwnerMenus();
-  }
   if (!liveOwnerMenusCache.p) {
     liveOwnerMenusCache.p = fetchOwnerMenus().catch((e) => {
       liveOwnerMenusCache.p = null;
@@ -104,9 +67,6 @@ export function readOwnerMenus(): Promise<OwnerMenuSummary[]> {
 
 /** Owner `/categories` page — venue + category rows. */
 export function readOwnerCategories(): Promise<OwnerCategoriesData> {
-  if (useMocks()) {
-    return mockReadOwnerCategories();
-  }
   if (!liveOwnerCategoriesCache.p) {
     liveOwnerCategoriesCache.p = fetchOwnerCategories().catch((e) => {
       liveOwnerCategoriesCache.p = null;
@@ -123,25 +83,11 @@ export function readOwnerCategories(): Promise<OwnerCategoriesData> {
 export function readOwnerMenuCategories(menuId: string): Promise<OwnerMenuCategoriesData | null> {
   let p = ownerMenuCategoriesCache.get(menuId);
   if (!p) {
-    p = (async () => {
-      if (useMocks()) {
-        await delay(480);
-        const menuMeta = FIXTURE_OWNER_MENUS.find((m) => m.id === menuId);
-        if (!menuMeta) return null;
-        const base = structuredClone(FIXTURE_OWNER_CATEGORIES);
-        const categories = base.categories.filter((c) => c.menuId === menuId);
-        return {
-          menuId,
-          menuName: menuMeta.name,
-          venueName: base.venueName,
-          categories,
-        };
-      }
-      return fetchOwnerMenuCategoriesData(menuId);
-    })().catch((e) => {
-      ownerMenuCategoriesCache.delete(menuId);
-      throw e;
-    });
+    p = fetchOwnerMenuCategoriesData(menuId)
+      .catch((e) => {
+        ownerMenuCategoriesCache.delete(menuId);
+        throw e;
+      });
     ownerMenuCategoriesCache.set(menuId, p);
   }
   return p;
@@ -157,22 +103,11 @@ export function readOwnerCategoryPage(
   const key = `${menuId}:${categoryId}`;
   let p = ownerCategoryPageCache.get(key);
   if (!p) {
-    p = (async () => {
-      if (useMocks()) {
-        await delay(450);
-        const menu = getPublicMenuForMenuId(menuId);
-        const cat = menu.categories.find((c) => c.id === categoryId);
-        if (!cat || categoryId === "cat-0") return null;
-        const items = cat.itemIds
-          .map((id) => menu.itemsById[id])
-          .filter((row): row is import("@/types").MenuItem => row != null);
-        return { categoryName: cat.name, items };
-      }
-      return fetchOwnerCategoryPage(menuId, categoryId);
-    })().catch((e) => {
-      ownerCategoryPageCache.delete(key);
-      throw e;
-    });
+    p = fetchOwnerCategoryPage(menuId, categoryId)
+      .catch((e) => {
+        ownerCategoryPageCache.delete(key);
+        throw e;
+      });
     ownerCategoryPageCache.set(key, p);
   }
   return p;
@@ -183,10 +118,6 @@ export function readItemEditor(menuId: string, itemId: string): Promise<MenuItem
   let p = itemEditorCache.get(key);
   if (!p) {
     p = (async () => {
-      if (useMocks()) {
-        await delay(480);
-        return getFixtureItemEditor(itemId);
-      }
       try {
         return await fetchItemEditor(menuId, itemId);
       } catch (e) {
@@ -202,18 +133,19 @@ export function readItemEditor(menuId: string, itemId: string): Promise<MenuItem
   return p;
 }
 
-/** CSV preview after “upload” — canned rows. */
-export const readCsvPreview = cachedPromise(async (): Promise<CsvPreviewData> => {
-  await delay(400);
-  return {
-    headers: [...FIXTURE_CSV_HEADERS],
-    rows: FIXTURE_CSV_PREVIEW_ROWS.map((r) => ({ ...r })),
+function cachedPromise<T>(factory: () => Promise<T>): () => Promise<T> {
+  let promise: Promise<T> | null = null;
+  return () => {
+    if (!promise) promise = factory();
+    return promise;
   };
-});
+}
 
-/** Simulated AI extraction result. */
+/**
+ * Simulated AI extraction for scan import (no server API yet).
+ */
 export const readScanDraft = cachedPromise(async (): Promise<ScanDraftData> => {
-  await delay(700);
+  await delay(400);
   return {
     rows: FIXTURE_SCAN_DRAFT_ROWS.map((r) => ({ ...r })),
     imagePreviewUrl: null,

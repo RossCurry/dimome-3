@@ -1,17 +1,24 @@
-import { use } from "react";
+import { use, useMemo } from "react";
 import { Link, Navigate, useParams } from "react-router-dom";
 import { ArrowLeft } from "lucide-react";
+import { fetchOwnerMenuCategoriesData } from "@/api/owner";
 import { useCategoryCreateModal } from "@/context/CategoryCreateModalContext";
-import { useMocks } from "@/lib/env";
-import { readOwnerMenuCategories } from "@/mocks/mockApi";
 import { OwnerCategoryRowList } from "@/components/owner/OwnerCategoryRowList";
+import type { OwnerMenuCategoriesData } from "@/types";
 
 export default function OwnerMenuPage() {
-  const mocks = useMocks();
   const { menuId: menuIdParam } = useParams<{ menuId: string }>();
   const menuId = menuIdParam ?? "";
-  const data = use(readOwnerMenuCategories(menuId));
   const { openAddCategoryModal } = useCategoryCreateModal();
+
+  /** Refetch on every visit so categories are not stale vs cached menu list. */
+  const dataPromise = useMemo(() => {
+    if (!menuId) {
+      return Promise.resolve(null as OwnerMenuCategoriesData | null);
+    }
+    return fetchOwnerMenuCategoriesData(menuId);
+  }, [menuId]);
+  const data = use(dataPromise);
 
   if (!data) {
     return <Navigate to="/menus" replace />;
@@ -34,7 +41,7 @@ export default function OwnerMenuPage() {
           </h1>
           <p className="mt-2 text-on-surface-variant">
             {data.venueName} · Menu <span className="font-mono text-xs">{data.menuId}</span>
-            {mocks ? " — categories in this menu only (mock)." : " — categories in this menu."}
+            {" — categories in this menu."}
           </p>
         </div>
         <button

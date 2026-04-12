@@ -1,15 +1,14 @@
 # DiMoMe — `packages/client`
 
-Vite + React 19 + TypeScript + Tailwind v4 + React Router 7 (`react-router-dom`). By default the owner app and guest menu call the **Express API** (`src/api/`, `src/mocks/mockApi.ts` delegates when not in mock mode). **CSV import** uses **`/menus/:menuId/import/csv/...`** and [`src/api/csvImportJobs.ts`](src/api/csvImportJobs.ts) against **`csv-import-jobs`** endpoints when mocks are off. **AI scan** steps still use **in-memory mocks** only.
+Vite + React 19 + TypeScript + Tailwind v4 + React Router 7 (`react-router-dom`). The owner app and guest menu call the **Express API** via `src/api/` and cached readers in `src/mocks/mockApi.ts`. **CSV import** uses **`/menus/:menuId/import/csv/...`** and [`src/api/csvImportJobs.ts`](src/api/csvImportJobs.ts) against **`csv-import-jobs`** endpoints. **AI scan** steps use **fixture data** in `mockApi` until a scan API exists.
 
 ## Using the real API
 
 1. From `dimome3/`: `docker compose up -d`, copy `.env.example` → `.env`, run `npm run db:seed`, then `npm run dev:server` (API on `:3000`) and `npm run dev --workspace=client` (Vite on `:5173`).
 2. **Proxy:** Vite forwards `/api` → `http://localhost:3000`, so the browser can use same-origin `/api/v1/...` when **`VITE_API_URL` is unset** (see [`vite.config.ts`](vite.config.ts)).
 3. Optional **`VITE_API_URL`** (e.g. `http://localhost:3000`) if you prefer calling the API origin directly (CORS already allows the dev client).
-4. Set **`VITE_USE_MOCK_API=true`** to force fixtures for owner/guest menu data (see [`.env.example`](.env.example)).
-5. **UI ↔ routes:** [CLIENT_API_MAP_2026-04-08.md](../../CLIENT_API_MAP_2026-04-08.md) (includes CSV job routes). **Sign in:** `/login` — seed user `dev@dimome.local` / `password` after `db:seed`.
-6. **CSV details:** [CSV_IMPORT_IMPLEMENTATION.md](../../documentation/CSV_IMPORT_IMPLEMENTATION.md).
+4. **UI ↔ routes:** [CLIENT_API_MAP_2026-04-08.md](../../CLIENT_API_MAP_2026-04-08.md) (includes CSV job routes). **Sign in:** `/login` — seed user `dev@dimome.local` / `password` after `db:seed`.
+5. **CSV details:** [CSV_IMPORT_IMPLEMENTATION.md](../../documentation/CSV_IMPORT_IMPLEMENTATION.md).
 
 ## Run
 
@@ -35,12 +34,12 @@ Old `/owner/...` links redirect to the same path without `/owner`.
 
 ## Placeholder image
 
-All mock dishes use `public/images/placeholder-dish.jpg` (see `src/mocks/constants.ts` `PLACEHOLDER_IMAGE`). Replace that file to change the shared photo.
+Default dish images use `public/images/placeholder-dish.jpg` (see `src/mocks/constants.ts` `PLACEHOLDER_IMAGE`). Replace that file to change the shared photo.
 
 ## Suspense
 
 - **Route-level:** lazy-loaded pages with skeleton fallbacks in `src/router.tsx`.
-- **Data-level:** `React.use()` + `Suspense` around `readPublicMenu(menuId)`, `readCsvPreview()`, `readScanDraft()`, etc., in page components.
+- **Data-level:** `React.use()` + `Suspense` around `readPublicMenu(menuId)`, `readOwnerMenus()`, `readScanDraft()`, etc., in page components.
 
 ## Design tokens
 

@@ -2,11 +2,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { ArrowLeft } from "lucide-react";
 import { fetchCsvImportJob, patchCsvImportMapping } from "@/api/csvImportJobs";
-import { useCsvImport } from "@/pages/owner/csv/CsvImportContext";
-import { useMocks } from "@/lib/env";
 import type { CsvFieldKey } from "@/types";
-
-const MOCK_CSV_JOB_ID = "local";
 
 const FIELDS: { key: CsvFieldKey; label: string; required?: boolean }[] = [
   { key: "name", label: "Item name", required: true },
@@ -29,33 +25,23 @@ function defaultMapping(headers: string[]): Record<CsvFieldKey, string> {
 export default function CsvStep2Page() {
   const navigate = useNavigate();
   const { menuId = "", jobId = "" } = useParams<{ menuId: string; jobId: string }>();
-  const mocks = useMocks();
-  const { state: mockState } = useCsvImport();
-  const isMockJob = mocks && jobId === MOCK_CSV_JOB_ID;
 
   const [liveHeaders, setLiveHeaders] = useState<string[]>([]);
   const [liveFileName, setLiveFileName] = useState("");
   const [liveSampleRows, setLiveSampleRows] = useState<Record<string, string>[]>([]);
   const [liveError, setLiveError] = useState<string | null>(null);
-  const [liveLoading, setLiveLoading] = useState(!isMockJob);
-  const [mapping, setMapping] = useState<Record<CsvFieldKey, string>>(() =>
-    defaultMapping(isMockJob ? (mockState?.headers ?? []) : []),
-  );
+  const [liveLoading, setLiveLoading] = useState(true);
+  const [mapping, setMapping] = useState<Record<CsvFieldKey, string>>(() => defaultMapping([]));
   const mappingSeeded = useRef(false);
 
   useEffect(() => {
-    if (isMockJob) {
-      setLiveLoading(false);
-      if (mockState?.headers?.length) {
-        setLiveHeaders(mockState.headers);
-        setLiveFileName(mockState.fileName);
-        if (!mappingSeeded.current) {
-          mappingSeeded.current = true;
-          setMapping(defaultMapping(mockState.headers));
-        }
-      }
-      return;
-    }
+    mappingSeeded.current = false;
+    setLiveLoading(true);
+    setLiveHeaders([]);
+    setLiveFileName("");
+    setLiveSampleRows([]);
+    setLiveError(null);
+    setMapping(defaultMapping([]));
 
     let cancelled = false;
     const poll = async () => {
@@ -88,10 +74,7 @@ export default function CsvStep2Page() {
     return () => {
       cancelled = true;
     };
-  }, [isMockJob, jobId, menuId, mockState?.fileName, mockState?.headers?.join("\0")]);
-
-  const headers = isMockJob ? (mockState?.headers ?? []) : liveHeaders;
-  const fileName = isMockJob ? (mockState?.fileName ?? "") : liveFileName;
+  }, [jobId, menuId]);
 
   const canContinue = useMemo(
     () => Boolean(mapping.name && mapping.price),
@@ -100,7 +83,7 @@ export default function CsvStep2Page() {
 
   const step1Href = `/menus/${encodeURIComponent(menuId)}/import/csv`;
 
-  if (!isMockJob && liveError) {
+  if (liveError) {
     return (
       <div className="max-w-4xl mx-auto px-6 py-12">
         <p className="text-on-surface-variant">{liveError}</p>
@@ -111,18 +94,7 @@ export default function CsvStep2Page() {
     );
   }
 
-  if (isMockJob && !mockState) {
-    return (
-      <div className="max-w-4xl mx-auto px-6 py-12">
-        <p className="text-on-surface-variant">No file selected.</p>
-        <Link to={step1Href} className="text-primary font-medium mt-4 inline-block">
-          Go to step 1
-        </Link>
-      </div>
-    );
-  }
-
-  if (liveLoading || headers.length === 0) {
+  if (liveLoading || liveHeaders.length === 0) {
     return (
       <div className="max-w-4xl mx-auto px-6 py-12">
         <p className="text-on-surface-variant">Preparing column mapping…</p>
@@ -135,10 +107,6 @@ export default function CsvStep2Page() {
   };
 
   const onCompleteMapping = () => {
-    if (isMockJob) {
-      goReview();
-      return;
-    }
     void (async () => {
       try {
         await patchCsvImportMapping(menuId, jobId, {
@@ -166,7 +134,7 @@ export default function CsvStep2Page() {
       </Link>
       <h1 className="text-4xl font-headline text-on-surface mb-2">CSV upload — step 2</h1>
       <p className="text-on-surface-variant text-lg max-w-2xl mb-4">
-        Map columns from <span className="font-mono text-sm">{fileName}</span> to menu fields.
+        Map columns from <span className="font-mono text-sm">{liveFileName}</span> to menu fields.
       </p>
       <p className="text-sm text-on-surface-variant mb-10 rounded-lg bg-surface-container-low px-4 py-3">
         <span className="font-semibold text-primary">Suggested CSV headers:</span> name, price,
@@ -197,7 +165,7 @@ export default function CsvStep2Page() {
                   }
                 >
                   <option value="">Select column…</option>
-                  {headers.map((h) => (
+                  {liveHeaders.map((h) => (
                     <option key={h} value={h}>
                       {h}
                     </option>
@@ -214,7 +182,7 @@ export default function CsvStep2Page() {
               <table className="w-full text-left">
                 <thead className="bg-surface-container text-on-surface-variant uppercase text-[10px]">
                   <tr>
-                    {headers.slice(0, 6).map((h) => (
+                    {liveHeaders.slice(0, 6).map((h) => (
                       <th key={h} className="px-3 py-2 font-semibold">
                         {h}
                       </th>
@@ -222,16 +190,11 @@ export default function CsvStep2Page() {
                   </tr>
                 </thead>
                 <tbody>
-                  {(isMockJob
-                    ? (mockState?.rawSampleLines.slice(1, 4) ?? []).map((line) =>
-                        line.split(",").slice(0, 6),
-                      )
-                    : liveSampleRows.slice(0, 3).map((row) => headers.slice(0, 6).map((h) => row[h] ?? ""))
-                  ).map((cells, i) => (
+                  {liveSampleRows.slice(0, 3).map((row, i) => (
                     <tr key={i} className="border-t border-surface-container-low">
-                      {cells.map((cell, j) => (
-                        <td key={j} className="px-3 py-2">
-                          {String(cell).trim()}
+                      {liveHeaders.slice(0, 6).map((h) => (
+                        <td key={h} className="px-3 py-2">
+                          {String(row[h] ?? "").trim()}
                         </td>
                       ))}
                     </tr>

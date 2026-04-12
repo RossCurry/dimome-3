@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import {
   BarChart3,
@@ -11,7 +11,7 @@ import {
   LogOut,
   X,
 } from "lucide-react";
-import { FIXTURE_OWNER_CATEGORIES } from "@/mocks/fixtures";
+import { fetchOwnerCategories } from "@/api/owner";
 
 function venueInitials(name: string): string {
   const parts = name.trim().split(/\s+/).filter(Boolean);
@@ -32,7 +32,17 @@ export type OwnerSidebarProps = {
 
 function OwnerSidebarInner({ onNavigate }: { onNavigate?: () => void }) {
   const { pathname } = useLocation();
-  const venueName = FIXTURE_OWNER_CATEGORIES.venueName;
+  const [venueName, setVenueName] = useState("Venue");
+
+  useEffect(() => {
+    let cancelled = false;
+    void fetchOwnerCategories().then((data) => {
+      if (!cancelled && data.venueName.trim()) setVenueName(data.venueName);
+    });
+    return () => {
+      cancelled = true;
+    };
+  }, []);
 
   const overviewActive = pathname === "/";
   const createMenuHubActive = pathname === "/menus/create";
@@ -127,7 +137,7 @@ function OwnerSidebarInner({ onNavigate }: { onNavigate?: () => void }) {
           type="button"
           onClick={afterNav}
           className={`${navClass} w-full text-left text-on-surface-variant`}
-          aria-label="Log out (mock)"
+          aria-label="Log out"
         >
           <LogOut className="h-5 w-5 shrink-0" aria-hidden />
           Logout

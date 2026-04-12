@@ -2,7 +2,6 @@ import { useCallback, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Camera, ClipboardList, Upload } from "lucide-react";
 import { createMenu } from "@/api/owner";
-import { useMocks } from "@/lib/env";
 import { clearReadCaches } from "@/mocks/mockApi";
 
 type Layout = "vertical" | "horizontal";
@@ -11,20 +10,15 @@ export type MenuCreationOptionsProps = {
   layout: Layout;
   /** Shown above the option cards (overview keeps “Create new menu”; hub page omits). */
   showInnerHeading?: boolean;
-  /** After a successful API draft create (not mock navigate). */
+  /** After a successful API draft create. */
   onAfterDraftCreated?: () => void;
 };
 
 function useCreateDraftMenu(onAfterDraftCreated?: () => void) {
-  const mocks = useMocks();
   const navigate = useNavigate();
   const [creatingMenu, setCreatingMenu] = useState(false);
 
   const createDraft = useCallback(async () => {
-    if (mocks) {
-      navigate("/menus/menu-1/category/cat-1");
-      return;
-    }
     setCreatingMenu(true);
     try {
       const created = await createMenu({
@@ -39,21 +33,16 @@ function useCreateDraftMenu(onAfterDraftCreated?: () => void) {
     } finally {
       setCreatingMenu(false);
     }
-  }, [mocks, navigate, onAfterDraftCreated]);
+  }, [navigate, onAfterDraftCreated]);
 
   return { createDraft, creatingMenu };
 }
 
 function useStartCsvImport(onAfterDraftCreated?: () => void) {
-  const mocks = useMocks();
   const navigate = useNavigate();
   const [busy, setBusy] = useState(false);
 
   const startCsv = useCallback(async () => {
-    if (mocks) {
-      navigate("/menus/menu-1/import/csv");
-      return;
-    }
     setBusy(true);
     try {
       const created = await createMenu({
@@ -68,7 +57,7 @@ function useStartCsvImport(onAfterDraftCreated?: () => void) {
     } finally {
       setBusy(false);
     }
-  }, [mocks, navigate, onAfterDraftCreated]);
+  }, [navigate, onAfterDraftCreated]);
 
   return { startCsv, busy };
 }
@@ -83,13 +72,10 @@ export function MenuCreationOptions({
   showInnerHeading = layout === "vertical",
   onAfterDraftCreated,
 }: MenuCreationOptionsProps) {
-  const mocks = useMocks();
   const { createDraft, creatingMenu } = useCreateDraftMenu(onAfterDraftCreated);
   const { startCsv, busy: csvBusy } = useStartCsvImport(onAfterDraftCreated);
 
-  const buildDescription = mocks
-    ? "Edit items manually (mock)"
-    : "Create a draft menu and add categories";
+  const buildDescription = "Create a draft menu and add categories";
 
   if (layout === "vertical") {
     return (
@@ -126,7 +112,7 @@ export function MenuCreationOptions({
             <div>
               <p className="text-sm font-semibold">Upload CSV</p>
               <p className="text-xs text-on-surface-variant">
-                {mocks ? "Bulk import (mock)" : "Creates a draft menu, then column mapping"}
+                Creates a draft menu, then column mapping
               </p>
             </div>
           </button>
@@ -136,7 +122,7 @@ export function MenuCreationOptions({
             </div>
             <div>
               <p className="text-sm font-semibold">Scan image</p>
-              <p className="text-xs text-on-surface-variant">AI menu OCR (mock)</p>
+              <p className="text-xs text-on-surface-variant">AI menu OCR (demo — no API yet)</p>
             </div>
           </Link>
         </div>
@@ -174,7 +160,7 @@ export function MenuCreationOptions({
             <p className="text-sm font-semibold">Upload CSV</p>
           </div>
           <p className="text-xs text-on-surface-variant">
-            {mocks ? "Bulk import (mock)" : "Creates a draft menu, then column mapping"}
+            Creates a draft menu, then column mapping
           </p>
         </button>
         <Link to="/import/scan" className={optionColClass}>
@@ -184,7 +170,7 @@ export function MenuCreationOptions({
             </div>
             <p className="text-sm font-semibold">Scan image</p>
           </div>
-          <p className="text-xs text-on-surface-variant">AI menu OCR (mock)</p>
+          <p className="text-xs text-on-surface-variant">AI menu OCR (demo — no API yet)</p>
         </Link>
       </div>
     </div>

@@ -2,41 +2,14 @@ import { useRef } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { ArrowLeft, FileSpreadsheet } from "lucide-react";
 import { createCsvImportJob } from "@/api/csvImportJobs";
-import { useCsvImport } from "@/pages/owner/csv/CsvImportContext";
-import { useMocks } from "@/lib/env";
-
-const MOCK_CSV_JOB_ID = "local";
-
-function parseCsvHeaderLine(text: string): string[] {
-  const line = text.split(/\r?\n/)[0] ?? "";
-  return line.split(",").map((c) => c.trim().replace(/^"|"$/g, ""));
-}
 
 export default function CsvStep1Page() {
   const navigate = useNavigate();
   const { menuId = "" } = useParams<{ menuId: string }>();
-  const mocks = useMocks();
-  const { setState } = useCsvImport();
   const inputRef = useRef<HTMLInputElement>(null);
 
   const onFile = (file: File | null) => {
     if (!file || !file.name.toLowerCase().endsWith(".csv")) return;
-    if (mocks) {
-      const reader = new FileReader();
-      reader.onload = () => {
-        const text = typeof reader.result === "string" ? reader.result : "";
-        const headers = parseCsvHeaderLine(text);
-        const lines = text.split(/\r?\n/).slice(0, 6);
-        setState({
-          fileName: file.name,
-          headers: headers.length ? headers : ["Column A", "Column B"],
-          rawSampleLines: lines,
-        });
-        navigate(`${MOCK_CSV_JOB_ID}/map`);
-      };
-      reader.readAsText(file.slice(0, 64 * 1024));
-      return;
-    }
     void (async () => {
       try {
         const { id } = await createCsvImportJob(menuId, file);
@@ -66,8 +39,8 @@ export default function CsvStep1Page() {
       <p className="text-on-surface-variant text-lg max-w-2xl mb-10">
         Select a .csv file. Required columns include <strong>name</strong>, <strong>price</strong>, and{" "}
         <strong>category</strong> (use &quot;Uncategorised&quot; in the file or leave category blank to assign
-        automatically). Optional: description, allergens (comma-separated, e.g. eggs, milk).
-        {mocks ? " Mock mode uses local preview only." : " The server parses your file and opens mapping when ready."}
+        automatically). Optional: description, allergens (comma-separated, e.g. eggs, milk). The server parses
+        your file and opens mapping when ready.
       </p>
 
       <div className="rounded-2xl bg-surface-container-low p-10 border border-outline-variant/10">
