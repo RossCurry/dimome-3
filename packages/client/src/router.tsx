@@ -22,6 +22,7 @@ const OrderPage = lazy(() => import("@/pages/guest/OrderPage"));
 const OwnerOverviewPage = lazy(() => import("@/pages/owner/OwnerOverviewPage"));
 const OwnerCategoriesPage = lazy(() => import("@/pages/owner/OwnerCategoriesPage"));
 const MenusListPage = lazy(() => import("@/pages/owner/MenusListPage"));
+const CreateMenuHubPage = lazy(() => import("@/pages/owner/CreateMenuHubPage"));
 const OwnerMenuPage = lazy(() => import("@/pages/owner/OwnerMenuPage"));
 const CategoryPage = lazy(() => import("@/pages/owner/CategoryPage"));
 const ItemEditPage = lazy(() => import("@/pages/owner/ItemEditPage"));
@@ -111,6 +112,14 @@ export const router = createBrowserRouter([
         element: (
           <Suspense fallback={<OwnerDashboardSkeleton />}>
             <MenusListPage />
+          </Suspense>
+        ),
+      },
+      {
+        path: "menus/create",
+        element: (
+          <Suspense fallback={<OwnerDashboardSkeleton />}>
+            <CreateMenuHubPage />
           </Suspense>
         ),
       },

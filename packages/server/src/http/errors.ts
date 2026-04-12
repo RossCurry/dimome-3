@@ -17,6 +17,9 @@ export function sendError(
   res.status(status).json(body);
 }
 
+/**
+ * Use later to register http errors elsewhere in the code.
+ */
 export class HttpError extends Error {
   constructor(
     public readonly status: number,

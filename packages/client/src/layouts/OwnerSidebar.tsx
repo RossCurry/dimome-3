@@ -2,6 +2,7 @@ import { useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
 import {
   BarChart3,
+  CirclePlus,
   Droplet,
   FileText,
   HelpCircle,
@@ -34,7 +35,10 @@ function OwnerSidebarInner({ onNavigate }: { onNavigate?: () => void }) {
   const venueName = FIXTURE_OWNER_CATEGORIES.venueName;
 
   const overviewActive = pathname === "/";
-  const menusActive = pathname === "/menus" || pathname.startsWith("/menus/");
+  const createMenuHubActive = pathname === "/menus/create";
+  const menusActive =
+    pathname === "/menus" ||
+    (pathname.startsWith("/menus/") && !createMenuHubActive);
   const categoriesActive = pathname === "/categories";
 
   const afterNav = () => {
@@ -99,6 +103,14 @@ function OwnerSidebarInner({ onNavigate }: { onNavigate?: () => void }) {
           <BarChart3 className="h-5 w-5 shrink-0 opacity-80" aria-hidden />
           Performance
         </span>
+        <Link
+          to="/menus/create"
+          onClick={afterNav}
+          className={`${navClass} ${createMenuHubActive ? navActiveClass : ""}`}
+        >
+          <CirclePlus className="h-5 w-5 shrink-0 opacity-80" aria-hidden />
+          Create menu
+        </Link>
       </nav>
 
       <div className="mt-auto space-y-1 border-t border-outline-variant/10 p-3">

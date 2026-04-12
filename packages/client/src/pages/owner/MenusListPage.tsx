@@ -1,5 +1,7 @@
 import { Suspense, useState } from "react";
 import { use } from "react";
+import { Link } from "react-router-dom";
+import { Plus } from "lucide-react";
 import { patchMenu } from "@/api/owner";
 import { OwnerMenuCardsSection } from "@/components/owner/OwnerMenuCardsSection";
 import { OwnerDashboardSkeleton } from "@/components/skeletons/OwnerDashboardSkeleton";
@@ -49,14 +51,23 @@ export default function MenusListPage() {
 
   return (
     <div className="mx-auto max-w-5xl px-6 py-10">
-      <div className="mb-10">
-        <h1 className="font-headline text-3xl tracking-tight text-primary md:text-4xl">
-          Menus
-        </h1>
-        <p className="mt-2 text-on-surface-variant">
-          Every menu you own — including drafts and archived versions
-          {mocks ? " (mock)." : "."}
-        </p>
+      <div className="mb-10 flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+        <div>
+          <h1 className="font-headline text-3xl tracking-tight text-primary md:text-4xl">
+            Menus
+          </h1>
+          <p className="mt-2 text-on-surface-variant">
+            Every menu you own — including drafts and archived versions
+            {mocks ? " (mock)." : "."}
+          </p>
+        </div>
+        <Link
+          to="/menus/create"
+          className="primary-gradient inline-flex shrink-0 items-center justify-center gap-2 self-start rounded-xl px-5 py-2.5 text-sm font-semibold text-on-primary sm:self-auto"
+        >
+          <Plus className="h-4 w-4" aria-hidden />
+          Create menu
+        </Link>
       </div>
 
       <Suspense key={bodyKey} fallback={<OwnerDashboardSkeleton />}>
