@@ -1,6 +1,9 @@
 import { getApiOrigin } from "@/lib/env";
 import { notifyApiError } from "@/api/errorNotifier";
 
+/**
+ * Structured failure from `apiJson` (HTTP body, network, or thrown upstream).
+ */
 export class ApiError extends Error {
   constructor(
     public readonly code: string,
@@ -12,6 +15,9 @@ export class ApiError extends Error {
   }
 }
 
+/**
+ * Build absolute `/api/v1/...` URL for the configured API origin (or same-origin proxy path).
+ */
 export function apiUrl(apiPath: string): string {
   const path = apiPath.startsWith("/") ? apiPath : `/${apiPath}`;
   const origin = getApiOrigin();
@@ -23,10 +29,15 @@ export function apiUrl(apiPath: string): string {
 
 type ApiJsonOptions = RequestInit & {
   token?: string | null;
-  /** When false, skip global snackbar (e.g. login form shows its own error). Default true. */
+  /**
+   * When false, skip global snackbar (e.g. login form shows its own error). Default true.
+   */
   showErrorSnack?: boolean;
 };
 
+/**
+ * Typed `fetch` to `/api/v1` with optional bearer token, JSON body, and global error snackbar on failure.
+ */
 export async function apiJson<T>(path: string, init: ApiJsonOptions = {}): Promise<T> {
   const { token, showErrorSnack = true, headers: hdrs, ...rest } = init;
   const headers = new Headers(hdrs);

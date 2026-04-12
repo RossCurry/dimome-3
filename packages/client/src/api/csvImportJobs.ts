@@ -37,12 +37,18 @@ export type CsvImportJob = {
   updatedAt: string;
 };
 
+/**
+ * Bearer token from storage, or throws `ApiError` unauthorized.
+ */
 function tokenOrThrow(): string {
   const t = getStoredToken();
   if (!t) throw new ApiError("unauthorized", "Not signed in", 401);
   return t;
 }
 
+/**
+ * Start a CSV import job for a menu (multipart upload); returns new job id.
+ */
 export async function createCsvImportJob(menuId: string, file: File): Promise<{ id: string }> {
   const token = tokenOrThrow();
   const fd = new FormData();
@@ -68,6 +74,9 @@ export async function createCsvImportJob(menuId: string, file: File): Promise<{ 
   return res.json() as Promise<{ id: string }>;
 }
 
+/**
+ * Load one import job (headers, mapping, preview, status, commit result).
+ */
 export function fetchCsvImportJob(menuId: string, jobId: string): Promise<CsvImportJob> {
   return apiJson<CsvImportJob>(
     `/owner/menus/${encodeURIComponent(menuId)}/csv-import-jobs/${encodeURIComponent(jobId)}`,
@@ -75,6 +84,9 @@ export function fetchCsvImportJob(menuId: string, jobId: string): Promise<CsvImp
   );
 }
 
+/**
+ * Save CSV column → dish field mapping and refresh server-side preview.
+ */
 export function patchCsvImportMapping(
   menuId: string,
   jobId: string,
@@ -90,6 +102,9 @@ export function patchCsvImportMapping(
   );
 }
 
+/**
+ * Apply validated preview rows to the menu (import); job returns commit counts/messages.
+ */
 export function commitCsvImportJob(menuId: string, jobId: string): Promise<CsvImportJob> {
   return apiJson<CsvImportJob>(
     `/owner/menus/${encodeURIComponent(menuId)}/csv-import-jobs/${encodeURIComponent(jobId)}/commit`,

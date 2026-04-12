@@ -16,6 +16,7 @@ async function main() {
     console.log(`DiMoMe API http://localhost:${config.port}/api/v1/health`);
   });
 
+  // TODO I don't like the service being started here. Would prefer a separate service file.
   const csvWorker = startWorkerLoop({
     intervalMs: 450,
     tick: csvImportWorkerTick,

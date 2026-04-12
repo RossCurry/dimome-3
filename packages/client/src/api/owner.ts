@@ -9,6 +9,9 @@ import type {
   OwnerMenuSummary,
 } from "@/types";
 
+/**
+ * Bearer token from storage, or throws `ApiError` unauthorized.
+ */
 function tokenOrThrow(): string {
   const t = getStoredToken();
   if (!t) {
@@ -17,14 +20,23 @@ function tokenOrThrow(): string {
   return t;
 }
 
+/**
+ * List all menus for the signed-in owner’s venue.
+ */
 export function fetchOwnerMenus(): Promise<OwnerMenuSummary[]> {
   return apiJson<OwnerMenuSummary[]>("/owner/menus", { token: tokenOrThrow() });
 }
 
+/**
+ * Venue-level category palette and display name (not per-menu ordering).
+ */
 export function fetchOwnerCategories(): Promise<OwnerCategoriesData> {
   return apiJson<OwnerCategoriesData>("/owner/categories", { token: tokenOrThrow() });
 }
 
+/**
+ * Parallel fetch of menu list, categories on a menu, and venue meta; null if menu id missing from list.
+ */
 export async function fetchOwnerMenuCategoriesData(
   menuId: string,
 ): Promise<OwnerMenuCategoriesData | null> {
@@ -51,6 +63,9 @@ export type OwnerCategoryPageData = {
   items: MenuItem[];
 };
 
+/**
+ * Load one category’s items for editor navigation; null if category not on menu.
+ */
 export async function fetchOwnerCategoryPage(
   menuId: string,
   categoryId: string,
@@ -69,6 +84,9 @@ export async function fetchOwnerCategoryPage(
   return { categoryName: cat.name, items };
 }
 
+/**
+ * Full item payload for the owner item editor screen.
+ */
 export function fetchItemEditor(menuId: string, itemId: string): Promise<MenuItemEditor> {
   return apiJson<MenuItemEditor>(
     `/owner/menus/${encodeURIComponent(menuId)}/items/${encodeURIComponent(itemId)}`,
@@ -91,6 +109,9 @@ export type PatchItemBody = Partial<{
   dietaryTags: string[];
 }>;
 
+/**
+ * Partial update of a menu item (fields omitted are left unchanged server-side).
+ */
 export function patchItem(
   menuId: string,
   itemId: string,
@@ -121,6 +142,9 @@ export type CreateItemBody = {
   dietaryTags?: string[];
 };
 
+/**
+ * Create a new dish under a category; returns editor-shaped item.
+ */
 export function createItem(menuId: string, body: CreateItemBody): Promise<MenuItemEditor> {
   return apiJson<MenuItemEditor>(`/owner/menus/${encodeURIComponent(menuId)}/items`, {
     method: "POST",
@@ -142,6 +166,9 @@ export function createItem(menuId: string, body: CreateItemBody): Promise<MenuIt
   });
 }
 
+/**
+ * Add a category tab/section to a specific menu.
+ */
 export function createCategory(
   menuId: string,
   input: { name: string; thumbnail?: string },
@@ -165,6 +192,9 @@ export type PatchMenuBody = Partial<{
   guestVenueName: string;
 }>;
 
+/**
+ * Update menu metadata (name, publish flags, thumbnail, guest label, etc.).
+ */
 export function patchMenu(menuId: string, body: PatchMenuBody): Promise<OwnerMenuSummary> {
   return apiJson<OwnerMenuSummary>(`/owner/menus/${encodeURIComponent(menuId)}`, {
     method: "PATCH",
@@ -182,6 +212,9 @@ export type CreateMenuBody = {
   guestVenueName?: string;
 };
 
+/**
+ * Create a new draft/active menu for the venue.
+ */
 export function createMenu(body: CreateMenuBody): Promise<OwnerMenuSummary> {
   return apiJson<OwnerMenuSummary>("/owner/menus", {
     method: "POST",
