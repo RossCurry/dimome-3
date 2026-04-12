@@ -2,11 +2,13 @@ import {
   createContext,
   useCallback,
   useContext,
+  useEffect,
   useMemo,
   useState,
   type ReactNode,
 } from "react";
 import { loginRequest } from "@/api/auth";
+import { SESSION_INVALIDATED_EVENT } from "@/auth/sessionEvents";
 import { clearStoredToken, getStoredToken, setStoredToken } from "@/auth/tokenStorage";
 import { clearReadCaches } from "@/mocks/mockApi";
 
@@ -21,6 +23,15 @@ const AuthContext = createContext<AuthContextValue | null>(null);
 
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [token, setToken] = useState<string | null>(() => getStoredToken());
+
+  useEffect(() => {
+    const onSessionInvalidated = () => {
+      clearReadCaches();
+      setToken(null);
+    };
+    window.addEventListener(SESSION_INVALIDATED_EVENT, onSessionInvalidated);
+    return () => window.removeEventListener(SESSION_INVALIDATED_EVENT, onSessionInvalidated);
+  }, []);
 
   const login = useCallback(async (email: string, password: string) => {
     const res = await loginRequest(email, password);

@@ -1,28 +1,64 @@
-import { use, useMemo } from "react";
+import { useEffect, useState } from "react";
 import { Link, Navigate, useParams } from "react-router-dom";
 import { ArrowLeft } from "lucide-react";
+import { ApiError } from "@/api/client";
 import { fetchOwnerMenuCategoriesData } from "@/api/owner";
 import { useCategoryCreateModal } from "@/context/CategoryCreateModalContext";
+import { OwnerDashboardSkeleton } from "@/components/skeletons/OwnerDashboardSkeleton";
 import { OwnerCategoryRowList } from "@/components/owner/OwnerCategoryRowList";
 import type { OwnerMenuCategoriesData } from "@/types";
+
+type LoadState =
+  | { status: "loading" }
+  | { status: "ready"; data: OwnerMenuCategoriesData }
+  | { status: "missing" }
+  | { status: "unauthorized" };
 
 export default function OwnerMenuPage() {
   const { menuId: menuIdParam } = useParams<{ menuId: string }>();
   const menuId = menuIdParam ?? "";
   const { openAddCategoryModal } = useCategoryCreateModal();
+  const [loadState, setLoadState] = useState<LoadState>({ status: "loading" });
 
-  /** Refetch on every visit so categories are not stale vs cached menu list. */
-  const dataPromise = useMemo(() => {
+  useEffect(() => {
     if (!menuId) {
-      return Promise.resolve(null as OwnerMenuCategoriesData | null);
+      setLoadState({ status: "missing" });
+      return;
     }
-    return fetchOwnerMenuCategoriesData(menuId);
+    let cancelled = false;
+    setLoadState({ status: "loading" });
+    void fetchOwnerMenuCategoriesData(menuId)
+      .then((d) => {
+        if (cancelled) return;
+        if (!d) setLoadState({ status: "missing" });
+        else setLoadState({ status: "ready", data: d });
+      })
+      .catch((e) => {
+        if (cancelled) return;
+        if (e instanceof ApiError && e.status === 401) {
+          setLoadState({ status: "unauthorized" });
+          return;
+        }
+        setLoadState({ status: "missing" });
+      });
+    return () => {
+      cancelled = true;
+    };
   }, [menuId]);
-  const data = use(dataPromise);
 
-  if (!data) {
+  if (loadState.status === "loading") {
+    return <OwnerDashboardSkeleton />;
+  }
+
+  if (loadState.status === "unauthorized") {
+    return <Navigate to="/login" replace />;
+  }
+
+  if (loadState.status === "missing") {
     return <Navigate to="/menus" replace />;
   }
+
+  const { data } = loadState;
 
   return (
     <div className="mx-auto max-w-5xl px-6 py-10">

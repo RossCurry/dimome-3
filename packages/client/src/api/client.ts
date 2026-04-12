@@ -1,5 +1,7 @@
 import { getApiOrigin } from "@/lib/env";
 import { notifyApiError } from "@/api/errorNotifier";
+import { clearStoredToken } from "@/auth/tokenStorage";
+import { emitSessionInvalidated } from "@/auth/sessionEvents";
 
 /**
  * Structured failure from `apiJson` (HTTP body, network, or thrown upstream).
@@ -67,11 +69,21 @@ export async function apiJson<T>(path: string, init: ApiJsonOptions = {}): Promi
       const body = (await res.json()) as { error?: { code?: string; message?: string } };
       const code = body.error?.code ?? "http_error";
       const message = body.error?.message ?? res.statusText;
-      if (showErrorSnack) notifyApiError(message);
+      if (res.status === 401 && token) {
+        clearStoredToken();
+        emitSessionInvalidated();
+      } else if (showErrorSnack) {
+        notifyApiError(message);
+      }
       throw new ApiError(code, message, res.status);
     }
     const message = res.statusText || String(res.status);
-    if (showErrorSnack) notifyApiError(message);
+    if (res.status === 401 && token) {
+      clearStoredToken();
+      emitSessionInvalidated();
+    } else if (showErrorSnack) {
+      notifyApiError(message);
+    }
     throw new ApiError("http_error", message, res.status);
   }
 

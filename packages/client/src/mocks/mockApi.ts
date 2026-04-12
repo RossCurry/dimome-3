@@ -58,7 +58,9 @@ export function readPublicMenu(menuId: string): Promise<PublicMenuData> {
 export function readOwnerMenus(): Promise<OwnerMenuSummary[]> {
   if (!liveOwnerMenusCache.p) {
     liveOwnerMenusCache.p = fetchOwnerMenus().catch((e) => {
-      liveOwnerMenusCache.p = null;
+      if (!(e instanceof ApiError && e.status === 401)) {
+        liveOwnerMenusCache.p = null;
+      }
       throw e;
     });
   }
@@ -69,7 +71,9 @@ export function readOwnerMenus(): Promise<OwnerMenuSummary[]> {
 export function readOwnerCategories(): Promise<OwnerCategoriesData> {
   if (!liveOwnerCategoriesCache.p) {
     liveOwnerCategoriesCache.p = fetchOwnerCategories().catch((e) => {
-      liveOwnerCategoriesCache.p = null;
+      if (!(e instanceof ApiError && e.status === 401)) {
+        liveOwnerCategoriesCache.p = null;
+      }
       throw e;
     });
   }
@@ -85,7 +89,9 @@ export function readOwnerMenuCategories(menuId: string): Promise<OwnerMenuCatego
   if (!p) {
     p = fetchOwnerMenuCategoriesData(menuId)
       .catch((e) => {
-        ownerMenuCategoriesCache.delete(menuId);
+        if (!(e instanceof ApiError && e.status === 401)) {
+          ownerMenuCategoriesCache.delete(menuId);
+        }
         throw e;
       });
     ownerMenuCategoriesCache.set(menuId, p);
@@ -105,7 +111,9 @@ export function readOwnerCategoryPage(
   if (!p) {
     p = fetchOwnerCategoryPage(menuId, categoryId)
       .catch((e) => {
-        ownerCategoryPageCache.delete(key);
+        if (!(e instanceof ApiError && e.status === 401)) {
+          ownerCategoryPageCache.delete(key);
+        }
         throw e;
       });
     ownerCategoryPageCache.set(key, p);
@@ -125,7 +133,9 @@ export function readItemEditor(menuId: string, itemId: string): Promise<MenuItem
         throw e;
       }
     })().catch((e) => {
-      itemEditorCache.delete(key);
+      if (!(e instanceof ApiError && e.status === 401)) {
+        itemEditorCache.delete(key);
+      }
       throw e;
     });
     itemEditorCache.set(key, p);
