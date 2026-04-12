@@ -53,4 +53,9 @@ export interface OwnerItemsPort {
     itemPublicId: string,
     input: UpdateItemInput,
   ): Promise<MenuItemEditorDto | null>;
+  deleteItem(
+    venueId: string,
+    menuPublicId: string,
+    itemPublicId: string,
+  ): Promise<boolean>;
 }

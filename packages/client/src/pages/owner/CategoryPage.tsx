@@ -1,17 +1,24 @@
-import { use, useState } from "react";
+import { Suspense, use, useState } from "react";
 import { Link, Navigate, useParams } from "react-router-dom";
-import { ArrowLeft, Eye, EyeOff, Plus } from "lucide-react";
-import { patchItem, type OwnerCategoryPageData } from "@/api/owner";
+import { ArrowLeft, Edit, Eye, EyeOff, Plus, Trash2 } from "lucide-react";
+import { deleteItem, patchItem, type OwnerCategoryPageData } from "@/api/owner";
+import { OwnerConfirmDialog } from "@/components/owner/OwnerConfirmDialog";
+import { OwnerRouteSkeleton } from "@/components/skeletons/OwnerRouteSkeleton";
+import type { MenuItem } from "@/types";
 import { clearReadCaches, readOwnerCategoryPage } from "@/mocks/mockApi";
 
 function CategoryPageInner({
   menuId,
   categoryId,
   data,
+  onRequestDeleteItem,
+  deletingItemId,
 }: {
   menuId: string;
   categoryId: string;
   data: OwnerCategoryPageData;
+  onRequestDeleteItem: (item: MenuItem) => void;
+  deletingItemId: string | null;
 }) {
   const { categoryName, items } = data;
   const [visibleById, setVisibleById] = useState<Record<string, boolean>>(() =>
@@ -76,7 +83,7 @@ function CategoryPageInner({
                 <th className="px-6 py-4">Item</th>
                 <th className="px-6 py-4">Price</th>
                 <th className="px-6 py-4">Visible</th>
-                <th className="px-6 py-4" />
+                <th className="px-6 py-4 text-right">Actions</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-outline-variant/10">
@@ -119,13 +126,26 @@ function CategoryPageInner({
                         {visible ? "Yes" : "No"}
                       </button>
                     </td>
-                    <td className="px-6 py-4 text-right">
-                      <Link
-                        to={`/menus/${menuId}/items/${item.id}/edit`}
-                        className="text-sm font-semibold text-primary"
-                      >
-                        Edit
-                      </Link>
+                    <td className="px-6 py-4">
+                      <div className="flex flex-wrap items-center justify-end gap-2">
+                        <Link
+                          to={`/menus/${menuId}/items/${item.id}/edit`}
+                          className="inline-flex items-center gap-2 rounded-xl bg-primary-container px-4 py-2 text-sm font-medium text-on-primary"
+                        >
+                          <Edit className="h-4 w-4" aria-hidden />
+                          Edit
+                        </Link>
+                        <button
+                          type="button"
+                          disabled={deletingItemId === item.id}
+                          onClick={() => onRequestDeleteItem(item)}
+                          className="rounded-lg p-2 text-error hover:bg-error-container/30 disabled:opacity-50"
+                          aria-label={`Permanently delete ${item.name}`}
+                          title="Permanently delete item"
+                        >
+                          <Trash2 className="h-5 w-5" />
+                        </button>
+                      </div>
                     </td>
                   </tr>
                 );
@@ -138,6 +158,32 @@ function CategoryPageInner({
   );
 }
 
+function CategoryPageSuspended({
+  menuId,
+  categoryId,
+  onRequestDeleteItem,
+  deletingItemId,
+}: {
+  menuId: string;
+  categoryId: string;
+  onRequestDeleteItem: (item: MenuItem) => void;
+  deletingItemId: string | null;
+}) {
+  const data = use(readOwnerCategoryPage(menuId, categoryId));
+  if (!data) {
+    return <Navigate to={menuId ? `/menus/${menuId}` : "/menus"} replace />;
+  }
+  return (
+    <CategoryPageInner
+      menuId={menuId}
+      categoryId={categoryId}
+      data={data}
+      onRequestDeleteItem={onRequestDeleteItem}
+      deletingItemId={deletingItemId}
+    />
+  );
+}
+
 export default function CategoryPage() {
   const { menuId: menuIdParam, categoryId: categoryIdParam } = useParams<{
     menuId: string;
@@ -145,18 +191,48 @@ export default function CategoryPage() {
   }>();
   const menuId = menuIdParam ?? "";
   const categoryId = categoryIdParam ?? "";
-  const data = use(readOwnerCategoryPage(menuId, categoryId));
+  const [reloadKey, setReloadKey] = useState(0);
+  const [pendingDeleteItem, setPendingDeleteItem] = useState<MenuItem | null>(null);
+  const [deletingItemId, setDeletingItemId] = useState<string | null>(null);
 
-  if (!data) {
-    return <Navigate to={menuId ? `/menus/${menuId}` : "/menus"} replace />;
-  }
+  const confirmDeleteItem = async () => {
+    if (!pendingDeleteItem || !menuId) return;
+    setDeletingItemId(pendingDeleteItem.id);
+    try {
+      await deleteItem(menuId, pendingDeleteItem.id);
+      clearReadCaches();
+      setPendingDeleteItem(null);
+      setReloadKey((k) => k + 1);
+    } catch {
+      /* snackbar from apiJson */
+    } finally {
+      setDeletingItemId(null);
+    }
+  };
 
   return (
-    <CategoryPageInner
-      key={`${menuId}-${categoryId}`}
-      menuId={menuId}
-      categoryId={categoryId}
-      data={data}
-    />
+    <>
+      <Suspense key={reloadKey} fallback={<OwnerRouteSkeleton />}>
+        <CategoryPageSuspended
+          menuId={menuId}
+          categoryId={categoryId}
+          onRequestDeleteItem={setPendingDeleteItem}
+          deletingItemId={deletingItemId}
+        />
+      </Suspense>
+
+      <OwnerConfirmDialog
+        open={pendingDeleteItem != null}
+        title="Delete item permanently?"
+        onClose={() => setPendingDeleteItem(null)}
+        onConfirm={() => void confirmDeleteItem()}
+        cancelLabel="Cancel"
+        confirmLabel={deletingItemId ? "Deleting…" : "Delete item"}
+      >
+        <p>
+          This removes <strong>{pendingDeleteItem?.name}</strong> from the menu. This cannot be undone.
+        </p>
+      </OwnerConfirmDialog>
+    </>
   );
 }

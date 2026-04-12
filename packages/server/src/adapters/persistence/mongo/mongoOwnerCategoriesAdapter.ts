@@ -122,4 +122,32 @@ export class MongoOwnerCategoriesAdapter implements OwnerCategoriesPort {
     if (!c) return null;
     return mapCategory(c);
   }
+
+  async deleteCategory(
+    venueId: string,
+    menuPublicId: string,
+    categoryPublicId: string,
+  ): Promise<boolean> {
+    console.log('!deleteCategory -->', {
+      venueId,
+      menuPublicId,
+      categoryPublicId,
+    });
+    const menu = await this.assertMenuOwned(menuPublicId, venueId);
+    console.log('!menu -->', menu);
+    if (!menu) return false;
+
+    const vid = toVenueOid(venueId);
+    await this.db.collection(COL.items).deleteMany({
+      menuPublicId,
+      venueId: vid,
+      categoryPublicId,
+    });
+    const r = await this.db.collection(COL.categories).deleteOne({
+      publicId: categoryPublicId,
+      menuPublicId,
+      venueId: vid,
+    });
+    return r.deletedCount > 0;
+  }
 }

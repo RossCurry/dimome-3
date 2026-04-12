@@ -26,4 +26,6 @@ export interface OwnerMenusPort {
     menuPublicId: string,
     input: UpdateMenuInput,
   ): Promise<OwnerMenuSummaryDto | null>;
+  /** Permanently remove menu and its categories, items, and CSV import jobs for this venue. */
+  deleteMenu(venueId: string, menuPublicId: string): Promise<boolean>;
 }

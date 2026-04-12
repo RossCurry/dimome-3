@@ -27,4 +27,10 @@ export interface OwnerCategoriesPort {
     categoryPublicId: string,
     input: UpdateCategoryInput,
   ): Promise<CategorySummaryDto | null>;
+  /** Remove category and all items in that category for this menu. */
+  deleteCategory(
+    venueId: string,
+    menuPublicId: string,
+    categoryPublicId: string,
+  ): Promise<boolean>;
 }

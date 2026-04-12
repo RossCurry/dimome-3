@@ -59,6 +59,16 @@ export function ownerRouter(
     res.json(updated);
   });
 
+  r.delete("/menus/:menuId", async (req, res) => {
+    const venueId = req.auth!.venueId;
+    const ok = await menus.deleteMenu(venueId, req.params.menuId);
+    if (!ok) {
+      sendError(res, 404, "not_found", "Menu not found");
+      return;
+    }
+    res.status(204).send();
+  });
+
   r.get("/categories", async (req, res) => {
     const venueId = req.auth!.venueId;
     const [venueName, list] = await Promise.all([
@@ -113,6 +123,16 @@ export function ownerRouter(
       return;
     }
     res.json(updated);
+  });
+
+  r.delete("/menus/:menuId/categories/:categoryId", async (req, res) => {
+    const venueId = req.auth!.venueId;
+    const ok = await categories.deleteCategory(venueId, req.params.menuId, req.params.categoryId);
+    if (!ok) {
+      sendError(res, 404, "not_found", "Category not found");
+      return;
+    }
+    res.status(204).send();
   });
 
   r.get("/menus/:menuId/items", async (req, res) => {
@@ -196,6 +216,16 @@ export function ownerRouter(
       return;
     }
     res.json(updated);
+  });
+
+  r.delete("/menus/:menuId/items/:itemId", async (req, res) => {
+    const venueId = req.auth!.venueId;
+    const ok = await items.deleteItem(venueId, req.params.menuId, req.params.itemId);
+    if (!ok) {
+      sendError(res, 404, "not_found", "Item not found");
+      return;
+    }
+    res.status(204).send();
   });
 
   return r;

@@ -180,6 +180,32 @@ export class MongoOwnerItemsAdapter implements OwnerItemsPort {
     return toEditorDto(next);
   }
 
+  async deleteItem(
+    venueId: string,
+    menuPublicId: string,
+    itemPublicId: string,
+  ): Promise<boolean> {
+    const menu = await this.assertMenuOwned(menuPublicId, venueId);
+    if (!menu) return false;
+
+    const existing = await this.db.collection<ItemDoc>(COL.items).findOne({
+      menuPublicId,
+      publicId: itemPublicId,
+      venueId: toVenueOid(venueId),
+    });
+    if (!existing) return false;
+
+    const del = await this.db.collection(COL.items).deleteOne({
+      menuPublicId,
+      publicId: itemPublicId,
+      venueId: toVenueOid(venueId),
+    });
+    if (del.deletedCount === 0) return false;
+
+    await this.syncCategoryItemIds(menuPublicId, venueId, existing.categoryPublicId);
+    return true;
+  }
+
   private async removeItemFromCategoryList(
     menuPublicId: string,
     venueId: string,

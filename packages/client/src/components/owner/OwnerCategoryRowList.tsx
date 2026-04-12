@@ -6,11 +6,21 @@ type Props = {
   categories: CategorySummary[];
   /** When true, show parent menu name in each row (global categories page). */
   showParentMenuName?: boolean;
+  /** Permanently remove category and its items (hidden when omitted). */
+  onDeleteCategory?: (category: CategorySummary) => void;
+  /** `${menuId}:${categoryId}` while that row’s delete request is in flight. */
+  deletingCategoryKey?: string | null;
 };
+
+function categoryKey(c: CategorySummary): string {
+  return `${c.menuId}:${c.categoryId}`;
+}
 
 export function OwnerCategoryRowList({
   categories,
   showParentMenuName = false,
+  onDeleteCategory,
+  deletingCategoryKey = null,
 }: Props) {
   if (categories.length === 0) {
     return (
@@ -62,13 +72,18 @@ export function OwnerCategoryRowList({
               <Edit className="h-4 w-4" />
               Edit
             </Link>
-            <button
-              type="button"
-              className="rounded-lg p-2 text-error hover:bg-error-container/30"
-              aria-label="Delete category"
-            >
-              <Trash2 className="h-5 w-5" />
-            </button>
+            {onDeleteCategory ? (
+              <button
+                type="button"
+                disabled={deletingCategoryKey === categoryKey(category)}
+                onClick={() => onDeleteCategory(category)}
+                className="rounded-lg p-2 text-error hover:bg-error-container/30 disabled:opacity-50"
+                aria-label={`Permanently delete category ${category.name}`}
+                title="Permanently delete category"
+              >
+                <Trash2 className="h-5 w-5" />
+              </button>
+            ) : null}
           </div>
         </div>
       ))}

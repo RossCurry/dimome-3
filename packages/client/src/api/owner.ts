@@ -203,6 +203,36 @@ export function patchMenu(menuId: string, body: PatchMenuBody): Promise<OwnerMen
   });
 }
 
+/**
+ * Permanently delete a menu and its categories, items, and CSV import jobs.
+ */
+export function deleteMenu(menuId: string): Promise<void> {
+  return apiJson<void>(`/owner/menus/${encodeURIComponent(menuId)}`, {
+    method: "DELETE",
+    token: tokenOrThrow(),
+  });
+}
+
+/**
+ * Permanently delete a category and all items in that category.
+ */
+export function deleteCategory(menuId: string, categoryPublicId: string): Promise<void> {
+  return apiJson<void>(
+    `/owner/menus/${encodeURIComponent(menuId)}/categories/${encodeURIComponent(categoryPublicId)}`,
+    { method: "DELETE", token: tokenOrThrow() },
+  );
+}
+
+/**
+ * Permanently delete one dish from a menu category.
+ */
+export function deleteItem(menuId: string, itemId: string): Promise<void> {
+  return apiJson<void>(
+    `/owner/menus/${encodeURIComponent(menuId)}/items/${encodeURIComponent(itemId)}`,
+    { method: "DELETE", token: tokenOrThrow() },
+  );
+}
+
 export type CreateMenuBody = {
   name: string;
   contextLabel?: string;

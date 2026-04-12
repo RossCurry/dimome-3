@@ -1,4 +1,5 @@
 import { ObjectId, type Db } from "mongodb";
+import { CSV_IMPORT_JOBS_COLLECTION } from "jobs";
 import type { OwnerMenusPort, CreateMenuInput, UpdateMenuInput } from "../../../ports/ownerMenusPort.js";
 import type { OwnerMenuSummaryDto } from "../../../domain/menu.js";
 import { COL } from "./collections.js";
@@ -106,5 +107,23 @@ export class MongoOwnerMenusAdapter implements OwnerMenusPort {
       thumbnail: m.thumbnail,
       isActive: m.isActive,
     };
+  }
+
+  async deleteMenu(venueId: string, menuPublicId: string): Promise<boolean> {
+    const vid = toVenueOid(venueId);
+    const menu = await this.db.collection<MenuDoc>(COL.menus).findOne({
+      publicId: menuPublicId,
+      venueId: vid,
+    });
+    if (!menu) return false;
+
+    await this.db.collection(COL.items).deleteMany({ menuPublicId, venueId: vid });
+    await this.db.collection(COL.categories).deleteMany({ menuPublicId, venueId: vid });
+    await this.db.collection(CSV_IMPORT_JOBS_COLLECTION).deleteMany({
+      venueId,
+      menuPublicId,
+    });
+    const r = await this.db.collection(COL.menus).deleteOne({ publicId: menuPublicId, venueId: vid });
+    return r.deletedCount > 0;
   }
 }

@@ -2,11 +2,13 @@ import { useEffect, useState } from "react";
 import { Link, Navigate, useParams } from "react-router-dom";
 import { ArrowLeft } from "lucide-react";
 import { ApiError } from "@/api/client";
-import { fetchOwnerMenuCategoriesData } from "@/api/owner";
+import { deleteCategory, fetchOwnerMenuCategoriesData } from "@/api/owner";
+import { OwnerConfirmDialog } from "@/components/owner/OwnerConfirmDialog";
 import { useCategoryCreateModal } from "@/context/CategoryCreateModalContext";
 import { OwnerDashboardSkeleton } from "@/components/skeletons/OwnerDashboardSkeleton";
 import { OwnerCategoryRowList } from "@/components/owner/OwnerCategoryRowList";
-import type { OwnerMenuCategoriesData } from "@/types";
+import type { CategorySummary, OwnerMenuCategoriesData } from "@/types";
+import { clearReadCaches } from "@/mocks/mockApi";
 
 type LoadState =
   | { status: "loading" }
@@ -14,11 +16,18 @@ type LoadState =
   | { status: "missing" }
   | { status: "unauthorized" };
 
+function categoryRowKey(c: CategorySummary): string {
+  return `${c.menuId}:${c.categoryId}`;
+}
+
 export default function OwnerMenuPage() {
   const { menuId: menuIdParam } = useParams<{ menuId: string }>();
   const menuId = menuIdParam ?? "";
   const { openAddCategoryModal } = useCategoryCreateModal();
   const [loadState, setLoadState] = useState<LoadState>({ status: "loading" });
+  const [reloadNonce, setReloadNonce] = useState(0);
+  const [pendingDeleteCategory, setPendingDeleteCategory] = useState<CategorySummary | null>(null);
+  const [deletingCategoryKey, setDeletingCategoryKey] = useState<string | null>(null);
 
   useEffect(() => {
     if (!menuId) {
@@ -44,7 +53,23 @@ export default function OwnerMenuPage() {
     return () => {
       cancelled = true;
     };
-  }, [menuId]);
+  }, [menuId, reloadNonce]);
+
+  const confirmDeleteCategory = async () => {
+    if (!pendingDeleteCategory) return;
+    const key = categoryRowKey(pendingDeleteCategory);
+    setDeletingCategoryKey(key);
+    try {
+      await deleteCategory(pendingDeleteCategory.menuId, pendingDeleteCategory.categoryId);
+      clearReadCaches();
+      setPendingDeleteCategory(null);
+      setReloadNonce((n) => n + 1);
+    } catch {
+      /* snackbar from apiJson */
+    } finally {
+      setDeletingCategoryKey(null);
+    }
+  };
 
   if (loadState.status === "loading") {
     return <OwnerDashboardSkeleton />;
@@ -91,8 +116,26 @@ export default function OwnerMenuPage() {
 
       <section className="mb-12">
         <h2 className="mb-6 font-headline text-xl text-primary">Your categories</h2>
-        <OwnerCategoryRowList categories={data.categories} />
+        <OwnerCategoryRowList
+          categories={data.categories}
+          onDeleteCategory={setPendingDeleteCategory}
+          deletingCategoryKey={deletingCategoryKey}
+        />
       </section>
+
+      <OwnerConfirmDialog
+        open={pendingDeleteCategory != null}
+        title="Delete category permanently?"
+        onClose={() => setPendingDeleteCategory(null)}
+        onConfirm={() => void confirmDeleteCategory()}
+        cancelLabel="Cancel"
+        confirmLabel={deletingCategoryKey ? "Deleting…" : "Delete category"}
+      >
+        <p>
+          This removes <strong>{pendingDeleteCategory?.name}</strong> and every dish in that category.
+          This cannot be undone.
+        </p>
+      </OwnerConfirmDialog>
     </div>
   );
 }

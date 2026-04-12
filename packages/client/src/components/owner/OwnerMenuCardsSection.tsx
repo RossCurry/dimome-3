@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { ChevronRight, ExternalLink } from "lucide-react";
+import { ChevronRight, ExternalLink, Trash2 } from "lucide-react";
 import type { OwnerMenuSummary } from "@/types";
 
 type Props = {
@@ -11,6 +11,9 @@ type Props = {
   /** Live API: archive or restore a menu (hidden when omitted). */
   onToggleArchive?: (menu: OwnerMenuSummary) => void | Promise<void>;
   togglingMenuId?: string | null;
+  /** Live API: permanently delete menu (hidden when omitted). */
+  onDeleteMenu?: (menu: OwnerMenuSummary) => void;
+  deletingMenuId?: string | null;
 };
 
 export function OwnerMenuCardsSection({
@@ -20,6 +23,8 @@ export function OwnerMenuCardsSection({
   showStatus = false,
   onToggleArchive,
   togglingMenuId = null,
+  onDeleteMenu,
+  deletingMenuId = null,
 }: Props) {
   return (
     <section className="rounded-2xl bg-surface-container-lowest p-6 shadow-[var(--shadow-ambient)] md:p-8">
@@ -89,6 +94,18 @@ export function OwnerMenuCardsSection({
                     Edit
                     <ChevronRight className="h-4 w-4" aria-hidden />
                   </Link>
+                  {onDeleteMenu ? (
+                    <button
+                      type="button"
+                      disabled={deletingMenuId === m.id}
+                      onClick={() => onDeleteMenu(m)}
+                      className="inline-flex items-center justify-center rounded-xl border border-error/30 px-3 py-2 text-error hover:bg-error-container/20 disabled:opacity-50"
+                      aria-label={`Permanently delete menu ${m.name}`}
+                      title="Permanently delete menu"
+                    >
+                      <Trash2 className="h-4 w-4" aria-hidden />
+                    </button>
+                  ) : null}
                 </div>
               </div>
             </li>
