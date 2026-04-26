@@ -11,7 +11,7 @@ import {
   LogOut,
   X,
 } from "lucide-react";
-import { fetchOwnerCategories } from "@/api/owner";
+import { fetchOwnerCategories, fetchOwnerMenus } from "@/api/owner";
 
 function venueInitials(name: string): string {
   const parts = name.trim().split(/\s+/).filter(Boolean);
@@ -40,16 +40,24 @@ function OwnerSidebarInner({
 }) {
   const { pathname } = useLocation();
   const [venueName, setVenueName] = useState("Venue");
+  /** Optimistic true until a successful menus fetch proves otherwise (fail-open on errors). */
+  const [hasMenus, setHasMenus] = useState(true);
 
   useEffect(() => {
     let cancelled = false;
-    void fetchOwnerCategories().then((data) => {
-      if (!cancelled && data.venueName.trim()) setVenueName(data.venueName);
-    });
+    void Promise.all([fetchOwnerCategories(), fetchOwnerMenus()])
+      .then(([catData, menus]) => {
+        if (cancelled) return;
+        if (catData.venueName.trim()) setVenueName(catData.venueName);
+        setHasMenus(menus.length > 0);
+      })
+      .catch(() => {
+        if (!cancelled) setHasMenus(true);
+      });
     return () => {
       cancelled = true;
     };
-  }, []);
+  }, [pathname]);
 
   const overviewActive = pathname === "/";
   const createMenuHubActive = pathname === "/menus/create";
@@ -98,14 +106,25 @@ function OwnerSidebarInner({
           <FileText className="h-5 w-5 shrink-0 opacity-80" aria-hidden />
           Menus
         </Link>
-        <Link
-          to="/categories"
-          onClick={afterNav}
-          className={`${navClass} ${categoriesActive ? navActiveClass : ""}`}
-        >
-          <Layers className="h-5 w-5 shrink-0 opacity-80" aria-hidden />
-          Categories
-        </Link>
+        {hasMenus ? (
+          <Link
+            to="/categories"
+            onClick={afterNav}
+            className={`${navClass} ${categoriesActive ? navActiveClass : ""}`}
+          >
+            <Layers className="h-5 w-5 shrink-0 opacity-80" aria-hidden />
+            Categories
+          </Link>
+        ) : (
+          <span
+            className={`${navClass} cursor-not-allowed opacity-50`}
+            aria-disabled="true"
+            title="Create a menu first to manage categories."
+          >
+            <Layers className="h-5 w-5 shrink-0 opacity-80" aria-hidden />
+            Categories
+          </span>
+        )}
         <span
           className={`${navClass} cursor-not-allowed opacity-50`}
           aria-disabled="true"
