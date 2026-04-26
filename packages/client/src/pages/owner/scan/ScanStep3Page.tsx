@@ -4,6 +4,7 @@ import { ArrowLeft } from "lucide-react";
 import { readScanDraft } from "@/mocks/mockApi";
 import type { ScanDraftRow } from "@/types";
 import { TableRowsSkeleton } from "@/components/skeletons/TableRowsSkeleton";
+import { OwnerSlidingActionFooter } from "@/components/owner/OwnerSlidingActionFooter";
 
 function ScanReviewBody() {
   const data = use(readScanDraft());
@@ -69,28 +70,19 @@ function ScanReviewBody() {
       <p className="text-xs text-on-surface-variant italic mt-4">
         Showing {rows.length} mock extracted items. Confirm to finish.
       </p>
-      <div className="mt-8 flex gap-4">
-        <button
-          type="button"
-          onClick={() => navigate("/")}
-          className="primary-gradient text-on-primary px-8 py-3 rounded-xl font-semibold"
-        >
-          Confirm import
-        </button>
-        <Link
-          to="/"
-          className="px-8 py-3 rounded-xl border border-outline-variant/30 text-on-surface-variant font-medium"
-        >
-          Cancel
-        </Link>
-      </div>
+      <OwnerSlidingActionFooter
+        leading={<span>{`Showing ${rows.length} extracted rows (mock).`}</span>}
+        onCancel={() => navigate("/")}
+        onSave={() => navigate("/")}
+        saveLabel="Confirm import"
+      />
     </>
   );
 }
 
 export default function ScanStep3Page() {
   return (
-    <div className="max-w-5xl mx-auto px-6 py-12">
+    <div className="max-w-5xl mx-auto px-6 py-12 pb-28">
       <Link
         to="/import/scan/progress"
         className="inline-flex items-center gap-2 text-sm text-on-surface-variant hover:text-primary mb-8"

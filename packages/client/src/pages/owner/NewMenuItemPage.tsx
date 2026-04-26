@@ -5,6 +5,7 @@ import type { MenuItemEditor } from "@/types";
 import type { NewMenuItemLocationState } from "@/types/navigation";
 import { createItem } from "@/api/owner";
 import { clearReadCaches } from "@/mocks/mockApi";
+import { OwnerSlidingActionFooter } from "@/components/owner/OwnerSlidingActionFooter";
 import {
   DIETARY_VEGAN,
   EU_ALLERGEN_LABELS,
@@ -102,8 +103,8 @@ export default function NewMenuItemPage() {
   const fromExistingCategory = Boolean(menuId);
 
   return (
-    <div className="max-w-6xl mx-auto px-6 py-10">
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between mb-6">
+    <div className="max-w-6xl mx-auto px-6 py-10 pb-28">
+      <div className="mb-6">
         <Link
           to={returnTo}
           className="inline-flex items-center gap-2 text-sm text-primary font-medium"
@@ -111,24 +112,6 @@ export default function NewMenuItemPage() {
           <ArrowLeft className="w-4 h-4" />
           {fromExistingCategory ? "Back to category" : "Back to dashboard"}
         </Link>
-        <div className="flex justify-end gap-3 shrink-0">
-          <button
-            type="button"
-            disabled={saving}
-            onClick={() => navigate(returnTo)}
-            className="px-5 py-2.5 rounded-xl text-sm font-medium text-on-surface-variant hover:bg-surface-container-low disabled:opacity-50"
-          >
-            Cancel
-          </button>
-          <button
-            type="button"
-            disabled={saving}
-            onClick={() => void saveItem()}
-            className="primary-gradient text-on-primary px-5 py-2.5 rounded-xl text-sm font-semibold disabled:opacity-50"
-          >
-            {saving ? "Saving…" : "Add menu item"}
-          </button>
-        </div>
       </div>
 
       <div
@@ -361,6 +344,18 @@ export default function NewMenuItemPage() {
           </section>
         </div>
       </div>
+
+      <OwnerSlidingActionFooter
+        leading={
+          <span>
+            {saving ? "Saving…" : "This item is added to the selected category when you confirm."}
+          </span>
+        }
+        onCancel={() => navigate(returnTo)}
+        onSave={() => void saveItem()}
+        saveDisabled={saving || !item.name.trim()}
+        saveLabel={saving ? "Saving…" : "Add menu item"}
+      />
     </div>
   );
 }

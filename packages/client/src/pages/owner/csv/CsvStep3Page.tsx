@@ -2,8 +2,10 @@ import { useEffect, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { ArrowLeft } from "lucide-react";
 import { commitCsvImportJob, fetchCsvImportJob } from "@/api/csvImportJobs";
+import { deleteMenu, fetchOwnerMenus } from "@/api/owner";
 import { clearReadCaches } from "@/mocks/mockApi";
 import { TableRowsSkeleton } from "@/components/skeletons/TableRowsSkeleton";
+import { OwnerSlidingActionFooter } from "@/components/owner/OwnerSlidingActionFooter";
 import type { CsvPreviewRow } from "@/api/csvImportJobs";
 
 function LivePreviewTable({ rows }: { rows: CsvPreviewRow[] }) {
@@ -47,6 +49,7 @@ export default function CsvStep3Page() {
   const [liveError, setLiveError] = useState<string | null>(null);
   const [liveLoading, setLiveLoading] = useState(true);
   const [committing, setCommitting] = useState(false);
+  const [cancelling, setCancelling] = useState(false);
 
   useEffect(() => {
     setLiveRows(null);
@@ -81,6 +84,7 @@ export default function CsvStep3Page() {
   }, [jobId, menuId]);
 
   const mapHref = `/menus/${encodeURIComponent(menuId)}/import/csv/${encodeURIComponent(jobId)}/map`;
+  const menuHref = `/menus/${encodeURIComponent(menuId)}`;
 
   const onComplete = () => {
     setCommitting(true);
@@ -88,9 +92,34 @@ export default function CsvStep3Page() {
       try {
         await commitCsvImportJob(menuId, jobId);
         clearReadCaches();
-        navigate(`/menus/${encodeURIComponent(menuId)}`);
+        navigate(menuHref);
       } catch {
         setCommitting(false);
+      }
+    })();
+  };
+
+  /** Draft menu created for CSV-only import (`MenuCreationOptions`): drop it and return to overview. */
+  const onCancelImport = () => {
+    if (cancelling || committing) return;
+    setCancelling(true);
+    void (async () => {
+      try {
+        const menus = await fetchOwnerMenus();
+        const meta = menus.find((m) => m.id === menuId);
+        const discardDraftMenu =
+          meta != null && meta.contextLabel === "CSV import" && meta.categoryCount === 0;
+        if (discardDraftMenu) {
+          await deleteMenu(menuId);
+          clearReadCaches();
+          navigate("/");
+          return;
+        }
+        navigate(meta ? menuHref : "/");
+      } catch {
+        navigate(menuHref);
+      } finally {
+        setCancelling(false);
       }
     })();
   };
@@ -116,7 +145,7 @@ export default function CsvStep3Page() {
   }
 
   return (
-    <div className="max-w-5xl mx-auto px-6 py-12">
+    <div className="max-w-5xl mx-auto px-6 py-12 pb-28">
       <Link to={mapHref} className="inline-flex items-center gap-2 text-sm text-primary font-medium mb-8">
         <ArrowLeft className="w-4 h-4" />
         Back to mapping
@@ -135,22 +164,14 @@ export default function CsvStep3Page() {
 
       {liveRows ? <LivePreviewTable rows={liveRows} /> : null}
 
-      <div className="mt-10 flex gap-4">
-        <button
-          type="button"
-          disabled={committing}
-          onClick={onComplete}
-          className="primary-gradient text-on-primary px-8 py-3 rounded-xl font-semibold disabled:opacity-50"
-        >
-          {committing ? "Importing…" : "Complete import"}
-        </button>
-        <Link
-          to={`/menus/${encodeURIComponent(menuId)}`}
-          className="px-8 py-3 rounded-xl border border-outline-variant/30 text-on-surface-variant font-medium"
-        >
-          Cancel
-        </Link>
-      </div>
+      <OwnerSlidingActionFooter
+        leading={<span>{committing ? "Importing rows…" : "Ready to import reviewed rows."}</span>}
+        onCancel={onCancelImport}
+        onSave={onComplete}
+        cancelDisabled={committing || cancelling}
+        saveDisabled={committing || cancelling}
+        saveLabel={committing ? "Importing…" : "Complete import"}
+      />
     </div>
   );
 }

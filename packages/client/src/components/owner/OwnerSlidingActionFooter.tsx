@@ -10,6 +10,7 @@ export type OwnerSlidingActionFooterProps = {
   cancelLabel?: string;
   saveLabel?: string;
   saveDisabled?: boolean;
+  cancelDisabled?: boolean;
 };
 
 /**
@@ -24,6 +25,7 @@ export function OwnerSlidingActionFooter({
   cancelLabel = "Cancel",
   saveLabel = "Save",
   saveDisabled = false,
+  cancelDisabled = false,
 }: OwnerSlidingActionFooterProps) {
   if (hidden) return null;
 
@@ -47,7 +49,8 @@ export function OwnerSlidingActionFooter({
           <button
             type="button"
             onClick={onCancel}
-            className="rounded-xl px-5 py-2.5 text-sm font-medium text-on-surface-variant hover:bg-surface-container-low"
+            disabled={cancelDisabled}
+            className="rounded-xl px-5 py-2.5 text-sm font-medium text-on-surface-variant hover:bg-surface-container-low disabled:opacity-50 disabled:pointer-events-none"
           >
             {cancelLabel}
           </button>
