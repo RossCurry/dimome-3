@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useLocation, useNavigate } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { ApiError } from "@/api/client";
 import { useAuth } from "@/context/AuthContext";
 
@@ -89,6 +89,12 @@ export default function LoginPage() {
           >
             {pending ? "Signing in…" : "Sign in"}
           </button>
+          <p className="text-center text-sm text-on-surface-variant">
+            New here?{" "}
+            <Link to="/register" className="font-semibold text-primary hover:underline">
+              Create an account
+            </Link>
+          </p>
           <p className="text-center text-xs text-on-surface-variant">
             Seed user after <code className="rounded bg-surface-container-low px-1">db:seed</code>:{" "}
             <span className="font-mono">dev@dimome.local</span>

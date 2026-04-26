@@ -87,6 +87,7 @@ export function OwnerLayout() {
           <OwnerSidebar
             mobileOpen={mobileNavOpen}
             onMobileOpenChange={setMobileNavOpen}
+            onLogout={onLogout}
           />
           <div className="flex min-h-0 min-w-0 flex-1 flex-col">
             <main className="min-h-0 flex-1 overflow-auto">

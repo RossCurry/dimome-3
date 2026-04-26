@@ -16,3 +16,17 @@ export function loginRequest(email: string, password: string): Promise<LoginResp
     showErrorSnack: false,
   });
 }
+
+/**
+ * Create owner account; returns the same session shape as login. Failures use the global API snackbar.
+ */
+export function registerRequest(
+  email: string,
+  password: string,
+  businessName: string,
+): Promise<LoginResponse> {
+  return apiJson<LoginResponse>("/auth/register", {
+    method: "POST",
+    body: JSON.stringify({ email, password, businessName }),
+  });
+}

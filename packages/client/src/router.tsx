@@ -29,6 +29,7 @@ const CategoryPage = lazy(() => import("@/pages/owner/CategoryPage"));
 const ItemEditPage = lazy(() => import("@/pages/owner/ItemEditPage"));
 const NewMenuItemPage = lazy(() => import("@/pages/owner/NewMenuItemPage"));
 const LoginPage = lazy(() => import("@/pages/owner/LoginPage"));
+const RegisterPage = lazy(() => import("@/pages/owner/RegisterPage"));
 
 const CsvStep1Page = lazy(() => import("@/pages/owner/csv/CsvStep1Page"));
 const CsvStep2Page = lazy(() => import("@/pages/owner/csv/CsvStep2Page"));
@@ -81,6 +82,14 @@ export const router = createBrowserRouter([
     element: (
       <Suspense fallback={<OwnerRouteSkeleton />}>
         <LoginPage />
+      </Suspense>
+    ),
+  },
+  {
+    path: "/register",
+    element: (
+      <Suspense fallback={<OwnerRouteSkeleton />}>
+        <RegisterPage />
       </Suspense>
     ),
   },

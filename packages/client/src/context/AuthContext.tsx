@@ -7,7 +7,7 @@ import {
   useState,
   type ReactNode,
 } from "react";
-import { loginRequest } from "@/api/auth";
+import { loginRequest, registerRequest } from "@/api/auth";
 import { SESSION_INVALIDATED_EVENT } from "@/auth/sessionEvents";
 import { clearStoredToken, getStoredToken, setStoredToken } from "@/auth/tokenStorage";
 import { clearReadCaches } from "@/mocks/mockApi";
@@ -15,6 +15,7 @@ import { clearReadCaches } from "@/mocks/mockApi";
 type AuthContextValue = {
   token: string | null;
   login: (email: string, password: string) => Promise<void>;
+  register: (email: string, password: string, businessName: string) => Promise<void>;
   logout: () => void;
   isAuthenticated: boolean;
 };
@@ -40,6 +41,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setToken(res.token);
   }, []);
 
+  const register = useCallback(async (email: string, password: string, businessName: string) => {
+    const res = await registerRequest(email, password, businessName);
+    clearReadCaches();
+    setStoredToken(res.token);
+    setToken(res.token);
+  }, []);
+
   const logout = useCallback(() => {
     clearReadCaches();
     clearStoredToken();
@@ -50,10 +58,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     () => ({
       token,
       login,
+      register,
       logout,
       isAuthenticated: Boolean(token),
     }),
-    [token, login, logout],
+    [token, login, register, logout],
   );
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

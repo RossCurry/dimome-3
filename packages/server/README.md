@@ -60,6 +60,7 @@ With both running:
 | GET | `/api/v1/health` | No — `{ ok, db }` |
 | GET | `/api/v1/public/menus/:menuId` | No — public **published** menu (`PublicMenuData` shape) |
 | POST | `/api/v1/auth/login` | No — body `{ email, password }` → `{ token, userId, venueId }` |
+| POST | `/api/v1/auth/register` | No — body `{ email, password, businessName }` → **`201`** `{ token, userId, venueId }`; **`409`** `email_taken` if email exists |
 | GET | `/api/v1/owner/menus` | Bearer JWT |
 | POST / PATCH | `/api/v1/owner/menus`, `/api/v1/owner/menus/:menuId` | JWT |
 | GET | `/api/v1/owner/categories` | JWT — `{ venueName, categories }` |
@@ -77,6 +78,8 @@ Errors: `{ error: { code, message } }`.
 ## Not implemented yet
 
 R2 uploads, **AI scan** job workers, SSE/Redis/RabbitMQ, refresh tokens — see [BACKEND_REQUIREMENTS.md](../../documentation/BACKEND_REQUIREMENTS.md) §7 and §9.
+
+**Auth hardening (future):** per-route rate limiting for `/auth/login` and `/auth/register`, and a **shared rate-limit store** (e.g. Redis) when running **multiple API instances** (in-memory limits are per process only).
 
 ## Client integration
 

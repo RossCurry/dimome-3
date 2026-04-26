@@ -28,9 +28,16 @@ const navActiveClass =
 export type OwnerSidebarProps = {
   mobileOpen: boolean;
   onMobileOpenChange: (open: boolean) => void;
+  onLogout: () => void;
 };
 
-function OwnerSidebarInner({ onNavigate }: { onNavigate?: () => void }) {
+function OwnerSidebarInner({
+  onNavigate,
+  onLogout,
+}: {
+  onNavigate?: () => void;
+  onLogout: () => void;
+}) {
   const { pathname } = useLocation();
   const [venueName, setVenueName] = useState("Venue");
 
@@ -135,7 +142,10 @@ function OwnerSidebarInner({ onNavigate }: { onNavigate?: () => void }) {
         </button>
         <button
           type="button"
-          onClick={afterNav}
+          onClick={() => {
+            afterNav();
+            onLogout();
+          }}
           className={`${navClass} w-full text-left text-on-surface-variant`}
           aria-label="Log out"
         >
@@ -147,7 +157,7 @@ function OwnerSidebarInner({ onNavigate }: { onNavigate?: () => void }) {
   );
 }
 
-export function OwnerSidebar({ mobileOpen, onMobileOpenChange }: OwnerSidebarProps) {
+export function OwnerSidebar({ mobileOpen, onMobileOpenChange, onLogout }: OwnerSidebarProps) {
   const closeMobile = () => onMobileOpenChange(false);
 
   useEffect(() => {
@@ -171,7 +181,7 @@ export function OwnerSidebar({ mobileOpen, onMobileOpenChange }: OwnerSidebarPro
   return (
     <>
       <aside className="hidden w-64 shrink-0 flex-col border-r border-outline-variant/15 bg-surface-container-low md:flex md:w-72">
-        <OwnerSidebarInner />
+        <OwnerSidebarInner onLogout={onLogout} />
       </aside>
 
       <div
@@ -206,7 +216,7 @@ export function OwnerSidebar({ mobileOpen, onMobileOpenChange }: OwnerSidebarPro
               <X className="h-5 w-5" aria-hidden />
             </button>
           </div>
-          <OwnerSidebarInner onNavigate={closeMobile} />
+          <OwnerSidebarInner onNavigate={closeMobile} onLogout={onLogout} />
         </aside>
       </div>
     </>
