@@ -14,8 +14,11 @@ Copy [`.env.example`](../../.env.example) to **`dimome3/.env`** (workspace root)
 - `MONGODB_URI` — e.g. `mongodb://localhost:27017/dimome`
 - `JWT_SECRET` — any non-empty string in dev
 - `PORT` — optional, default `3000`
+- **`CORS_ORIGINS`** — optional comma-separated list of extra allowed browser origins (defaults always include **`http://localhost:5173`**). In **non-production** (`NODE_ENV !== "production"`), origins on **private IPv4** LANs (e.g. `http://192.168.x.x:5173`) are also allowed so a phone can call the API directly when using **`VITE_API_URL`**. For **production**, set **`NODE_ENV=production`** and list every real SPA origin in **`CORS_ORIGINS`**. Implementation: [`src/http/corsOrigin.ts`](src/http/corsOrigin.ts) + dynamic `origin` callback in [`src/createApp.ts`](src/createApp.ts).
 
 `loadEnv` resolves **`dimome3/.env`** when you run the server from the workspace.
+
+Client-side env for QR and API base URL lives in **[`packages/client/.env.example`](../client/.env.example)** (e.g. **`VITE_PUBLIC_APP_URL`**, **`VITE_API_URL`**).
 
 ## Scripts (from `dimome3/`)
 

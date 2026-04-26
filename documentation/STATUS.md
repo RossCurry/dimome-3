@@ -40,7 +40,7 @@ For full requirements and future scope, see [REQUIREMENTS.md](./REQUIREMENTS.md)
 
 - **Vite 6**, **React 19**, **TypeScript**, **Tailwind CSS v4** (`@tailwindcss/vite`)
 - **React Router 7** (`react-router-dom`)
-- **lucide-react** for icons
+- **lucide-react** for icons; **`qrcode.react`** for owner **menu QR** preview (`QRCodeSVG`)
 - **`engines.node`**: `>=24.0.0 <25` (mirrors workspace expectation)
 - **`@types/node`**: ^24
 
@@ -57,7 +57,7 @@ For full requirements and future scope, see [REQUIREMENTS.md](./REQUIREMENTS.md)
 
 ### Routing (`createBrowserRouter`)
 
-**MVP default:** `/` is the **owner** app (dashboard), **JWT required** (redirect to `/login`). **Guest** routes use **`/qr/:menuId`** for QR (`https://<host>/qr/<menuId>`) and **`/menu/:menuId`** as a readable alias.
+**MVP default:** `/` is the **owner** app (dashboard), **JWT required** (redirect to `/login`). **Guest** routes use **`/qr/:menuId`** for QR (`https://<host>/qr/<menuId>`) and **`/menu/:menuId`** as a readable alias. Encoded guest origin comes from **`VITE_PUBLIC_APP_URL`** when set, else `window.location.origin` ([`src/lib/publicAppUrl.ts`](../packages/client/src/lib/publicAppUrl.ts)).
 
 **Owner** (`OwnerLayout` at `/` — **sidebar** on `md+`: Overview, Menus, Categories, …; **below `md`** the sidebar is hidden and a **header menu icon** opens a **slide-in drawer** from the left with scrim, close control, **Escape** to dismiss, and **body scroll lock** while open):
 
@@ -66,7 +66,8 @@ For full requirements and future scope, see [REQUIREMENTS.md](./REQUIREMENTS.md)
 | `/login` | Owner sign-in (`POST /api/v1/auth/login`) |
 | `/` | Overview — active (+ archived) menus, quick actions |
 | `/menus` | All menus list (active / archived) |
-| `/menus/:menuId` | Menu hub — categories for that menu only |
+| `/menus/:menuId` | Menu hub — categories for that menu only; **Create QR** → `/menus/:menuId/qr` |
+| `/menus/:menuId/qr` | Menu QR — scannable code + guest URL; **Download** `.svg`; **Email** (disabled placeholder) |
 | `/menus/:menuId/category/:categoryId` | Category — item table; visibility from API when live |
 | `/categories` | All categories across menus + Add Category modal |
 | `/items/new` | New menu item (from modal or category page) |
@@ -116,6 +117,7 @@ Small **Owner** link on the guest menu points to `/` (dashboard).
 - **Stack:** Express, TypeScript (ESM), **native `mongodb`**, `dotenv`, `cors`, `bcryptjs`, `jsonwebtoken`.
 - **Layout:** `ports/`, `adapters/persistence/mongo/`, `routes/v1/`, `domain/`, `http/errors`, `middleware/requireAuth`, `services/authService`.
 - **Endpoints:** `GET /api/v1/health` (incl. DB ping); **`GET /api/v1/public/menus/:menuId`** (published menus only, `PublicMenuData`-shaped JSON); **`POST /api/v1/auth/login`**; **`/api/v1/owner/*`** (JWT): menus list/create/patch, categories list/create/patch, items **list** (optional `?categoryPublicId=`), get/create/patch; **CSV import jobs** under **`/api/v1/owner/menus/:menuId/csv-import-jobs`** (multipart create, `GET`/`PATCH`/`POST …/commit`). In-process **worker loop** advances job states (see [CSV_IMPORT_IMPLEMENTATION.md](./CSV_IMPORT_IMPLEMENTATION.md)).
+- **CORS:** [`createApp.ts`](../packages/server/src/createApp.ts) uses a dynamic **`origin`** callback: configured list (**`CORS_ORIGINS`** + default localhost Vite) plus, when **`NODE_ENV !== "production"`**, any browser **`Origin`** on **private IPv4** ([`http/corsOrigin.ts`](../packages/server/src/http/corsOrigin.ts)) so LAN device testing works when the client calls the API host directly.
 - **Tooling:** `npm run db:seed` — resets collections and loads data aligned with client fixtures (`menu-1`, demo user **`dev@dimome.local` / `password`**).
 - **Docs:** [packages/server/README.md](../packages/server/README.md) — includes **Run API + Vite client together** (two terminals, proxy, URLs).
 
@@ -165,7 +167,8 @@ npm run build            # client + server
 | **Backend / infra (docs)** | [BACKEND_REQUIREMENTS.md](./BACKEND_REQUIREMENTS.md) **§3**: **Docker Compose** under `dimome3/` for **Mongo** (and later Redis/RabbitMQ via **profiles**); **Express on host** for local dev. [REQUIREMENTS.md](./REQUIREMENTS.md) **§5** cross-reference. |
 | **Backend — first code slice** | [packages/server](../packages/server/): **docker-compose.yml** + **.env.example**, Express **`/api/v1/`**, Mongo **ports/adapters**, **JWT** login, **public menu** + **owner CRUD** routes, **`db:seed`**. [BE_PLAN.md](./BE_PLAN.md) Phases **A–F** checked off; **R2 / jobs / SSE** remain future. |
 | **2026-04-12 — CSV import jobs** | New workspace **[`packages/jobs`](../packages/jobs/)** (`MongoCsvImportJobStore`, `startWorkerLoop`). Server: **`csv-parse`**, **`multer`**, owner **`csv-import-jobs`** routes, **`processCsvImportTick`** worker in API process. Client: nested **`/menus/:menuId/import/csv/...`**, [`csvImportJobs.ts`](../packages/client/src/api/csvImportJobs.ts), hub **Upload CSV** creates draft menu then opens import. Docs: [CSV_IMPORT_IMPLEMENTATION.md](./CSV_IMPORT_IMPLEMENTATION.md). |
+| **2026-04-26 — Menu QR + LAN dev** | Owner **`/menus/:menuId`** **Create QR** → **`/menus/:menuId/qr`** ([`OwnerMenuQrPage.tsx`](../packages/client/src/pages/owner/OwnerMenuQrPage.tsx)): **`qrcode.react`** SVG, **`VITE_PUBLIC_APP_URL`** + [`publicAppUrl.ts`](../packages/client/src/lib/publicAppUrl.ts), **Download** QR as `.svg`, **Email** disabled. Vite **`server.host: true`**. Server **CORS** allows private LAN browser origins in non-production ([`corsOrigin.ts`](../packages/server/src/http/corsOrigin.ts)). Docs: client/server README, root **`.env.example`**, **[`packages/client/.env.example`](../packages/client/.env.example)**. |
 
 ---
 
-*Last updated: 2026-04-12 — **CSV import (job + polling)** live; **`packages/jobs`**; see [CSV_IMPORT_IMPLEMENTATION.md](./CSV_IMPORT_IMPLEMENTATION.md).*
+*Last updated: 2026-04-26 — **Menu QR** (owner preview + download); **LAN / CORS** dev ergonomics; see [packages/client/README.md](../packages/client/README.md).*
