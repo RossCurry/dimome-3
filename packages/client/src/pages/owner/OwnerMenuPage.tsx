@@ -7,6 +7,7 @@ import { OwnerConfirmDialog } from "@/components/owner/OwnerConfirmDialog";
 import { useCategoryCreateModal } from "@/context/CategoryCreateModalContext";
 import { OwnerDashboardSkeleton } from "@/components/skeletons/OwnerDashboardSkeleton";
 import { OwnerCategoryRowList } from "@/components/owner/OwnerCategoryRowList";
+import { QrMenuLogoIcon } from "@/components/icons/QrMenuLogoIcon";
 import type { CategorySummary, OwnerMenuCategoriesData } from "@/types";
 import { clearReadCaches } from "@/mocks/mockApi";
 
@@ -105,13 +106,25 @@ export default function OwnerMenuPage() {
             {" — categories in this menu."}
           </p>
         </div>
-        <button
-          type="button"
-          onClick={() => openAddCategoryModal(menuId)}
-          className="primary-gradient rounded-xl px-5 py-2.5 text-center text-sm font-semibold text-on-primary"
-        >
-          Add Category
-        </button>
+        <div className="flex w-full flex-col items-stretch gap-3 sm:w-auto sm:items-end">
+          <Link
+            to={`/menus/${encodeURIComponent(menuId)}/qr`}
+            title="Create QR code for this menu"
+            className="flex items-center gap-3 rounded-xl border border-outline-variant/30 bg-surface-container-low px-3 py-2.5 text-primary transition hover:border-primary/40 hover:bg-surface-container"
+          >
+            <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-surface-container-lowest ring-1 ring-outline-variant/20">
+              <QrMenuLogoIcon className="h-6 w-6" />
+            </span>
+            <span className="text-sm font-semibold">Create QR</span>
+          </Link>
+          <button
+            type="button"
+            onClick={() => openAddCategoryModal(menuId)}
+            className="primary-gradient rounded-xl px-5 py-2.5 text-center text-sm font-semibold text-on-primary"
+          >
+            Add Category
+          </button>
+        </div>
       </div>
 
       <section className="mb-12">

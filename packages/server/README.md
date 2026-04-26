@@ -49,7 +49,7 @@ With both running:
 - **Guest menu (published data):** [http://localhost:5173/qr/menu-1](http://localhost:5173/qr/menu-1) (alias: `/menu/menu-1`).
 - **Owner app:** [http://localhost:5173/](http://localhost:5173/) — you are sent to **`/login`** until you sign in; use the seed email and password.
 
-**Proxy:** [packages/client/vite.config.ts](../client/vite.config.ts) forwards **`/api`** to `http://localhost:3000`, so the browser can call **`/api/v1/...`** on the Vite origin. Leave **`VITE_API_URL` unset** in the client for that setup. Optional env and mock mode are documented in [packages/client/README.md](../client/README.md).
+**Proxy:** [packages/client/vite.config.ts](../client/vite.config.ts) forwards **`/api`** to `http://localhost:3000`, so the browser can call **`/api/v1/...`** on the Vite origin. Leave **`VITE_API_URL` unset** in the client for that setup (recommended for phones on Wi‑Fi: same origin as `http://<LAN-IP>:5173`, no browser CORS to the API). If you **do** set `VITE_API_URL` to `http://<LAN-IP>:3000`, the API must allow the Vite origin; while **`NODE_ENV` is not `production`**, private LAN origins (e.g. `http://192.168.x.x:5173`) are accepted automatically. Optional env and mock mode are documented in [packages/client/README.md](../client/README.md).
 
 **Scope:** the UI exercises **reads**, **login**, owner **mutations**, and **CSV import jobs** (multipart upload + polling) against this API when not in mock mode. Page ↔ route mapping: [CLIENT_API_MAP_2026-04-08.md](../../CLIENT_API_MAP_2026-04-08.md).
 

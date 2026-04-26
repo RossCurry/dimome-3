@@ -1,5 +1,6 @@
 import cors from "cors";
 import express, { type Express, Router } from "express";
+import { isPrivateNetworkHttpOrigin } from "./http/corsOrigin.js";
 import type { Db } from "mongodb";
 import { ObjectId } from "mongodb";
 import { MongoCsvImportJobStore } from "jobs";
@@ -27,9 +28,24 @@ export type CreateAppResult = {
 
 export function createApp(db: Db, config: AppConfig): CreateAppResult {
   const app = express();
+  const allowLanBrowserOrigins = process.env.NODE_ENV !== "production";
   app.use(
     cors({
-      origin: config.corsOrigins,
+      origin: (requestOrigin, callback) => {
+        if (!requestOrigin) {
+          callback(null, true);
+          return;
+        }
+        if (config.corsOrigins.includes(requestOrigin)) {
+          callback(null, true);
+          return;
+        }
+        if (allowLanBrowserOrigins && isPrivateNetworkHttpOrigin(requestOrigin)) {
+          callback(null, true);
+          return;
+        }
+        callback(null, false);
+      },
       credentials: true,
     }),
   );

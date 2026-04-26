@@ -11,6 +11,8 @@ export default defineConfig({
     },
   },
   server: {
+    /** Listen on all interfaces so phones on the same LAN can open the app (use with `VITE_PUBLIC_APP_URL`). */
+    host: true,
     proxy: {
       "/api": {
         target: "http://localhost:3000",
